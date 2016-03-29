@@ -7,11 +7,15 @@ class InvalidCoordinatesException(Exception):
 
     coordinates = ()
 
-    def __init__(self, x: int, y: int):
+    def __init__(self, x: int, y: int, *args, **kwargs):
         """ Initializes a new InvalidCoordinatesException with the given coordinates """
-        super().__init__("The given coordinates ({}, {}) are invalid for this board.".format(x, y))
+        super().__init__("The given coordinates ({}, {}) are invalid for this board.".format(x, y), *args, **kwargs)
         self.coordinates = (x, y)
 
     def get_coordinates(self):
         """ Returns the faulty coordinates that caused this Exception to occur """
         return self.coordinates
+
+class InvalidBoardException(Exception):
+    """ Invalid board exception """
+    pass
