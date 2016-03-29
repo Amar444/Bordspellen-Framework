@@ -11,7 +11,12 @@ class Board(object):
     Represents an empty board
     """
 
+    last_turn = None
     state = []
+
+    def get_last_turn(self):
+        """ Returns the last turn """
+        return self.last_turn
 
 class TwoDimensionalBoard(Board):
     """
@@ -20,9 +25,13 @@ class TwoDimensionalBoard(Board):
 
     size = (0, 0)
 
-    def __init__(self, x_size: int, y_size: int):
+    def __init__(self, x_size: int=0, y_size: int=0, *args, **kwargs):
         """ Initializes a new, clear 2D board using the given X and Y sizes """
-        self.resize(x_size, y_size)
+        super().__init__(*args, **kwargs)
+        if self.size != (0, 0) and (x_size, y_size) == (0, 0):
+            self.resize(self.size[0], self.size[1])
+        else:
+            self.resize(x_size, y_size)
 
     def check_coordinates(self, x: int, y: int):
         """ Checks whether the given coordinates are valid and within range of the current board """
@@ -50,6 +59,7 @@ class TwoDimensionalBoard(Board):
         """ Saves a given value to the board on the given X and Y positions """
         self.check_coordinates(x, y)
         self.state[x][y] = value
+        self.last_turn = (x, y, value)
 
     def get(self, x: int, y: int):
         """ Returns the saved value from the board on the given X and Y positions """
