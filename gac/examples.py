@@ -23,15 +23,13 @@ class DemoPlayer(BoardPlayerMixin, NamedPlayerMixin):
 class DemoGame(TurnBasedGame, BoardGame):
     board_class = DemoBoard
 
-    def __init__(self):
-        super().__init__()
-
-        player1 = input("First player name:  ")
-        player2 = input("Second player name: ")
-
-        self.set_players((DemoPlayer(name=player1, board=self.board),
-                          DemoPlayer(name=player2, board=self.board)))
-
 
 game = DemoGame()
+players = ()
+
+for x in range(0, int(input("How many players would you like to add? "))):
+    player_name = input("Name for player {}?".format(x + 1))
+    players += (DemoPlayer(name=player_name, board=game.board),)
+
+game.set_players(players)
 game.play()
