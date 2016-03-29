@@ -24,6 +24,11 @@ class TwoDimensionalBoard(Board):
         """ Initializes a new, clear 2D board using the given X and Y sizes """
         self.resize(x_size, y_size)
 
+    def check_coordinates(self, x: int, y: int):
+        """ Checks whether the given coordinates are valid and within range of the current board """
+        if not (0 <= x < self.size[0] or 0 <= y < self.size[1]):
+            raise InvalidCoordinatesException("The given coordinates ({}, {}) are invalid for this board.".format(x, y))
+
     def resize(self, x_size: int, y_size: int):
         """ Applies a new size to the board """
         if x_size < 1 or y_size < 1:
@@ -38,14 +43,17 @@ class TwoDimensionalBoard(Board):
 
     def is_available(self, x: int, y: int):
         """ Returns whether a given spot on the board is available """
-        if not (0 < x < self.size[0] or 0 < y < self.size[1]):
-            raise InvalidCoordinatesException("The given coordinates ({}, {}) are invalid for this board.".format(x, y))
-
+        self.check_coordinates(x, y)
         return self.state[x][y] is None
 
-    def fill(self, x: int, y: int, value: any):
+    def set(self, x: int, y: int, value: any):
         """ Saves a given value to the board on the given X and Y positions """
-        if not (0 < x < self.size[0] or 0 < y < self.size[1]):
+        if not (0 <= x < self.size[0] or 0 <= y < self.size[1]):
             raise InvalidCoordinatesException("The given coordinates ({}, {}) are invalid for this board.".format(x, y))
 
         self.state[x][y] = value
+
+    def get(self, x: int, y: int):
+        """ Returns the saved value from the board on the given X and Y positions """
+        self.check_coordinates(x, y)
+        return self.state[x][y]
