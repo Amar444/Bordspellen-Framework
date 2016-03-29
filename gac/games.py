@@ -23,23 +23,20 @@ class Game(object):
 class TurnBasedGame(Game):
     """
     Mixin for games that allows for handling turn-based games. You will be allowed to add
-    exactly 2 players to the game, which will be able to play the game on a turn-by-turn basis.
+    players to the game, which will be able to play the game on a turn-by-turn basis.
     """
 
     current_turn = 0
     players = ()
 
     def set_players(self, players: tuple):
-        """ Sets a tuple of exactly 2 players """
-        if len(players) != 2:
-            raise ValueError("You must add exactly 2 players to this game")
-
+        """ Adds the given players to the game """
         self.players = players
 
     def next_turn(self):
         """ Plays the next turn in the game """
         self.players[self.current_turn].play()
-        self.current_turn = (1, 0)[self.current_turn]
+        self.current_turn = 0 if self.current_turn == len(self.players) - 1 else self.current_turn + 1
 
 
 class BoardGame(Game):
