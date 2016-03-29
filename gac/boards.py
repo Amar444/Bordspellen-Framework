@@ -55,3 +55,7 @@ class TwoDimensionalBoard(Board):
         """ Returns the saved value from the board on the given X and Y positions """
         self.check_coordinates(x, y)
         return self.state[x][y]
+
+    def __str__(self):
+        """ Returns the current board as a string """
+        return "\n".join(["".join([y or '-' for y in x]) for x in self.state])
