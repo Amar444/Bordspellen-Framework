@@ -6,6 +6,8 @@ import unittest
 
 from boards import TwoDimensionalBoard
 from exceptions import InvalidCoordinatesException
+from games import Game
+
 
 class TestBoards(unittest.TestCase):
     """ Test Case for testing the board classes """
@@ -29,6 +31,28 @@ class TestBoards(unittest.TestCase):
         with self.assertRaises(InvalidCoordinatesException):
             board.get(100, 100)
             board.get(-5, 0)
+
+class TestGames(unittest.TestCase):
+    """ Test Case for the various game implementation classes """
+
+    def test_base_game(self):
+        """ Tests functionality of the base game class """
+
+        # This is a mock class - we'll use it to test the Game class
+        class TestGameMock(Game):
+            turn_ok = False
+
+            def next_turn(self):
+                if self.is_playing:
+                    self.turn_ok = True
+                self.is_playing = False
+
+        # Create a new instance of the TestGameMock class and play it
+        game = TestGameMock()
+        game.play()
+
+        # Now assume we got round to actually being able to play
+        self.assertTrue(game.turn_ok)
 
 if __name__ == '__main__':
     unittest.main()
