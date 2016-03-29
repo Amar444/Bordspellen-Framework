@@ -1,6 +1,7 @@
 """
 Games
 """
+
 from boards import Board
 from exceptions import *
 

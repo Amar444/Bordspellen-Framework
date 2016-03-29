@@ -1,3 +1,7 @@
+"""
+Provides implementation for Player objects
+"""
+
 class Player(object):
     """ Player is used to define a player in the game """
 
