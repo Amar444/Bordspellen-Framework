@@ -48,9 +48,7 @@ class TwoDimensionalBoard(Board):
 
     def set(self, x: int, y: int, value: any):
         """ Saves a given value to the board on the given X and Y positions """
-        if not (0 <= x < self.size[0] or 0 <= y < self.size[1]):
-            raise InvalidCoordinatesException("The given coordinates ({}, {}) are invalid for this board.".format(x, y))
-
+        self.check_coordinates(x, y)
         self.state[x][y] = value
 
     def get(self, x: int, y: int):
