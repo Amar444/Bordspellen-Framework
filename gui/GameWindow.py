@@ -34,7 +34,7 @@ class Browser(Gtk.Window):
         self.add(scrolled_window)
 
         # Set minimal size window:
-        self.set_size_request(700, 600)
+        self.set_size_request(700, 700)
 
 
 if __name__ == "__main__":
