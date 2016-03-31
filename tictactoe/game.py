@@ -82,18 +82,3 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
             return "human"
         else:
             return "nobody"
-
-
-game = TicTacToeGame()
-players = ()
-
-answer = str(input("Would you like to play against the computer? y/n"))
-if answer == "y":
-    players += (DemoPlayer(name="user", board=game.board),)
-    players += (AIPlayer(game, name="computer", board=game.board),)
-else:
-    players += (DemoPlayer(name="user 1", board=game.board),)
-    players += (DemoPlayer(name="user 2", board=game.board),)
-
-game.set_players(players)
-game.play()
