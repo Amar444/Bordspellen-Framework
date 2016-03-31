@@ -1,7 +1,5 @@
 from boards import TwoDimensionalBoard
 from games import BoardGame, TurnBasedGame
-from ai import AIPlayer
-from examples import DemoPlayer
 
 
 class TicTacToeBoard(TwoDimensionalBoard):
