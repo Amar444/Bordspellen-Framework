@@ -9,9 +9,6 @@ class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
         super().__init__(*args, **kwargs)
         self.game = game
 
-    def play(self):
-        super().play()
-
     def choose_move(self, side=0):
         """ Find best move for winning the game """
         best_row = 0
