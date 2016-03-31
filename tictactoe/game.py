@@ -72,6 +72,17 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
                 is_a_win_horizontal = temp
         return is_a_win_horizontal
 
+    def game_over(self):
+        return self.position_value() != self.board.UNCLEAR
+
+    def winner(self):
+        if self.position_value() == self.board.AI_WIN:
+            return "computer"
+        elif self.position_value() == self.board.OPP_WIN:
+            return "human"
+        else:
+            return "nobody"
+
 
 game = TicTacToeGame()
 players = ()
