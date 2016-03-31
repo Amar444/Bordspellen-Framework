@@ -1,10 +1,77 @@
 from random import randint
+from games import *
+from boards import TwoDimensionalBoard
+from players import BoardPlayerMixin, NamedPlayerMixin, TicTacToeAI
+
+
+class TicTacToeBoard(TwoDimensionalBoard):
+    size = 3, 3
+
+    def position_value(self):
+        """ Compute static value of current position (win, draw, etc.) """
+        if self.is_a_win(self.ai):
+            return self.AI_WIN
+        elif self.is_a_win(self.opp):
+            return self.OPP_WIN
+        elif self.board_is_full():
+            return self.DRAW
+        else:
+            return self.UNCLEAR
+
+    def is_a_win(self, side):
+        """ Returns whether 'side' has won in this position """
+        return self.is_a_win_horizontal(side) or self.is_a_win_vertical(side) or self.is_a_win_diagonal(side)
+
+    def is_a_win_diagonal(self, side):
+        """ Check diagonal win """
+        # left top corner to right bottom corner
+        if self.get(0, 0) == side and self.get(1, 1) == side and self.get(2, 2) == side:
+            return True
+        # right top corner to left bottom corner
+        if self.get(0, 2) == side and self.get(1, 1) == side and self.get(2, 0) == side:
+            return True
+        return False
+
+    def is_a_win_vertical(self, side):
+        """ Check vertical win """
+        is_a_win_vertical = False
+        for i in range(int(self.size)):
+            if is_a_win_vertical is True:
+                break
+            temp = True
+            for j in range(int(self.size)):
+                if self.get(j, i) != side:
+                    temp = False
+                is_a_win_vertical = temp
+        return is_a_win_vertical
+
+    def is_a_win_horizontal(self, side):
+        """ Check horizontal win """
+        is_a_win_horizontal = False
+        for i in range(int(self.size)):
+            if is_a_win_horizontal is True:
+                break
+            temp = True
+            for j in range(int(self.size)):
+                if self.get(i, j) != side:
+                    temp = False
+                is_a_win_horizontal = temp
+        return is_a_win_horizontal
+
+
+class TicTacToePlayer(BoardPlayerMixin, NamedPlayerMixin, TicTacToeAI):
+    def play(self):
+        super().play()
+
+
+class TicTacToeGame(BoardGame):
+    board_class = TicTacToeBoard
+
+game = TicTacToeGame()
 
 
 class TicTacToe(object):
-    """
-    Represents TicTacToe game.
-    """
+    """ Represents TicTacToe game """
 
     ROW_COUNT = 3
     COLUMN_COUNT = 3
@@ -94,8 +161,10 @@ class TicTacToe(object):
         return self.Matrix
 
     def board_is_full(self):
-        """ Check whether the board is full. The method is doing this with checking the entries in the two arrays from
-            the board and will directly return it's result when it finds out if there is still place for another move"""
+        """
+        Check whether the board is full. The method is doing this with checking the entries in the two arrays from
+        the board and will directly return it's result when it finds out if there is still place for another move
+        """
         for j in range(self.COLUMN_COUNT):
             for i in range(self.ROW_COUNT):
                 # '0' means there is still space
