@@ -3,6 +3,12 @@ from utils import Best
 
 
 class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
+
+    def __init__(self, game, *args, **kwargs):
+        """ Initializes a new game and sets up the board class """
+        super().__init__(*args, **kwargs)
+        self.game = game
+
     def play(self):
         super().play()
 
@@ -11,8 +17,7 @@ class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
         best_row = 0
         best_column = 0
 
-        # FIXME: needs access to game
-        simple_eval = self.position_value()
+        simple_eval = self.game.position_value()
         if simple_eval != self.board.UNCLEAR:
             return Best(simple_eval)
 
