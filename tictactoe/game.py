@@ -5,10 +5,26 @@ from games import BoardGame, TurnBasedGame
 class TicTacToeBoard(TwoDimensionalBoard):
     """ Represents TicTacToe board """
 
-    AI_WIN = 3
-    OPP_WIN = 0
-    DRAW = 1
-    UNCLEAR = 2
+    _ai_win = 3
+    _opp_win = 0
+    _draw = 1
+    _unclear = 2
+
+    @property
+    def ai_win(self):
+        return type(self)._ai_win
+
+    @property
+    def opp_win(self):
+        return type(self)._opp_win
+
+    @property
+    def draw(self):
+        return type(self)._draw
+
+    @property
+    def unclear(self):
+        return type(self)._unclear
 
     size = 3, 3
 
@@ -19,14 +35,14 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
 
     def position_value(self):
         """ Compute static value of current position (win, draw, etc.) """
-        if self.is_a_win(self.players(1)):
-            return self.board.AI_WIN
-        elif self.is_a_win(self.players(0)):
-            return self.board.OPP_WIN
-        elif self.board.is_full(self.board):
-            return self.board.DRAW
+        if self.is_a_win(self.players[1]):
+            return self.board.ai_win
+        elif self.is_a_win(self.players[0]):
+            return self.board.opp_win
+        elif self.board.is_full():
+            return self.board.draw
         else:
-            return self.board.UNCLEAR
+            return self.board.unclear
 
     def is_a_win(self, side):
         """ Returns whether 'side' has won in this position """
@@ -35,12 +51,12 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
     def is_a_win_diagonal(self, side):
         """ Check diagonal win """
         # left top corner to right bottom corner
-        if self.board.get(self.board, 0, 0) == side and self.board.get(self.board, 1, 1) == side and \
-                self.board.get(self.board, 2, 2) == side:
+        if self.board.get(0, 0) == side and self.board.get(1, 1) == side and \
+                self.board.get(2, 2) == side:
             return True
         # right top corner to left bottom corner
-        if self.board.get(self.board, 0, 2) == side and self.board.get(self.board, 1, 1) == side and \
-                self.board.get(self.board, 2, 0) == side:
+        if self.board.get(0, 2) == side and self.board.get(1, 1) == side and \
+                self.board.get(2, 0) == side:
             return True
         return False
 
@@ -52,7 +68,7 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
                 break
             temp = True
             for j in range(3):
-                if self.board.get(self.board, j, i) != side:
+                if self.board.get(j, i) != side:
                     temp = False
                 is_a_win_vertical = temp
         return is_a_win_vertical
@@ -65,7 +81,7 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
                 break
             temp = True
             for j in range(3):
-                if self.board.get(self.board, i, j) != side:
+                if self.board.get(i, j) != side:
                     temp = False
                 is_a_win_horizontal = temp
         return is_a_win_horizontal
