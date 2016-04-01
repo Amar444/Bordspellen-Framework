@@ -28,15 +28,15 @@ class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
             opp, value = (self.name, self.board.ai_win)
 
         # look for best move
-        for i in range(3):
-            for j in range(3):
-                if self.board.is_available(i, j):
+        for row in range(3):
+            for col in range(3):
+                if self.board.is_available(row, col):
                     # move to this square
-                    self.board.set(i, j, side)
+                    self.board.set(row, col, side)
                     # continue playing
                     reply = self.choose_move(opp)
                     # clear position just used
-                    self.board.set(i, j, None)
+                    self.board.set(row, col, None)
 
                     # check if current player is winning
                     if (side == self.name and reply.val > value) or \
@@ -44,8 +44,8 @@ class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
                         # current player is winning
                         value = reply.val
                         # coordinates best move
-                        best_row = i
-                        best_column = j
+                        best_row = row
+                        best_column = col
         return Best(value, best_row, best_column)
 
 

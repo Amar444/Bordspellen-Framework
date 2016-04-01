@@ -63,12 +63,12 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
     def is_a_win_vertical(self, side):
         """ Check vertical win """
         is_a_win_vertical = False
-        for i in range(3):
+        for col in range(3):
             if is_a_win_vertical is True:
                 break
             temp = True
-            for j in range(3):
-                if self.board.get(j, i) != side:
+            for row in range(3):
+                if self.board.get(row, col) != side:
                     temp = False
                 is_a_win_vertical = temp
         return is_a_win_vertical
@@ -76,12 +76,12 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
     def is_a_win_horizontal(self, side):
         """ Check horizontal win """
         is_a_win_horizontal = False
-        for i in range(3):
+        for row in range(3):
             if is_a_win_horizontal is True:
                 break
             temp = True
-            for j in range(3):
-                if self.board.get(i, j) != side:
+            for col in range(3):
+                if self.board.get(row, col) != side:
                     temp = False
                 is_a_win_horizontal = temp
         return is_a_win_horizontal
