@@ -24,9 +24,9 @@ class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
 
         # select opponent and value
         if side == self.name:
-            opp, value = (self.game.players[0], self.board.opp_win)
+            opp, value = (self.game.players[0].name, self.board.opp_win)
         else:
-            opp, value = (self.game.players[1], self.board.ai_win)
+            opp, value = (self.name, self.board.ai_win)
 
         # look for best move
         for j in range(3):
@@ -40,7 +40,8 @@ class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
                     self.board.set(i, j, None)
 
                     # check if current player is winning
-                    if side == self.name and reply.val > value or side == self.game.players[0] and reply.val < value:
+                    if side == self.name and reply.val > value or side == self.game.players[0].name and reply.val \
+                            < value:
                         # current player is winning
                         value = reply.val
                         # coordinates best move

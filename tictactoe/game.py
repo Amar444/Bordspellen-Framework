@@ -35,9 +35,9 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
 
     def position_value(self):
         """ Compute static value of current position (win, draw, etc.) """
-        if self.is_a_win(self.players[1]):
+        if self.is_a_win(self.players[1].name):
             return self.board.ai_win
-        elif self.is_a_win(self.players[0]):
+        elif self.is_a_win(self.players[0].name):
             return self.board.opp_win
         elif self.board.is_full():
             return self.board.draw
@@ -87,12 +87,12 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
         return is_a_win_horizontal
 
     def game_over(self):
-        return self.position_value() != self.board.UNCLEAR
+        return self.position_value() != self.board.unclear
 
     def winner(self):
-        if self.position_value() == self.board.AI_WIN:
+        if self.position_value() == self.board.ai_win:
             return "computer"
-        elif self.position_value() == self.board.OPP_WIN:
+        elif self.position_value() == self.board.opp_win:
             return "human"
         else:
             return "nobody"
