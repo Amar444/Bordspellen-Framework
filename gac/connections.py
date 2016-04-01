@@ -5,7 +5,6 @@ Might contain the connections between the local application and the GUI later
 
 import socket
 from threading import Thread
-import sys
 
 import time
 
@@ -33,14 +32,12 @@ class ServerConnection(object):
     LOGOUT = "LOGOUT"
     GET = "GET"
     GAMELIST = "GAMELIST"
-    PLAYERLIST = "PLAYERLIST"
+    PLAYERLIST = "playerlist"  # Using lowercase because of a mistake in the server implementation.
     SUBSCRIBE = "SUBSCRIBE"
     UNSUBSCRIBE = "UNSUBSCRIBE"
     FORFEIT = "FORFEIT"
     CHALLENGE = "CHALLENGE"
     ACCEPT = "ACCEPT"
-
-    action_listeners = None
 
     def __init__(self, listeners=None, ip=None):
         """ Initializes a new ServerConnection to a server at the ip """
@@ -60,10 +57,17 @@ class ServerConnection(object):
         WARNING: Calling this method directly will result in an infinite loop
         """
         while True:
-            self.incoming += self.connection.recv(256).decode()
-            if len(self.incoming) > 2:
+            self.incoming = self.connection.recv(256).decode()
+            while self.incoming[len(self.incoming)-1] == self.COMMAND_SEPARATOR or\
+                            self.incoming[len(self.incoming)-1] == self.ARGUMENT_SEPARATOR:
+                self.incoming = self.incoming[:-1]
+            self.incoming = self.incoming[:-1]
+            if self.incoming == self.ACKNOWLEDGEMENT:
+                print("found an OK")
+            else:
                 print(self.incoming)
-                self.incoming = ""
+                self.notify_listeners(self.incoming)
+            self.incoming = ""
 
     def send_move(self, move):
         """ Sends a move to the Server """
@@ -74,38 +78,52 @@ class ServerConnection(object):
         self.connection.send((self.LOGIN + self.ARGUMENT_SEPARATOR + name + self.COMMAND_SEPARATOR).encode())
 
     def logout(self):
+        """ Unregisters the application from the server"""
         self.connection.send((self.LOGOUT + self.COMMAND_SEPARATOR).encode())
 
     def get_gamelist(self):
+        """ Request a list of avaiable gametypes from the server"""
         self.connection.send((self.GET + self.ARGUMENT_SEPARATOR + self.GAMELIST + self.COMMAND_SEPARATOR).encode())
 
     def get_playerlist(self):
+        """ Request a list of logged in players from the server"""
         self.connection.send((self.GET + self.ARGUMENT_SEPARATOR + self.PLAYERLIST + self.COMMAND_SEPARATOR).encode())
 
     def subscribe(self, gametype):
+        """ Subscribe for a tournament on the server """
         self.connection.send((self.SUBSCRIBE + self.ARGUMENT_SEPARATOR + gametype + self.COMMAND_SEPARATOR).encode())
 
     def unsubscribe(self):
+        """ Unsubscribe from any tournament on the server"""
         self.connection.send((self.UNSUBSCRIBE + self.COMMAND_SEPARATOR).encode())
 
     def forfeit(self):
+        """ Give up the curren match """
         self.connection.send((self.FORFEIT + self.COMMAND_SEPARATOR).encode())
 
     def challenge_player(self, player_name, gametype):
+        """ Challenge an opponent to a game of gametype"""
         self.connection.send((self.CHALLENGE + self.ARGUMENT_SEPARATOR +
                              player_name + self.ARGUMENT_SEPARATOR + gametype + self.COMMAND_SEPARATOR).encode())
 
     def accept_challenge(self, challenge_number):
+        """ Accept a challenge send by an opponent"""
         self.connection.send((self.CHALLENGE + self.ARGUMENT_SEPARATOR + self.ACCEPT +
                              self.ARGUMENT_SEPARATOR + challenge_number + self.COMMAND_SEPARATOR).encode())
 
     def notify_listeners(self, message):
-        for listener in self.action_listeners:
-            listener.action_performed(message)
+        if self.action_listeners is not None:
+            for listener in self.action_listeners:
+                listener.action_performed(message)
+        else:
+            print("No listeners attached to this connection.")
 
 if __name__ == '__main__':
     s = ServerConnection()
     time.sleep(3)
     print(s.connection.getpeername())
     s.login("BIATCH")
+    s.get_gamelist()
+    s.get_playerlist()
+
 
