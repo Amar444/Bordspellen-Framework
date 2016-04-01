@@ -3,7 +3,6 @@ from utils import Best
 
 
 class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
-
     def __init__(self, game, *args, **kwargs):
         """ Initializes a new game and sets up the board class """
         super().__init__(*args, **kwargs)
@@ -40,8 +39,8 @@ class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
                     self.board.set(i, j, None)
 
                     # check if current player is winning
-                    if (side == self.name and reply.val > value) or (side == self.game.players[0].name and reply.val \
-                            < value):
+                    if (side == self.name and reply.val > value) or \
+                            (side == self.game.players[0].name and reply.val < value):
                         # current player is winning
                         value = reply.val
                         # coordinates best move
