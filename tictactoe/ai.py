@@ -13,7 +13,7 @@ class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
         best_move = self.choose_move(self.name)
         self.board.set(best_move.row, best_move.column, self.name)
 
-    def choose_move(self, side=0):
+    def choose_move(self, side):
         """ Find best move for winning the game """
         best_row = 0
         best_column = 0
