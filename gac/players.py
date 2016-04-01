@@ -2,6 +2,7 @@
 Provides implementation for Player objects
 """
 
+
 class Player(object):
     """ Player is used to define a player in the game """
 
@@ -40,6 +41,7 @@ class NamedPlayerMixin(Player):
         """ It is your turn, play the game """
         print(self.name, "is now playing.")
         super().play()
+
 
 class CommandLineInputPlayerMixin(Player):
     """ Player mixin that supports input from the command line """
