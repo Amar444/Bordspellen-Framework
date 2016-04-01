@@ -1,4 +1,4 @@
-from players import BoardPlayerMixin, NamedPlayerMixin, CommandLineInputPlayerMixin
+from players import BoardPlayerMixin, NamedPlayerMixin
 from utils import Best
 
 
@@ -47,8 +47,3 @@ class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
                         best_row = row
                         best_column = col
         return Best(value, best_row, best_column)
-
-
-class DemoTicTacToePlayer(BoardPlayerMixin, NamedPlayerMixin, CommandLineInputPlayerMixin):
-    def play(self):
-        super().play()
