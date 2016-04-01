@@ -40,8 +40,8 @@ class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
                     self.board.set(i, j, None)
 
                     # check if current player is winning
-                    if side == self.name and reply.val > value or side == self.game.players[0].name and reply.val \
-                            < value:
+                    if (side == self.name and reply.val > value) or (side == self.game.players[0].name and reply.val \
+                            < value):
                         # current player is winning
                         value = reply.val
                         # coordinates best move
