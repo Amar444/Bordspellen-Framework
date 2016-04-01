@@ -1,5 +1,5 @@
 class Best(object):
-    def __init__(self, v, r=0, c=0):
+    def __init__(self, v: any, r=0, c=0):
         """ Holds the best move"""
         # value of move
         self.val = v
