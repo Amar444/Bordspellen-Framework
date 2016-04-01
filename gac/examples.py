@@ -1,14 +1,23 @@
 from games import *
 from boards import TwoDimensionalBoard
-from players import BoardPlayerMixin, NamedPlayerMixin, CommandLineInputPlayerMixin
+from players import BoardPlayerMixin, NamedPlayerMixin
 
 class DemoBoard(TwoDimensionalBoard):
     size = (10, 5)
 
 
-class DemoPlayer(BoardPlayerMixin, NamedPlayerMixin, CommandLineInputPlayerMixin):
+class DemoPlayer(BoardPlayerMixin, NamedPlayerMixin):
     def play(self):
         super().play()
+
+        try:
+            coords = input("Please enter coords to update the board? [x,y] ")
+            x, y = coords.split(',')
+            self.board.set(int(x), int(y), self.name[0:1])
+            print("\n")
+        except Exception as e:
+            print(e)
+            self.play()
 
 
 class DemoGame(TurnBasedGame, BoardGame):

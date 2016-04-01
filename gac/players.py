@@ -40,21 +40,3 @@ class NamedPlayerMixin(Player):
         """ It is your turn, play the game """
         print(self.name, "is now playing.")
         super().play()
-
-class CommandLineInputPlayerMixin(Player):
-    """ Player mixin that supports input from the command line """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def play(self):
-        """ Asks for input and places the input on the board.
-        If the input is not valid the exception will be printed and this method gets called again."""
-        try:
-            coords = input("Please enter coords to update the board? [x,y] ")
-            x, y = coords.split(',')
-            self.board.set(int(x), int(y), self.name[0:1])
-            print("\n")
-        except Exception as e:
-            print(e)
-            self.play()
