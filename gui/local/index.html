@@ -29,6 +29,7 @@
       </div>
     </div>
   </body>
+  <script>window.home = true;</script>
   <script src="js/main.js"></script>
   <script>
     document.querySelector('[data-action="unload-page"]').addEventListener('click', function() {
@@ -36,6 +37,9 @@
 
       if(name != "") {
         var dest = this.getAttribute('data-destination');
+        if(sessionStorage != null) {
+          sessionStorage.localName = name;
+        }
         app.main.unloadPage(dest, this);
       } else {
         document.querySelector('#name').classList.add('wrongInput');

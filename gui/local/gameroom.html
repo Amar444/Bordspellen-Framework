@@ -25,8 +25,8 @@
           <div class="participants">
             <div class="participant">
               <div class="participant-buttons">
-                <a class="button">Challenge TicTacToe</a>
-                <a class="button">Challenge Reversion</a>
+                <a class="button" data-listener="challenge" data-game="TicTacToe" data-player="Mark Nijboer">Challenge TicTacToe</a>
+                <a class="button" data-listener="challenge" data-game="Reversion" data-player="Mark Nijboer">Challenge Reversion</a>
               </div>
               <div class="participant-info">
                 <label class="label">NAME</label>
@@ -39,9 +39,37 @@
         </div>
       </div>
     </div>
-    <div class="challenge-overlay">
+    <div class="challenge-overlay hidden">
       <div class="challenge">
-        
+        <div class="screen-1">
+          <div class="overflow-hidden">
+            <div class="half font big" id="localPlayer">
+            </div>
+            <div class="half font big" id="remotePlayer">
+            </div>
+          </div>
+          <div class="center font">
+            VS.
+          </div>
+          <h3 class="font" id="gameName"></h3>
+          <div class="challenge-settings">
+            Settings and shit
+          </div>
+          <div class="challenge-buttons">
+            <a class="button cancel-button">Cancel</a>
+            <a class="button" id="challenge">Challenge</a>
+          </div>
+        </div>
+        <div class="screen-2" style="display:none;">
+          <h2 class="font">Waiting for opponent...</h2>
+
+          <div class="waiting-animation">
+          </div>
+
+          <div class="challenge-buttons">
+            <a class="button cancel-button">Cancel</a>
+          </div>
+        </div>
       </div>
     </div>
   </body>
@@ -51,5 +79,39 @@
       var dest = this.getAttribute('data-destination');
       app.main.unloadPage(dest, this);
     }, false);
+
+    var elems = document.querySelectorAll('.cancel-button');
+    for (var i = 0; i < elems.length; i++) {
+      elems[i].addEventListener('click', function() {
+        document.querySelector('.challenge-overlay').classList.add('hidden');
+      }, false);
+    }
+
+    var elems = document.querySelectorAll('[data-listener="challenge"]');
+
+    for (var i = 0; i < elems.length; i++) {
+      elems[i].addEventListener('click', function() {
+        var remoteName = this.getAttribute('data-player');
+        var game = this.getAttribute('data-game');
+
+        // Check whether the session storage is active on this browser.
+        if(sessionStorage != null) {
+          document.querySelector('#localPlayer').innerHTML = sessionStorage.localName;
+        }
+
+        document.querySelector('.screen-1').style.display="block";
+        document.querySelector('.screen-2').style.display="none";
+
+        document.querySelector('#remotePlayer').innerHTML = remoteName;
+        document.querySelector('#gameName').innerHTML = game;
+
+        document.querySelector('.challenge-overlay').classList.remove('hidden');
+      }, false);
+    }
+
+    document.querySelector('#challenge').addEventListener('click', function() {
+      document.querySelector('.screen-1').style.display="none";
+      document.querySelector('.screen-2').style.display="block";
+    });
   </script>
 </html>
