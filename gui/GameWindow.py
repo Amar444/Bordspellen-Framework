@@ -38,7 +38,7 @@ class Browser(Gtk.Window):
         self.add(scrolled_window)
 
         # Set minimal size window:
-        self.set_size_request(700, 700)
+        self.set_size_request(1000, 800)
 
         # Add listener:
         self.connect("key-release-event", self.on_key_release)
@@ -47,7 +47,7 @@ class Browser(Gtk.Window):
         self.fullscreen()
 
     def on_key_release(self, widget, ev):
-        if ev.keyval == Gdk.KEY_F11:  # If Escape pressed, reset text
+        if ev.keyval == Gdk.KEY_F11 or ev.keyval == Gdk.KEY_Escape:  # If Escape pressed, reset text
             if self.full_screen:
                 self.unfullscreen()
                 self.full_screen = False
@@ -56,7 +56,7 @@ class Browser(Gtk.Window):
                 self.full_screen = True
 
 
-
+ 
 if __name__ == "__main__":
     win = Browser()
     win.connect("delete-event", Gtk.main_quit)
