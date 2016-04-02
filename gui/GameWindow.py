@@ -20,15 +20,11 @@ class Browser(Gtk.Window):
         BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
         # Add folder to project dir:
-        BASE_DIR += "/gui/local"
-
-        # Join begin file to project dir:
-        BASE_DIR = os.path.join(BASE_DIR, 'index.html')
+        BASE_DIR += "/gui/local/index.html"
 
         # Open the file on given location in a web-view:
         webView.open('file://' + BASE_DIR)
-        #bovenstaande methode returned file://c/Users/Jur/Documents/Bordspellen-Framework/gui/local/index.html op windows
-        #webView.open('file:///C:/Users/Jur/Documents/Bordspellen-Framework/gui/local/index.html')
+
         # Create a scrollable window:
         scrolled_window = Gtk.ScrolledWindow()
 
