@@ -3,10 +3,13 @@ import os
 gi.require_version('Gtk', '3.0')
 gi.require_version('WebKit', '3.0')
 
-from gi.repository import Gtk, WebKit
+from gi.repository import Gtk, Gdk, WebKit
 
 
 class Browser(Gtk.Window):
+
+    full_screen = True
+
     def __init__(self, *args, **kwargs):
         super(Browser, self).__init__(*args, **kwargs)
 
@@ -37,9 +40,22 @@ class Browser(Gtk.Window):
         # Set minimal size window:
         self.set_size_request(700, 700)
 
+        self.connect("key-release-event", self.on_key_release)
+
+    def on_key_release(self, widget, ev):
+        if ev.keyval == Gdk.KEY_Escape:  # If Escape pressed, reset text
+            if self.full_screen == True:
+                self.unfullscreen()
+                self.full_screen = False
+            else:
+                self.fullscreen()
+                self.full_screen = True
+
+
 
 if __name__ == "__main__":
     win = Browser()
     win.connect("delete-event", Gtk.main_quit)
     win.show_all()
+    win.fullscreen()
     Gtk.main()
