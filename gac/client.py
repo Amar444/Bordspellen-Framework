@@ -3,13 +3,62 @@ Provides connection classes for use in communicating between the server and the 
 Might contain the connections between the local application and the GUI later
 """
 
+import json
 import socket
-from threading import Thread
-
 import time
 
+from threading import Thread
+from exceptions import InvalidCommandException
 
-class ServerConnection(object):
+class BaseCommand(object):
+    """ Represents the base class for an incoming or outgoing command """
+
+    command = None
+    arguments = None
+
+    def __str__(self):
+        """ Serializes the command into a string """
+        if self.arguments is not None:
+            arguments = self.arguments
+            if isinstance(arguments, (tuple, dict, list)):
+                arguments = json.dumps(self.arguments)
+            return "{} {}".format(self.command, arguments)
+        return self.command
+
+    @property
+    def has_arguments(self):
+        """ Returns whether any arguments have been set """
+        return self.arguments is not None
+
+
+class OutgoingCommand(BaseCommand):
+    """ Represents a outgoing command """
+
+    command = None
+    arguments = None
+
+    def __init__(self, command: str, arguments: any=None):
+        """ Initializes a new command """
+        self.command = command
+        self.arguments = arguments
+
+
+class IncomingCommand(BaseCommand):
+    """ Represents an incoming command """
+
+    command = None
+    arguments = None
+
+    def __init__(self, raw: str):
+        """ Initializes a new command by parsing the incoming string """
+        try:
+            splits = raw.split(' ', 1)
+            self.command, self.arguments = splits if len(splits) == 2 else (splits[0], None)
+        except Exception as e:
+            raise InvalidCommandException(e.message)
+
+
+class Client(object):
     """ Used for communicating between the server and the local application """
 
     DEFAULT_IP = "localhost"
@@ -58,8 +107,8 @@ class ServerConnection(object):
         """
         while True:
             self.incoming = self.connection.recv(256).decode()
-            while self.incoming[len(self.incoming)-1] == self.COMMAND_SEPARATOR or\
-                            self.incoming[len(self.incoming)-1] == self.ARGUMENT_SEPARATOR:
+            while self.incoming[len(self.incoming) - 1] == self.COMMAND_SEPARATOR or \
+                            self.incoming[len(self.incoming) - 1] == self.ARGUMENT_SEPARATOR:
                 self.incoming = self.incoming[:-1]
             self.incoming = self.incoming[:-1]
             if self.incoming == self.ACKNOWLEDGEMENT:
@@ -104,12 +153,12 @@ class ServerConnection(object):
     def challenge_player(self, player_name, gametype):
         """ Challenge an opponent to a game of gametype"""
         self.connection.send((self.CHALLENGE + self.ARGUMENT_SEPARATOR +
-                             player_name + self.ARGUMENT_SEPARATOR + gametype + self.COMMAND_SEPARATOR).encode())
+                              player_name + self.ARGUMENT_SEPARATOR + gametype + self.COMMAND_SEPARATOR).encode())
 
     def accept_challenge(self, challenge_number):
         """ Accept a challenge send by an opponent"""
         self.connection.send((self.CHALLENGE + self.ARGUMENT_SEPARATOR + self.ACCEPT +
-                             self.ARGUMENT_SEPARATOR + challenge_number + self.COMMAND_SEPARATOR).encode())
+                              self.ARGUMENT_SEPARATOR + challenge_number + self.COMMAND_SEPARATOR).encode())
 
     def notify_listeners(self, message):
         if self.action_listeners is not None:
@@ -118,6 +167,7 @@ class ServerConnection(object):
         else:
             print("No listeners attached to this connection.")
 
+
 if __name__ == '__main__':
     s = ServerConnection()
     time.sleep(3)
@@ -125,5 +175,3 @@ if __name__ == '__main__':
     s.login("BIATCH")
     s.get_gamelist()
     s.get_playerlist()
-
-
