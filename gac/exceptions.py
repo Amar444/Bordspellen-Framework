@@ -19,3 +19,7 @@ class InvalidCoordinatesException(Exception):
 class InvalidBoardException(Exception):
     """ Invalid board exception """
     pass
+
+class InvalidCommandException(Exception):
+    """ Invalid command exception """
+    pass
