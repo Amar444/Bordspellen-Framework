@@ -44,7 +44,7 @@ class Browser(Gtk.Window):
 
     def on_key_release(self, widget, ev):
         if ev.keyval == Gdk.KEY_Escape:  # If Escape pressed, reset text
-            if self.full_screen == True:
+            if self.full_screen:
                 self.unfullscreen()
                 self.full_screen = False
             else:
