@@ -43,6 +43,9 @@ class Browser(Gtk.Window):
         # Add listener:
         self.connect("key-release-event", self.on_key_release)
 
+        # Set window to full screen:
+        self.fullscreen()
+
     def on_key_release(self, widget, ev):
         if ev.keyval == Gdk.KEY_F11:  # If Escape pressed, reset text
             if self.full_screen:
@@ -58,5 +61,4 @@ if __name__ == "__main__":
     win = Browser()
     win.connect("delete-event", Gtk.main_quit)
     win.show_all()
-    win.fullscreen()
     Gtk.main()
