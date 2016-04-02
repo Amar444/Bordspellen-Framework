@@ -1,15 +1,50 @@
-<head>
-    <link rel="stylesheet" type="text/css" href="css/index.css">
-</head>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="css/style.css"/>
+  </head>
+  <body>
+    <div class="background fadeIn">
+      <div class="scroll-background">
 
-<div class="mainIndex">
-    <img src="img/giclogo.png">
-    <p class="textIndex">
-        Welcome on the indexpage of GAC.
-    </p>
-</div>
+      </div>
+    </div>
+    <div class="content fadeIn">
+      <div class="game-logo">
+        <div class="game-logo-holder">
+          <img src="img/game.svg"><br>
+          <br>
+          <br>
+          <div>
+            <label class="label index-label">NAME</label>
+            <input type="text" class="input terminal-blink" id="name"/>
+          </div>
+          <br>
+          <br>
+          <a class="button" data-action="unload-page" data-destination="gameroom.html">Start Game</a>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="js/main.js"></script>
+  <script>
+    document.querySelector('[data-action="unload-page"]').addEventListener('click', function() {
+      var name = document.querySelector('#name').value.trim();
 
+      if(name != "") {
+        var dest = this.getAttribute('data-destination');
+        app.main.unloadPage(dest, this);
+      } else {
+        document.querySelector('#name').classList.add('wrongInput');
+        setTimeout(function() {
+          document.querySelector('#name').classList.remove('wrongInput')
+        }, 500);
+      }
 
-
-
-
+    }, false);
+    document.querySelector('.terminal-blink').addEventListener('focus', function() {
+      this.classList.remove('terminal-blink');
+    }, false);
+  </script>
+</html>

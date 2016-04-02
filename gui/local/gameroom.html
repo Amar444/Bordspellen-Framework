@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="fonts/stylesheet.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+  </head>
+  <body>
+    <div class="background fadeIn">
+      <div class="scroll-background">
+
+      </div>
+    </div>
+    <div class="content fadeIn">
+      <div class="top-bar">
+        <div class="title-bar">
+          The Lobby
+        </div>
+        <div class="title-bar-button" data-destination="index.html">
+          <
+        </div>
+      </div>
+      <div id="game-main-content">
+        <div class="participants">
+          <div class="participant">
+            <div class="participant-buttons">
+              <a class="button">Challenge TicTacToe</a>
+              <a class="button">Challenge Reversion</a>
+            </div>
+            <div class="participant-info">
+              <label class="label">NAME</label>
+              <div class="participant-name">
+                Mark Nijboer
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-overlay">
+        <div class="challenge">
+          
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="js/main.js"></script>
+  <script>
+    document.querySelector('.title-bar-button').addEventListener('click', function() {
+      var dest = this.getAttribute('data-destination');
+      app.main.unloadPage(dest, this);
+    }, false);
+  </script>
+</html>
