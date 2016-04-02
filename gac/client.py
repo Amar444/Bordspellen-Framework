@@ -55,7 +55,7 @@ class IncomingCommand(BaseCommand):
             splits = raw.split(' ', 1)
             self.command, self.arguments = splits if len(splits) == 2 else (splits[0], None)
         except Exception as e:
-            raise InvalidCommandException(e.message)
+            raise InvalidCommandException(e)
 
 
 class Client(object):
