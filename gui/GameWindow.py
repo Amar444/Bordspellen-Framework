@@ -1,4 +1,8 @@
+import gi
 import os
+gi.require_version('Gtk', '3.0')
+gi.require_version('WebKit', '3.0')
+
 from gi.repository import Gtk, WebKit
 
 
@@ -23,7 +27,8 @@ class Browser(Gtk.Window):
 
         # Open the file on given location in a web-view:
         webView.open('file://' + BASE_DIR)
-
+        #bovenstaande methode returned file://c/Users/Jur/Documents/Bordspellen-Framework/gui/local/index.html op windows
+        #webView.open('file:///C:/Users/Jur/Documents/Bordspellen-Framework/gui/local/index.html')
         # Create a scrollable window:
         scrolled_window = Gtk.ScrolledWindow()
 
