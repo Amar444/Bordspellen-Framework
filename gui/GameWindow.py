@@ -40,10 +40,11 @@ class Browser(Gtk.Window):
         # Set minimal size window:
         self.set_size_request(700, 700)
 
+        # Add listener:
         self.connect("key-release-event", self.on_key_release)
 
     def on_key_release(self, widget, ev):
-        if ev.keyval == Gdk.KEY_Escape:  # If Escape pressed, reset text
+        if ev.keyval == Gdk.KEY_F11:  # If Escape pressed, reset text
             if self.full_screen:
                 self.unfullscreen()
                 self.full_screen = False
