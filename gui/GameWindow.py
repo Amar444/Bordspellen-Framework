@@ -1,9 +1,9 @@
 import gi
 import os
+from gi.repository import Gtk, Gdk, WebKit
+
 gi.require_version('Gtk', '3.0')
 gi.require_version('WebKit', '3.0')
-
-from gi.repository import Gtk, Gdk, WebKit
 
 
 class Browser(Gtk.Window):
@@ -20,7 +20,7 @@ class Browser(Gtk.Window):
         webView = WebKit.WebView()
 
         # Gets project dir:
-        BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+        BASE_DIR = self.get_project_path()
 
         # Add folder to project dir:
         BASE_DIR += "/gui/local/index.html"
@@ -47,7 +47,7 @@ class Browser(Gtk.Window):
         self.fullscreen()
 
     def on_key_release(self, widget, ev):
-        if ev.keyval == Gdk.KEY_F11 or ev.keyval == Gdk.KEY_Escape:  # If Escape pressed, reset text
+        if ev.keyval == Gdk.KEY_F11 or ev.keyval == Gdk.KEY_Escape:
             if self.full_screen:
                 self.unfullscreen()
                 self.full_screen = False
@@ -56,7 +56,13 @@ class Browser(Gtk.Window):
                 self.full_screen = True
 
 
- 
+    def get_project_path(self):
+
+        BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+        return BASE_DIR
+
+
 if __name__ == "__main__":
     win = Browser()
     win.connect("delete-event", Gtk.main_quit)
