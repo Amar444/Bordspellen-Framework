@@ -74,11 +74,23 @@ body {
   display: block;
   margin-bottom: 4px;
 }
-.participant-name {
+.participant-name, .font {
   font-family:'Ethnocentric';
+}
+.font.big {
+  font-size:32px;
 }
 .participant-buttons {
   float:right;
+}
+.overflow-hidden {
+  position:relative;
+  overflow:hidden;
+}
+.half {
+  float: left;
+  width: 50%;
+  text-align: center;
 }
 
 
@@ -191,13 +203,15 @@ input.input {
  filter: blur(20px);
 }
 .challenge-overlay {
-  display:none;
   background:rgba(0,0,0,0.4);
   position:fixed;
   top:0px;
   bottom:0px;
   left:0px;
   right:0px;
+}
+.challenge-overlay.hidden {
+  display:none;
 }
 .challenge {
   background:white;
@@ -207,4 +221,18 @@ input.input {
   right:40px;
   bottom:40px;
   box-shadow:0px 3px 6px rgba(0,0,0,0.2);
+  padding:40px;
+  padding-bottom:80px;
+}
+.challenge-buttons {
+  text-align:right;
+  position: absolute;
+  right: 40px;
+  bottom: 40px;
+}
+.center {
+  text-align:center;
+}
+#localPlayer, #RemotePlayer {
+  word-break: break-all;
 }
