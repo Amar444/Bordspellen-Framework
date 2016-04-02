@@ -26,7 +26,7 @@ class Browser(Gtk.Window):
         BASE_DIR += "/gui/local/index.html"
 
         # Open the file on given location in a web-view:
-        webView.open('file://' + BASE_DIR)
+        webView.load_uri('file:///' + BASE_DIR)
 
         # Create a scrollable window:
         scrolled_window = Gtk.ScrolledWindow()
