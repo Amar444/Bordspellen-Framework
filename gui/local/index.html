@@ -40,10 +40,9 @@
 
       if(name != "") {
         var dest = this.getAttribute('data-destination');
-        if(sessionStorage != null) {
-          sessionStorage.localName = name;
-          document.cookie = "localName=" + name;
-        }
+
+        document.cookie = "localName=" + name;
+
         app.main.unloadPage(dest, this);
       } else {
         document.querySelector('#name').classList.add('wrongInput');

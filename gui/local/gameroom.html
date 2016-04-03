@@ -15,7 +15,9 @@
       <div class="content fadeIn">
         <div class="top-bar">
           <div class="title-bar">
-            The Lobby
+            <div id="lobbyMessage">
+                Welcome in the lobby!
+            </div>
           </div>
           <div class="title-bar-button" data-destination="index.html">
             <
@@ -89,15 +91,14 @@
 
     var elems = document.querySelectorAll('[data-listener="challenge"]');
 
+    document.querySelector('#lobbyMessage').innerHTML = (getCookie("localName") + ", " + document.querySelector('#lobbyMessage').innerHTML) ;
+
     for (var i = 0; i < elems.length; i++) {
       elems[i].addEventListener('click', function() {
         var remoteName = this.getAttribute('data-player');
         var game = this.getAttribute('data-game');
 
-        // Check whether the session storage is active on this browser.
-        if(sessionStorage != null) {
-          document.querySelector('#localPlayer').innerHTML = sessionStorage.localName;
-        }
+        document.querySelector('#localPlayer').innerHTML = getCookie("localName");
 
         document.querySelector('.screen-1').style.display="block";
         document.querySelector('.screen-2').style.display="none";
