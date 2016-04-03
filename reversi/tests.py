@@ -208,7 +208,7 @@ def test_scores():
 
 
 def test_game_value():
-    print("/n Testing Game Values")
+    print("\n Testing Game Values")
     test_game = ReversiGame()
     test_game.board = initial_board
     print(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO) == 2)

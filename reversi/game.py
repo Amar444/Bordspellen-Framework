@@ -2,22 +2,23 @@
 
 from boards import TwoDimensionalBoard
 from games import BoardGame, TurnBasedGame
+from exceptions import InvalidCoordinatesException
 
-REVERSI_BOARD_SIZE = 8
+_REVERSI_BOARD_SIZE = 8
 
-# Represtents the 8 directions, N, S, E, W, NW, NE, SW, SE in no particular order
-DIRECTIONS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+# Represents the 8 directions, N, S, E, W, NW, NE, SW, SE in no particular order
+_DIRECTIONS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
-#Game values
+# Game values
 _PLAYER_ONE_WIN = 3
 _UNCLEAR = 2
 _DRAW = 1
 _PLAYER_TWO_WIN = 0
 
+
 class ReversiBoard(TwoDimensionalBoard):
     """ Represents an reversi board"""
-
-    size = (REVERSI_BOARD_SIZE, REVERSI_BOARD_SIZE)
+    size = (_REVERSI_BOARD_SIZE, _REVERSI_BOARD_SIZE)
 
 
 class ReversiGame(TurnBasedGame, BoardGame):
@@ -29,47 +30,46 @@ class ReversiGame(TurnBasedGame, BoardGame):
         if self.board.is_available(row, col) is False:
             return []
         capture_directions = []
-        for direction in range(len(DIRECTIONS)):
+        for direction in range(len(_DIRECTIONS)):
             spotted_opponent = False
-            for distance in range(REVERSI_BOARD_SIZE):
-                row_to_check = row + (distance + 1) * DIRECTIONS[direction][0]
-                col_to_check = col + (distance + 1) * DIRECTIONS[direction][1]
+            for distance in range(_REVERSI_BOARD_SIZE):
+                row_to_check = row + (distance + 1) * _DIRECTIONS[direction][0]
+                col_to_check = col + (distance + 1) * _DIRECTIONS[direction][1]
                 try:
                     self.board.check_coordinates(row_to_check, col_to_check)
                     stone = self.board.get(row_to_check, col_to_check)
                     if stone is None:
                         break
-                    elif stone == player and spotted_opponent == False:
+                    elif stone == player and spotted_opponent is False:
                         break
                     elif stone == player and spotted_opponent:
                         capture_directions.append(direction)
                         break
                     else:
                         spotted_opponent = True
-                except Exception as e:
-                    # print(e)
+                except InvalidCoordinatesException:
                     break
         return capture_directions
 
     def get_legal_moves(self, player: any):
-        """ Functions that figures out whic legal moves there currently are for the player"""
+        """ Functions that figures out which legal moves there currently are for the player"""
         moves = []
-        for row in range(REVERSI_BOARD_SIZE):
-            for col in range(REVERSI_BOARD_SIZE):
+        for row in range(_REVERSI_BOARD_SIZE):
+            for col in range(_REVERSI_BOARD_SIZE):
                 if len(self.is_legal_move(player, row, col)) > 0:
                     moves.append((row, col))
         return moves
 
     def execute_move(self, player, row, col):
-        """ Places a stone on the board and flips the oppnents stones"""
+        """ Places a stone on the board and flips the opponents stones"""
         directions = self.is_legal_move(player, row, col)
         if len(directions) == 0:
             raise ValueError("{} is not allowed to play at {},{} at this time.".format(player, row, col))
         self.board.set(row, col, player)
         for direction in directions:
-            for distance in range(REVERSI_BOARD_SIZE):
-                col_to_change = col + (distance + 1) * DIRECTIONS[direction][1]
-                row_to_change = row + (distance + 1) * DIRECTIONS[direction][0]
+            for distance in range(_REVERSI_BOARD_SIZE):
+                col_to_change = col + (distance + 1) * _DIRECTIONS[direction][1]
+                row_to_change = row + (distance + 1) * _DIRECTIONS[direction][0]
                 if self.board.get(row_to_change, col_to_change) == player:
                     break
                 elif self.board.get(row_to_change, col_to_change) is None:
@@ -79,8 +79,8 @@ class ReversiGame(TurnBasedGame, BoardGame):
 
     def get_score(self, player: any):
         score = 0
-        for row in range(REVERSI_BOARD_SIZE):
-            for col in range(REVERSI_BOARD_SIZE):
+        for row in range(_REVERSI_BOARD_SIZE):
+            for col in range(_REVERSI_BOARD_SIZE):
                 if self.board.get(row, col) == player:
                     score += 1
         return score
@@ -88,9 +88,13 @@ class ReversiGame(TurnBasedGame, BoardGame):
     def get_value(self, player_one: any, player_two: any):
         player_one_has_moves = len(self.get_legal_moves(player_one)) > 0
         player_two_has_moves = len(self.get_legal_moves(player_two)) > 0
-        if player_one_has_moves or player_two_has_moves: return _UNCLEAR
+        if player_one_has_moves or player_two_has_moves:
+            return _UNCLEAR
         player_one_score = self.get_score(player_one)
         player_two_score = self.get_score(player_two)
-        if player_one_score == player_two_score: return _DRAW
-        if player_one_score > player_two_score: return _PLAYER_ONE_WIN
-        else: return _PLAYER_TWO_WIN
+        if player_one_score == player_two_score:
+            return _DRAW
+        if player_one_score > player_two_score:
+            return _PLAYER_ONE_WIN
+        else:
+            return _PLAYER_TWO_WIN
