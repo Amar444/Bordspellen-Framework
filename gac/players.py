@@ -41,3 +41,18 @@ class NamedPlayerMixin(Player):
         """ It is your turn, play the game """
         print(self.name, "is now playing.")
         super().play()
+
+
+class ExternalInputPlayerMixin(Player):
+    """ Player mixin that supports input from a server """
+
+    framework = None
+    lastMove = None
+
+    def __init__(self, framework, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        framework.on("_MOVE_FROM_OPPONENT", self.handle_move)
+
+    def handle_move(self, move):
+        """ handles a move passed from the framework, handling needs to be specified by siblings of this class """
+        pass
