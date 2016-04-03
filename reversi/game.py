@@ -22,7 +22,8 @@ class ReversiGame(TurnBasedGame, BoardGame):
     def is_legal_move(self, player: any, row: int, col: int):
         """Determine if the play on a square is an legal move"""
         if self.board.is_available(row, col) is False:
-            return False
+            return []
+        capture_directions = []
         for direction in range(len(DIRECTIONS)):
             spotted_opponent = False
             for distance in range(REVERSI_BOARD_SIZE):
@@ -36,19 +37,20 @@ class ReversiGame(TurnBasedGame, BoardGame):
                     elif stone == player and spotted_opponent == False:
                         break
                     elif stone == player and spotted_opponent:
-                        return True
+                        capture_directions.append(direction)
+                        break
                     else:
                         spotted_opponent = True
                 except Exception as e:
                     # print(e)
                     break
-        return False
+        return capture_directions
 
     def get_legal_moves(self, player: any):
         """ Functions that figures out whic legal moves there currently are for the player"""
         moves = []
         for row in range(REVERSI_BOARD_SIZE):
             for col in range(REVERSI_BOARD_SIZE):
-                if self.is_legal_move(player, row, col) is True:
+                if len(self.is_legal_move(player, row, col)) > 0:
                     moves.append((row, col))
         return moves
