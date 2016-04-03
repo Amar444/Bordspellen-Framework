@@ -31,13 +31,15 @@ class BoardPlayerMixin(Player):
 class NamedPlayerMixin(Player):
     """ Player mixin that supports having a name """
 
-    name = 'Unknown'
-
     def __init__(self, name, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.name = name
+        self.name = name or 'Unknown'
 
     def play(self):
         """ It is your turn, play the game """
         print(self.name, "is now playing.")
         super().play()
+
+    def __str__(self):
+        """ Returns the current player name """
+        return self.name
