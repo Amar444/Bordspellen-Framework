@@ -269,6 +269,14 @@ text-align:center;
     border: 1px solid red;
 }
 
+.waiting-animation {
+  animation: fadeIn 1s infinite alternate;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+}
+
+
 
 
 
