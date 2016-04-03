@@ -28,8 +28,8 @@ class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
             opp, value = (self.name, self.board.ai_win)
 
         # look for best move
-        for row in range(3):
-            for col in range(3):
+        for col in range(3):
+            for row in range(3):
                 if self.board.is_available(row, col):
                     # move to this square
                     self.board.set(row, col, side)
