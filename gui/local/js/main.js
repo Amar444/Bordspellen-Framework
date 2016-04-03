@@ -42,9 +42,7 @@ var app = {
       app._utilities.fadeOutVolume(window.playAudio);
 
       setTimeout(function() {
-        if(sessionStorage != null) {
-          sessionStorage.musicTime = window.playAudio.currentTime;
-        }
+        document.cookie = "musicTime=" + window.playAudio.currentTime;
         window.location=dest;
       }, 1000);
     }
@@ -71,8 +69,8 @@ window.playAudio.addEventListener('ended', function() {
     this.play();
 }, false);
 
-if(sessionStorage != null && window.home != true) {
-  window.playAudio.currentTime = sessionStorage.musicTime;
+if(window.home != true) {
+  window.playAudio.currentTime = getCookie("musicTime");
 }
 
 window.playAudio.volume = 0;
