@@ -1,27 +1,22 @@
 from game import TicTacToeGame
 from ai import AIPlayer
-from players import NamedPlayerMixin, Player, BoardPlayerMixin
+from players import Player, BoardPlayerMixin, NamedPlayerMixin
 
 
-class TicTacToeDemoPlayerMixin(BoardPlayerMixin, Player):
+class DemoCliPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):
     def play(self):
         super().play()
 
         try:
             x, y = str(input("Please enter coords to update the board? [x,y] ")).split(',')
-            self.board.set(int(x), int(y), self)
+            if self.board.is_available(int(x), int(y)):
+                self.board.set(int(x), int(y), self)
+            else:
+                raise Exception("The given coords are not available on the current board")
             print("\n")
         except Exception as e:
-            print(e)
+            print("{}\n".format(e))
             self.play()
-
-
-class DemoAiPlayer(AIPlayer, TicTacToeDemoPlayerMixin):
-    pass
-
-
-class DemoCliPlayer(NamedPlayerMixin, TicTacToeDemoPlayerMixin):
-    pass
 
 
 game = TicTacToeGame()
@@ -29,7 +24,7 @@ players = (DemoCliPlayer(name="X", board=game.board),)
 
 answer = str(input("Would you like to play against the computer? y/n"))
 if answer == "y":
-    players += (DemoAiPlayer(name="O", board=game.board, game=game),)
+    players += (AIPlayer(name="O", board=game.board, game=game),)
 else:
     players += (DemoCliPlayer(name="O", board=game.board),)
 
