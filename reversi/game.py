@@ -8,6 +8,11 @@ REVERSI_BOARD_SIZE = 8
 # Represtents the 8 directions, N, S, E, W, NW, NE, SW, SE in no particular order
 DIRECTIONS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
+#Game values
+_PLAYER_ONE_WIN = 3
+_UNCLEAR = 2
+_DRAW = 1
+_PLAYER_TWO_WIN = 0
 
 class ReversiBoard(TwoDimensionalBoard):
     """ Represents an reversi board"""
@@ -79,3 +84,13 @@ class ReversiGame(TurnBasedGame, BoardGame):
                 if self.board.get(row, col) == player:
                     score += 1
         return score
+
+    def get_value(self, player_one: any, player_two: any):
+        player_one_has_moves = len(self.get_legal_moves(player_one)) > 0
+        player_two_has_moves = len(self.get_legal_moves(player_two)) > 0
+        if player_one_has_moves or player_two_has_moves: return _UNCLEAR
+        player_one_score = self.get_score(player_one)
+        player_two_score = self.get_score(player_two)
+        if player_one_score == player_two_score: return _DRAW
+        if player_one_score > player_two_score: return _PLAYER_ONE_WIN
+        else: return _PLAYER_TWO_WIN
