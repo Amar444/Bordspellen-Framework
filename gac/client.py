@@ -34,9 +34,6 @@ class BaseCommand(object):
 class OutgoingCommand(BaseCommand):
     """ Represents a outgoing command """
 
-    command = None
-    arguments = None
-
     def __init__(self, command: str, arguments: any=None):
         """ Initializes a new command """
         self.command = command
@@ -45,9 +42,6 @@ class OutgoingCommand(BaseCommand):
 
 class IncomingCommand(BaseCommand):
     """ Represents an incoming command """
-
-    command = None
-    arguments = None
 
     def __init__(self, raw: str):
         """ Initializes a new command by parsing the incoming string """
@@ -169,7 +163,7 @@ class Client(object):
 
 
 if __name__ == '__main__':
-    s = ServerConnection()
+    s = Client()
     time.sleep(3)
     print(s.connection.getpeername())
     s.login("BIATCH")
