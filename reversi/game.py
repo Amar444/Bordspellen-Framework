@@ -1,7 +1,7 @@
 """ Provides tools to enforce game rules and keep track of the game """
 
-from boards import TwoDimensionalBoard
-from games import BoardGame, TurnBasedGame
+from gac.boards import TwoDimensionalBoard
+from gac.games import BoardGame, TurnBasedGame
 
 REVERSI_BOARD_SIZE = 8
 
