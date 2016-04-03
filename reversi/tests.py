@@ -151,7 +151,39 @@ def test_legal_moves():
     print(len(test_game.get_legal_moves(_PLAYER_ONE)) == 12)
     print(len(test_game.get_legal_moves(_PLAYER_TWO)) == 11)
 
+
+def test_execute_move():
+    """ Test the execute move method"""
+    print("\nTesting stone placements")
+    test_game = ReversiGame()
+    test_game.board = initial_board
+    try:
+        test_game.execute_move(_PLAYER_ONE, 2, 4)
+        if test_game.board.get(2, 4) == _PLAYER_ONE:
+            print("True")
+        else:
+            print("False: stone didn't change")
+    except:
+        print("This shouldn't be thrown")
+    try:
+        test_game.execute_move(_PLAYER_ONE, 0, 0)
+        print("False")
+    except:
+        print("Exception succesfully thrown")
+
+    test_game.board = board_state_two
+    try:
+        test_game.execute_move(_PLAYER_ONE, 5, 4)
+        if test_game.board.get(5, 4) == _PLAYER_ONE and test_game.board.get(4, 4) == _PLAYER_ONE:
+            print("True")
+        else:
+            print("Error: Stone didn't change")
+    except:
+        print("This Shouldn't Be Thrown")
+
+
 if __name__ == '__main__':
     print("Testing Reversi Methods")
     init_test_boards()
     test_legal_moves()
+    test_execute_move()
