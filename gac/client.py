@@ -55,8 +55,11 @@ class OutgoingCommand(BaseCommand):
 class IncomingCommand(BaseCommand):
     """ Represents an incoming command """
 
+    raw = None
+
     def __init__(self, raw: str):
         """ Initializes a new command by parsing the incoming string """
+        self.raw = raw
         try:
             parsed = parse_fakeson(raw)
             self.command = parsed[0]
@@ -64,6 +67,10 @@ class IncomingCommand(BaseCommand):
                 self.arguments = parsed[1:]
         except Exception as e:
             raise InvalidCommandException(e)
+
+    def __str__(self):
+        """ Returns the original, raw command """
+        return self.raw
 
 
 class Client(object):
