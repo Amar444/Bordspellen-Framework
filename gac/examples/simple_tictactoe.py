@@ -1,6 +1,14 @@
+"""
+Demonstrates a basic TicTacToe-like game without any AI, but acts as an example
+on how to use the basic Player and Board classes to create a basic game with just
+a few lines of code.
+"""
+
+
 from games import *
 from boards import TwoDimensionalBoard
 from players import BoardPlayerMixin, NamedPlayerMixin
+
 
 class DemoBoard(TwoDimensionalBoard):
     size = (10, 5)
@@ -11,8 +19,7 @@ class DemoPlayer(BoardPlayerMixin, NamedPlayerMixin):
         super().play()
 
         try:
-            coords = input("Please enter coords to update the board? [x,y] ")
-            x, y = coords.split(',')
+            x, y = input("Please enter coords to update the board? [x,y] ").split(',')
             self.board.set(int(x), int(y), self.name[0:1])
             print("\n")
         except Exception as e:
