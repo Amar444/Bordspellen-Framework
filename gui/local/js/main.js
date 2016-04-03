@@ -77,7 +77,8 @@ if(sessionStorage != null && window.home != true) {
 
 window.playAudio.volume = 0;
 app._utilities.fadeInVolume(window.playAudio);
-window.playAudio.play();
+
+playMusic();
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -88,4 +89,33 @@ function getCookie(cname) {
         if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
     }
     return "";
+}
+
+function toggleAudio() {
+    var status;
+    if(statusAudio()) {
+        document.cookie = "mute-sound=off"
+        app._utilities.fadeOutVolume(window.playAudio);
+        status = false;
+    } else {
+        document.cookie = "mute-sound=on"
+        app._utilities.fadeInVolume(window.playAudio);
+        window.playAudio.play();
+        status = true;
+    }
+     return status;
+}
+
+function statusAudio() {
+    if(getCookie("mute-sound") == "" || getCookie("mute-sound") == "on") {
+        return true;
+    } else {
+        return false
+    }
+}
+
+function playMusic() {
+    if(statusAudio()) {
+        window.playAudio.play();
+    }
 }

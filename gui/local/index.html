@@ -1,40 +1,41 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8"/>
     <link rel="stylesheet" href="css/style.css"/>
-  </head>
-  <body>
-    <div class="global">
-      <div class="background fadeIn">
+</head>
+<body>
+<div class="global">
+    <div class="background fadeIn">
         <div class="scroll-background">
 
         </div>
-      </div>
-      <div class="content fadeIn">
-        <div class="game-logo">
-          <div class="game-logo-holder">
-            <img src="img/game.svg"><br>
-            <br>
-            <br>
-            <div>
-              <label class="label index-label">NAME</label>
-              <input type="text" class="input terminal-blink" id="name"/>
-            </div>
-            <br>
-            <br>
-            <a class="button" data-action="unload-page" data-destination="gameroom.html">Start Game</a>
-            <br>
-            <br>
-            <a class="button" data-action="show-info" data-destination="gameroom.html">About</a>
-          </div>
-        </div>
-      </div>
     </div>
-  </body>
-  <script>window.home = true;</script>
-  <script src="js/main.js"></script>
-  <script>
+    <div class="content fadeIn">
+        <div class="game-logo">
+            <div class="game-logo-holder">
+                <img src="img/game.svg"><br>
+                <br>
+                <br>
+                <div>
+                    <label class="label index-label">NAME</label>
+                    <input type="text" class="input terminal-blink" id="name"/>
+                </div>
+                <br>
+                <br>
+                <a class="button" data-action="unload-page" data-destination="gameroom.html">Start Game</a>
+                <br>
+                <br>
+                <a class="button" data-action="show-info" data-destination="gameroom.html">About</a>
+            </div>
+        </div>
+        <img id="mute-button" data-action="mute-unmute" src="img/sound.png">
+    </div>
+</div>
+</body>
+<script>window.home = true;</script>
+<script src="js/main.js"></script>
+<script>
     document.querySelector('[data-action="unload-page"]').addEventListener('click', function() {
       var name = document.querySelector('#name').value.trim();
 
@@ -61,5 +62,28 @@
         app.main.unloadPage("info.html", this);
 
     }, false);
-  </script>
+
+    document.querySelector('[data-action="mute-unmute"]').addEventListener('click', function() {
+           var status = toggleAudio();
+           setMuteImage(status);
+    }, false);
+
+
+    setMuteImage(statusAudio());
+
+    function setMuteImage(status) {
+
+        if(status) {
+            document.getElementById("mute-button").src="img/sound.png";
+        } else {
+            document.getElementById("mute-button").src="img/mute.png";
+        }
+
+    }
+
+
+
+
+
+</script>
 </html>
