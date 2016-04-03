@@ -35,7 +35,7 @@ class TwoDimensionalBoard(Board):
 
     def check_coordinates(self, x: int, y: int):
         """ Checks whether the given coordinates are valid and within range of the current board """
-        if not (0 <= x < self.size[0] or 0 <= y < self.size[1]):
+        if not (0 <= x < self.size[0] and 0 <= y < self.size[1]):
             raise InvalidCoordinatesException(x, y)
 
     def resize(self, x_size: int, y_size: int):
