@@ -1,8 +1,7 @@
 """
 Unit Tests for the Reversi implementation
 """
-import reversi
-from gac.boards import TwoDimensionalBoard
+from game import ReversiBoard, ReversiGame
 
 _PLAYER_ONE = "w"
 _PLAYER_TWO = "b"
@@ -14,11 +13,18 @@ board_state_two = None
 
 
 def board_init():
-    return TwoDimensionalBoard(reversi.game.REVERSI_BOARD_SIZE, reversi.game.REVERSI_BOARD_SIZE)
+    """ init a 2D board with reversi board sizes"""
+    return ReversiBoard()
 
 
-class TestBoards():
+def init_test_boards():
     """ Creates a few game boards with different states for testing. See boards.txt for a visual version"""
+
+    global initial_board
+    global player_one_win_board
+    global player_two_win_board
+    global board_state_one
+    global board_state_two
 
     initial_board = board_init()
     player_one_win_board = board_init()
@@ -87,7 +93,7 @@ class TestBoards():
     player_two_win_board.set(6, 3, _PLAYER_TWO)
     player_two_win_board.set(7, 3, _PLAYER_TWO)
 
-    # setting up a midgame board: Part 1. P1 score = 5, P2 score = 5, Possible moves P1 = 4, P2 = 7
+    # setting up a midgame board: Part 1. P1 score = 5, P2 score = 5, Possible moves P1 = 5, P2 = 7
     board_state_one.set(1, 1, _PLAYER_TWO)
     board_state_one.set(2, 2, _PLAYER_TWO)
     board_state_one.set(3, 3, _PLAYER_TWO)
@@ -96,22 +102,60 @@ class TestBoards():
     board_state_one.set(2, 3, _PLAYER_ONE)
     board_state_one.set(2, 4, _PLAYER_ONE)
     board_state_one.set(3, 4, _PLAYER_ONE)
-    board_state_one.set(5, 3, _PLAYER_ONE)
-    board_state_one.set(6, 2, _PLAYER_ONE)
-
-    # setting up a midgame board. Part 2. P1 score = 9, P2 score = 6, Possible moves P1 =
-    board_state_two.set(0, 1, _PLAYER_TWO)
-    board_state_one.set(1, 2, _PLAYER_TWO)
-    board_state_one.set(1, 3, _PLAYER_TWO)
-    board_state_one.set(3, 4, _PLAYER_TWO)
-    board_state_one.set(4, 2, _PLAYER_TWO)
-    board_state_one.set(4, 4, _PLAYER_TWO)
-    board_state_one.set(1, 4, _PLAYER_ONE)
-    board_state_one.set(2, 2, _PLAYER_ONE)
-    board_state_one.set(2, 3, _PLAYER_ONE)
-    board_state_one.set(2, 4, _PLAYER_ONE)
-    board_state_one.set(3, 2, _PLAYER_ONE)
-    board_state_one.set(3, 3, _PLAYER_ONE)
-    board_state_one.set(3, 5, _PLAYER_ONE)
     board_state_one.set(4, 3, _PLAYER_ONE)
-    board_state_one.set(5, 3, _PLAYER_ONE)
+    board_state_one.set(5, 2, _PLAYER_ONE)
+
+    # setting up a midgame board. Part 2. P1 score = 9, P2 score = 6, Possible moves P1 =12, P2= 13
+    board_state_two.set(0, 1, _PLAYER_TWO)
+    board_state_two.set(1, 2, _PLAYER_TWO)
+    board_state_two.set(1, 3, _PLAYER_TWO)
+    board_state_two.set(3, 4, _PLAYER_TWO)
+    board_state_two.set(4, 2, _PLAYER_TWO)
+    board_state_two.set(4, 4, _PLAYER_TWO)
+    board_state_two.set(1, 4, _PLAYER_ONE)
+    board_state_two.set(2, 2, _PLAYER_ONE)
+    board_state_two.set(2, 3, _PLAYER_ONE)
+    board_state_two.set(2, 4, _PLAYER_ONE)
+    board_state_two.set(3, 2, _PLAYER_ONE)
+    board_state_two.set(3, 3, _PLAYER_ONE)
+    board_state_two.set(3, 5, _PLAYER_ONE)
+    board_state_two.set(4, 3, _PLAYER_ONE)
+    board_state_two.set(5, 3, _PLAYER_ONE)
+
+
+def test_legal_moves():
+    """ tests the get_legal_moves function, implcitly tests is_legal_move"""
+    test_game = ReversiGame()
+    # print(initial_board.__str__())
+    test_game.board = initial_board
+    print("Testing initial_board")
+    print(len(test_game.get_legal_moves(_PLAYER_ONE)) == 4)
+    print(len(test_game.get_legal_moves(_PLAYER_TWO)) == 4)
+
+    test_game.board = player_one_win_board
+    print("Testing p1win")
+    print(len(test_game.get_legal_moves(_PLAYER_ONE)) == 0)
+    print(len(test_game.get_legal_moves(_PLAYER_TWO)) == 0)
+
+    test_game.board = player_two_win_board
+    print("Testing p2win")
+    print(len(test_game.get_legal_moves(_PLAYER_ONE)) == 0)
+    print(len(test_game.get_legal_moves(_PLAYER_TWO)) == 0)
+
+    test_game.board = board_state_one
+    print("Testing board state 1")
+    print(test_game.board.__str__())
+    print(test_game.get_legal_moves(_PLAYER_ONE))
+    print(len(test_game.get_legal_moves(_PLAYER_ONE)) == 5)
+    print(len(test_game.get_legal_moves(_PLAYER_TWO)) == 7)
+
+    test_game.board = board_state_two
+    print("Testing board state 2")
+
+    print(len(test_game.get_legal_moves(_PLAYER_ONE)) == 12)
+    print(len(test_game.get_legal_moves(_PLAYER_TWO)) == 11)
+
+if __name__ == '__main__':
+    print("Testing Reversi Methods")
+    init_test_boards()
+    test_legal_moves()
