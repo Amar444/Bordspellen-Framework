@@ -63,8 +63,8 @@ class ReversiGame(TurnBasedGame, BoardGame):
         self.board.set(row, col, player)
         for direction in directions:
             for distance in range(REVERSI_BOARD_SIZE):
-                col_to_change = col + (distance + 1) * DIRECTIONS[direction]
-                row_to_change = row + (distance + 1) * DIRECTIONS[direction]
+                col_to_change = col + (distance + 1) * DIRECTIONS[direction][1]
+                row_to_change = row + (distance + 1) * DIRECTIONS[direction][0]
                 if self.board.get(row_to_change, col_to_change) == player:
                     break
                 elif self.board.get(row_to_change, col_to_change) is None:
