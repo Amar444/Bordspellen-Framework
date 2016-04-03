@@ -1,0 +1,1 @@
+""" Provides artificial intelligence for the Reversi game"""
