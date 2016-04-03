@@ -3,14 +3,13 @@ from ai import AIPlayer
 from players import NamedPlayerMixin, Player, BoardPlayerMixin
 
 
-class TicTacToeDemoPlayerMixin(Player):
+class TicTacToeDemoPlayerMixin(BoardPlayerMixin, Player):
     def play(self):
         super().play()
 
         try:
-            coords = input("Please enter coords to update the board? [x,y] ")
-            x, y = coords.split(',')
-            self.board.set(int(x), int(y), self.name[0:1])
+            x, y = str(input("Please enter coords to update the board? [x,y] ")).split(',')
+            self.board.set(int(x), int(y), self)
             print("\n")
         except Exception as e:
             print(e)
@@ -21,20 +20,18 @@ class DemoAiPlayer(AIPlayer, TicTacToeDemoPlayerMixin):
     pass
 
 
-class DemoCliPlayer(BoardPlayerMixin, NamedPlayerMixin, TicTacToeDemoPlayerMixin):
+class DemoCliPlayer(NamedPlayerMixin, TicTacToeDemoPlayerMixin):
     pass
 
 
 game = TicTacToeGame()
-players = ()
+players = (DemoCliPlayer(name="X", board=game.board),)
 
 answer = str(input("Would you like to play against the computer? y/n"))
 if answer == "y":
-    players += (DemoCliPlayer(name="u", board=game.board),)
-    players += (DemoAiPlayer(game, name="c", board=game.board),)
+    players += (DemoAiPlayer(name="O", board=game.board, game=game),)
 else:
-    players += (DemoCliPlayer(name="1", board=game.board),)
-    players += (DemoCliPlayer(name="2", board=game.board),)
+    players += (DemoCliPlayer(name="O", board=game.board),)
 
 game.set_players(players)
 game.play()
