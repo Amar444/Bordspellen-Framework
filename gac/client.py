@@ -9,6 +9,8 @@ import time
 
 from threading import Thread
 from exceptions import InvalidCommandException
+from utils import parse_fakeson
+
 
 class BaseCommand(object):
     """ Represents the base class for an incoming or outgoing command """
@@ -19,10 +21,19 @@ class BaseCommand(object):
     def __str__(self):
         """ Serializes the command into a string """
         if self.arguments is not None:
-            arguments = self.arguments
-            if isinstance(arguments, (tuple, dict, list)):
-                arguments = json.dumps(self.arguments)
-            return "{} {}".format(self.command, arguments)
+            arguments = []
+            for arg in self.arguments:
+                if isinstance(arg, str):
+                    arguments.append(arg)
+                elif isinstance(arg, (tuple, list)):
+                    arguments.append(json.dumps(arg))
+                elif isinstance(arg, dict):
+                    buffer = '{'
+                    for k, v in arg.items():
+                        buffer += k + ': "' + v + "'"
+                    buffer += '}'
+                    arguments.append(buffer)
+            return "{} {}".format(self.command, " ".join(arguments))
         return self.command
 
     @property
@@ -34,10 +45,11 @@ class BaseCommand(object):
 class OutgoingCommand(BaseCommand):
     """ Represents a outgoing command """
 
-    def __init__(self, command: str, arguments: any=None):
+    def __init__(self, command: str, *args):
         """ Initializes a new command """
         self.command = command
-        self.arguments = arguments
+        if len(args) > 0:
+            self.arguments = args
 
 
 class IncomingCommand(BaseCommand):
@@ -46,8 +58,10 @@ class IncomingCommand(BaseCommand):
     def __init__(self, raw: str):
         """ Initializes a new command by parsing the incoming string """
         try:
-            splits = raw.split(' ', 1)
-            self.command, self.arguments = splits if len(splits) == 2 else (splits[0], None)
+            parsed = parse_fakeson(raw)
+            self.command = parsed[0]
+            if len(parsed) > 1:
+                self.arguments = parsed[1:]
         except Exception as e:
             raise InvalidCommandException(e)
 

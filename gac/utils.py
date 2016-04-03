@@ -23,3 +23,6 @@ fakesonObject = Dict(Suppress('{') + Optional(fakesonObjectValues) + Suppress('}
 fakesonElements = Word(alphas) | Group(fakesonObject) | Group(fakesonArray)
 
 fakesonParser = delimitedList(fakesonElements, delim=White(' ', exact=1))
+
+def parse_fakeson(data):
+    return fakesonParser.parseString(data).asList()
