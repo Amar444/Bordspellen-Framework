@@ -127,6 +127,7 @@ def test_legal_moves():
     """ tests the get_legal_moves function, implcitly tests is_legal_move"""
     test_game = ReversiGame()
     test_game.board = initial_board
+    print("\nTesting legal moves")
     print("Testing initial_board")
     print(len(test_game.get_legal_moves(_PLAYER_ONE)) == 4)
     print(len(test_game.get_legal_moves(_PLAYER_TWO)) == 4)
@@ -205,9 +206,29 @@ def test_scores():
     print(test_game.get_score(_PLAYER_ONE) == 9)
     print(test_game.get_score(_PLAYER_TWO) == 6)
 
+
+def test_game_value():
+    print("/n Testing Game Values")
+    test_game = ReversiGame()
+    test_game.board = initial_board
+    print(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO) == 2)
+
+    test_game.board = player_one_win_board
+    print(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO) == 3)
+
+    test_game.board = player_two_win_board
+    print(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO) == 0)
+
+    test_game.board = board_state_one
+    print(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO) == 2)
+
+    test_game.board = board_state_two
+    print(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO) == 2)
+
 if __name__ == '__main__':
     print("Testing Reversi Methods")
     init_test_boards()
     test_legal_moves()
     test_scores()
+    test_game_value()
     test_execute_move()
