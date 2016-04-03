@@ -253,7 +253,6 @@ text-align:center;
 #localPlayer, #RemotePlayer {
   word-break: break-all;
 }
-
 .volume {
   cursor:pointer;
 }
@@ -275,9 +274,32 @@ text-align:center;
 @keyframes fadeIn {
   from { opacity: 0; }
 }
-
-
-
-
-
-
+.field {
+  position:absolute;
+  left:40px;
+  top:40px;
+  bottom:80px;
+  right:40px;
+  background:white;
+  box-shadow:0px 3px 6px rgba(0,0,0,0.2);
+}
+.tictactoe {
+  height:100%;
+  width:100%;
+  position:relative;
+}
+.tictactoe-position {
+  float:left;
+  width:33.333%;
+  height:33.333%;
+  box-sizing: border-box;
+  padding:20px;
+  text-align:center;
+}
+.tictactoe-position:hover {
+  background:#eee;
+}
+.tictactoe-position img {
+  height:100%;
+  display:inline;
+}
