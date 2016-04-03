@@ -76,117 +76,64 @@ class IncomingCommand(BaseCommand):
 class Client(object):
     """ Used for communicating between the server and the local application """
 
-    DEFAULT_IP = "localhost"
-    DEFAULT_PORT = 7789
+    endpoint = ('localhost', 7789)
+    thread = None
+    running = False
+    connection = None
+    ignored_messages = ('OK', 'ERR')
+    subscriptions = {}
 
-    # Strings used for the communication protocol
-    ARGUMENT_SEPARATOR = " "
-    COMMAND_SEPARATOR = "\n"
-    MAP_START = "{"
-    MAP_END = "}"
-    LIST_START = "["
-    LIST_END = "]"
+    def connect(self, endpoint=None):
+        """ Initializes a new connection to a server at the specified endpoint """
+        if endpoint is not None and len(endpoint) == 2:
+            self.endpoint = endpoint
 
-    ACKNOWLEDGEMENT = "OK"
-    ERROR = "ERR"
-    SERVER = "SVR"
-
-    SEND_MOVE_STRING = "MOVE"
-    LOGIN = "LOGIN"
-    LOGOUT = "LOGOUT"
-    GET = "GET"
-    GAMELIST = "GAMELIST"
-    PLAYERLIST = "playerlist"  # Using lowercase because of a mistake in the server implementation.
-    SUBSCRIBE = "SUBSCRIBE"
-    UNSUBSCRIBE = "UNSUBSCRIBE"
-    FORFEIT = "FORFEIT"
-    CHALLENGE = "CHALLENGE"
-    ACCEPT = "ACCEPT"
-
-    def __init__(self, listeners=None, ip=None):
-        """ Initializes a new ServerConnection to a server at the ip """
-        if ip is None:
-            ip = self.DEFAULT_IP
-        self.incoming = ""
-        self.connection = socket.socket()
-        self.connection.connect((ip, self.DEFAULT_PORT))
-        self.action_listeners = listeners
+        self.thread = Thread(target=self._run)
         self.running = True
-        thread = Thread(target=self.run)
-        thread.start()
+        self.thread.start()
 
-    def run(self):
-        """
-        This thread checks for incoming messages from the server
-        WARNING: Calling this method directly will result in an infinite loop
-        """
-        while True:
-            self.incoming = self.connection.recv(256).decode()
-            while self.incoming[len(self.incoming) - 1] == self.COMMAND_SEPARATOR or \
-                            self.incoming[len(self.incoming) - 1] == self.ARGUMENT_SEPARATOR:
-                self.incoming = self.incoming[:-1]
-            self.incoming = self.incoming[:-1]
-            if self.incoming == self.ACKNOWLEDGEMENT:
-                print("found an OK")
-            else:
-                print(self.incoming)
-                self.notify_listeners(self.incoming)
-            self.incoming = ""
+    def _run(self):
+        """ This thread checks for incoming messages from the server """
 
-    def send_move(self, move):
-        """ Sends a move to the Server """
-        self.connection.send((self.SEND_MOVE_STRING + self.ARGUMENT_SEPARATOR + move + self.COMMAND_SEPARATOR).encode())
+        try:
+            # Connect to the remote server
+            self.connection = socket.socket()
+            self.connection.connect(self.endpoint)
 
-    def login(self, name="GROUP7"):
-        """ Registers the application on the server using the name: name"""
-        self.connection.send((self.LOGIN + self.ARGUMENT_SEPARATOR + name + self.COMMAND_SEPARATOR).encode())
+            # Notify the console
+            print("Connected to {} on port {}\n".format(self.endpoint[0], self.endpoint[1]))
 
-    def logout(self):
-        """ Unregisters the application from the server"""
-        self.connection.send((self.LOGOUT + self.COMMAND_SEPARATOR).encode())
+            # Process incoming commands
+            ignore = -2
+            for cmd in self._readcmd():
+                print("S:", cmd)
 
-    def get_gamelist(self):
-        """ Request a list of avaiable gametypes from the server"""
-        self.connection.send((self.GET + self.ARGUMENT_SEPARATOR + self.GAMELIST + self.COMMAND_SEPARATOR).encode())
+                if ignore <= 0:  # ignore the welcome message
+                    ignore += 1
+                    continue
 
-    def get_playerlist(self):
-        """ Request a list of logged in players from the server"""
-        self.connection.send((self.GET + self.ARGUMENT_SEPARATOR + self.PLAYERLIST + self.COMMAND_SEPARATOR).encode())
+                # todo: announce this as an event
+                parsed_command = IncomingCommand(cmd)
+                print(parsed_command)
 
-    def subscribe(self, gametype):
-        """ Subscribe for a tournament on the server """
-        self.connection.send((self.SUBSCRIBE + self.ARGUMENT_SEPARATOR + gametype + self.COMMAND_SEPARATOR).encode())
+        except:
+            # todo: announce this as an event
+            print("Could not connect to {} on port {}".format(self.endpoint[0], self.endpoint[1]))
 
-    def unsubscribe(self):
-        """ Unsubscribe from any tournament on the server"""
-        self.connection.send((self.UNSUBSCRIBE + self.COMMAND_SEPARATOR).encode())
+        self.running = False
 
-    def forfeit(self):
-        """ Give up the curren match """
-        self.connection.send((self.FORFEIT + self.COMMAND_SEPARATOR).encode())
+    def _readcmd(self):
+        for line in self.connection.makefile('r'):
+            if line[:-1] not in self.ignored_messages:
+                yield line[:-1]
 
-    def challenge_player(self, player_name, gametype):
-        """ Challenge an opponent to a game of gametype"""
-        self.connection.send((self.CHALLENGE + self.ARGUMENT_SEPARATOR +
-                              player_name + self.ARGUMENT_SEPARATOR + gametype + self.COMMAND_SEPARATOR).encode())
+    # def notify_listeners(self, message):
+    #     if self.action_listeners is not None:
+    #         for listener in self.action_listeners:
+    #             listener.action_performed(message)
+    #     else:
+    #         print("No listeners attached to this connection.")
 
-    def accept_challenge(self, challenge_number):
-        """ Accept a challenge send by an opponent"""
-        self.connection.send((self.CHALLENGE + self.ARGUMENT_SEPARATOR + self.ACCEPT +
-                              self.ARGUMENT_SEPARATOR + challenge_number + self.COMMAND_SEPARATOR).encode())
-
-    def notify_listeners(self, message):
-        if self.action_listeners is not None:
-            for listener in self.action_listeners:
-                listener.action_performed(message)
-        else:
-            print("No listeners attached to this connection.")
-
-
-if __name__ == '__main__':
-    s = Client()
-    time.sleep(3)
-    print(s.connection.getpeername())
-    s.login("BIATCH")
-    s.get_gamelist()
-    s.get_playerlist()
+    def disconnect(self):
+        self.connection.close()
+        self.running = False
