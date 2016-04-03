@@ -182,8 +182,32 @@ def test_execute_move():
         print("This Shouldn't Be Thrown")
 
 
+def test_scores():
+    print("\nTesting get_score")
+    test_game = ReversiGame()
+    test_game.board = initial_board
+    print(test_game.get_score(_PLAYER_ONE) == 2)
+    print(test_game.get_score(_PLAYER_TWO) == 2)
+
+    test_game.board = player_one_win_board
+    print(test_game.get_score(_PLAYER_ONE) == 17)
+    print(test_game.get_score(_PLAYER_TWO) == 12)
+
+    test_game.board = player_two_win_board
+    print(test_game.get_score(_PLAYER_ONE) == 3)
+    print(test_game.get_score(_PLAYER_TWO) == 19)
+
+    test_game.board = board_state_one
+    print(test_game.get_score(_PLAYER_ONE) == 5)
+    print(test_game.get_score(_PLAYER_TWO) == 5)
+
+    test_game.board = board_state_two
+    print(test_game.get_score(_PLAYER_ONE) == 9)
+    print(test_game.get_score(_PLAYER_TWO) == 6)
+
 if __name__ == '__main__':
     print("Testing Reversi Methods")
     init_test_boards()
     test_legal_moves()
+    test_scores()
     test_execute_move()

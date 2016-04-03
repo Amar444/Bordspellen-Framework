@@ -27,8 +27,8 @@ class ReversiGame(TurnBasedGame, BoardGame):
         for direction in range(len(DIRECTIONS)):
             spotted_opponent = False
             for distance in range(REVERSI_BOARD_SIZE):
-                row_to_check = row + (distance+1) * DIRECTIONS[direction][0]
-                col_to_check = col + (distance+1) * DIRECTIONS[direction][1]
+                row_to_check = row + (distance + 1) * DIRECTIONS[direction][0]
+                col_to_check = col + (distance + 1) * DIRECTIONS[direction][1]
                 try:
                     self.board.check_coordinates(row_to_check, col_to_check)
                     stone = self.board.get(row_to_check, col_to_check)
@@ -71,3 +71,11 @@ class ReversiGame(TurnBasedGame, BoardGame):
                     print("How the hell did you get here?")
                 else:
                     self.board.set(row_to_change, col_to_change, player)
+
+    def get_score(self, player: any):
+        score = 0
+        for row in range(REVERSI_BOARD_SIZE):
+            for col in range(REVERSI_BOARD_SIZE):
+                if self.board.get(row, col) == player:
+                    score += 1
+        return score
