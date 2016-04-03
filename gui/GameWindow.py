@@ -8,6 +8,19 @@ gi.require_version('WebKit', '3.0')
 
 class Browser(Gtk.Window):
 
+    """
+    This class represents the application. It creates a simple Browser-view, who is cappable of showing HTML and
+    CSS. It can also handle JavaScript. Currently this browser is facing some problems with certain CSS animations.
+    Also this Browser can only start if Gtk, Gdk and Webkit are installed on the user it's system.
+
+    Tested on:
+        - Linux (Elementary OS - Freya)
+        - Windows (Windows 10)
+
+
+    The class is runnable.
+    """
+
     full_screen = True
 
     def __init__(self, *args, **kwargs):
