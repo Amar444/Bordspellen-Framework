@@ -2,7 +2,7 @@
 
 from pyparsing import *
 
-def convert_values(s, l, tokens):
+def convertValues(s, l, tokens):
     n = tokens[0]
     try:
         return int(n)
@@ -11,7 +11,7 @@ def convert_values(s, l, tokens):
 
 
 fakesonStringValue = Word(alphas + "_") | dblQuotedString.setParseAction(removeQuotes)
-fakesonStringValue.setParseAction(convert_values)
+fakesonStringValue.setParseAction(convertValues)
 
 fakesonArrayValues = delimitedList(fakesonStringValue)
 fakesonArray = Suppress('[') + Optional(fakesonArrayValues) + Suppress(']')
@@ -20,4 +20,6 @@ fakesonKeypairValue = Group(Word(alphas + "_") + Suppress(':') + fakesonStringVa
 fakesonObjectValues = delimitedList(fakesonKeypairValue)
 fakesonObject = Dict(Suppress('{') + Optional(fakesonObjectValues) + Suppress('}'))
 
-fakesonParser = fakesonObject | fakesonArray
+fakesonElements = Word(alphas) | Group(fakesonObject) | Group(fakesonArray)
+
+fakesonParser = delimitedList(fakesonElements, delim=White(' ', exact=1))
