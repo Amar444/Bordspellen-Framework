@@ -54,3 +54,20 @@ class ReversiGame(TurnBasedGame, BoardGame):
                 if len(self.is_legal_move(player, row, col)) > 0:
                     moves.append((row, col))
         return moves
+
+    def execute_move(self, player, row, col):
+        """ Places a stone on the board and flips the oppnents stones"""
+        directions = self.is_legal_move(player, row, col)
+        if len(directions) == 0:
+            raise ValueError("{} is not allowed to play at {},{} at this time.".format(player, row, col))
+        self.board.set(row, col, player)
+        for direction in directions:
+            for distance in range(REVERSI_BOARD_SIZE):
+                col_to_change = col + (distance + 1) * DIRECTIONS[direction]
+                row_to_change = row + (distance + 1) * DIRECTIONS[direction]
+                if self.board.get(row_to_change, col_to_change) == player:
+                    break
+                elif self.board.get(row_to_change, col_to_change) is None:
+                    print("How the hell did you get here?")
+                else:
+                    self.board.set(row_to_change, col_to_change, player)
