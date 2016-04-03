@@ -5,11 +5,14 @@ Might contain the connections between the local application and the GUI later
 
 import json
 import socket
-import time
 
 from threading import Thread
 from exceptions import InvalidCommandException
 from utils import parse_fakeson
+
+
+EVENT_CONNECTED = '_CONNECTED'
+EVENT_CONNECT_ERR = '_CONNECT_ERR'
 
 
 class BaseCommand(object):
@@ -80,8 +83,7 @@ class Client(object):
     thread = None
     running = False
     connection = None
-    ignored_messages = ('OK', 'ERR')
-    subscriptions = {}
+    listeners = {}
 
     def connect(self, endpoint=None):
         """ Initializes a new connection to a server at the specified endpoint """
@@ -105,34 +107,50 @@ class Client(object):
 
             # Process incoming commands
             ignore = -2
-            for cmd in self._readcmd():
-                print("S:", cmd)
+            for raw in self._readcmd():
+                print("S:", raw)
 
                 if ignore <= 0:  # ignore the welcome message
                     ignore += 1
+                    if ignore == 0:
+                        self.emit(EVENT_CONNECTED)
                     continue
 
-                # todo: announce this as an event
-                parsed_command = IncomingCommand(cmd)
-                print(parsed_command)
-
-        except:
-            # todo: announce this as an event
+                # Try to parse the incoming commands and then emit them to all
+                # listeners through the emit method
+                try:
+                    cmd = IncomingCommand(raw)
+                    self.emit(cmd.command, cmd)
+                except Exception as e:
+                    print("Could not process incoming command due to: {}", e)
+        except Exception as e:
+            self.emit(EVENT_CONNECT_ERR, e)
             print("Could not connect to {} on port {}".format(self.endpoint[0], self.endpoint[1]))
 
         self.running = False
 
     def _readcmd(self):
+        """ Reads from the socket and yields all incoming data back to the caller """
         for line in self.connection.makefile('r'):
-            if line[:-1] not in self.ignored_messages:
-                yield line[:-1]
+            yield line[:-1]
 
-    # def notify_listeners(self, message):
-    #     if self.action_listeners is not None:
-    #         for listener in self.action_listeners:
-    #             listener.action_performed(message)
-    #     else:
-    #         print("No listeners attached to this connection.")
+    def emit(self, event_name, data=None):
+        """ Emits an event to all listening handlers """
+        # todo: make this thread safe!!!
+        print("Emitting event {}".format(event_name))
+        if event_name in self.listeners:
+            for handler in self.listeners[event_name]:
+                try:
+                    handler(data)
+                except Exception as e:
+                    print("Could not emit event {} to one of the listeners due to: {}".format(event_name, e))
+
+    def on(self, event_name, handler):
+        """ Subscribe for a specific event """
+        # todo: make this thread safe!!!
+        if event_name not in self.listeners:
+            self.listeners[event_name] = []
+        self.listeners[event_name].append(handler)
 
     def disconnect(self):
         self.connection.close()
