@@ -152,6 +152,13 @@ class Client(object):
             self.listeners[event_name] = []
         self.listeners[event_name].append(handler)
 
+    def send(self, command):
+        """ Sends an OutgoingCommand instance into the server """
+        self.connection.send("{}\n".format(command).encode())
+
+    def login(self, nickname):  # Reviewers: Move this out of the client class maybe, into an .api? Share your thoughts!
+        self.send(OutgoingCommand("LOGIN", nickname))
+
     def disconnect(self):
         self.connection.close()
         self.running = False
