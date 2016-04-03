@@ -1,4 +1,3 @@
-from time import sleep
 from client import Client, EVENT_CONNECTED, OutgoingCommand
 
 print("Warning: this will loop forever waiting for incoming messages")
