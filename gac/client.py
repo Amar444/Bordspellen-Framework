@@ -98,36 +98,41 @@ class Client(object):
         """ This thread checks for incoming messages from the server """
 
         try:
-            # Connect to the remote server
-            self.connection = socket.socket()
-            self.connection.connect(self.endpoint)
-
-            # Notify the console
-            print("Connected to {} on port {}\n".format(self.endpoint[0], self.endpoint[1]))
-
-            # Process incoming commands
-            ignore = -2
-            for raw in self._readcmd():
-                print("S:", raw)
-
-                if ignore <= 0:  # ignore the welcome message
-                    ignore += 1
-                    if ignore == 0:
-                        self.emit(EVENT_CONNECTED)
-                    continue
-
-                # Try to parse the incoming commands and then emit them to all
-                # listeners through the emit method
-                try:
-                    cmd = IncomingCommand(raw)
-                    self.emit(cmd.command, cmd)
-                except Exception as e:
-                    print("Could not process incoming command due to: {}", e)
+            self._setup()
+            self._listen()
         except Exception as e:
             self.emit(EVENT_CONNECT_ERR, e)
             print("Could not connect to {} on port {}".format(self.endpoint[0], self.endpoint[1]))
 
         self.running = False
+
+    def _setup(self):
+        # Connect to the remote server
+        self.connection = socket.socket()
+        self.connection.connect(self.endpoint)
+
+        # Notify the console
+        print("Connected to {} on port {}\n".format(self.endpoint[0], self.endpoint[1]))
+
+    def _listen(self):
+        # Process incoming commands
+        ignore = -2
+        for raw in self._readcmd():
+            print("S:", raw)
+
+            if ignore <= 0:  # ignore the welcome message
+                ignore += 1
+                if ignore == 0:
+                    self.emit(EVENT_CONNECTED)
+                continue
+
+            # Try to parse the incoming commands and then emit them to all
+            # listeners through the emit method
+            try:
+                cmd = IncomingCommand(raw)
+                self.emit(cmd.command, cmd)
+            except Exception as e:
+                print("Could not process incoming command due to: {}", e)
 
     def _readcmd(self):
         """ Reads from the socket and yields all incoming data back to the caller """
