@@ -136,12 +136,11 @@ class Client(object):
 
     def emit(self, event_name, data=None):
         """ Emits an event to all listening handlers """
-        # todo: make this thread safe!!!
         print("Emitting event {}".format(event_name))
         if event_name in self.listeners:
             for handler in self.listeners[event_name]:
                 try:
-                    handler(data)
+                    Thread(target=handler, args=(data,)).run()
                 except Exception as e:
                     print("Could not emit event {} to one of the listeners due to: {}".format(event_name, e))
 
