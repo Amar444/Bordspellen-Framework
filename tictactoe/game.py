@@ -33,6 +33,12 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
     """ Represents TicTacToe game """
     board_class = TicTacToeBoard
 
+    def next_turn(self):
+        super().next_turn()
+        if self.game_over():
+            print("Game over, {} wins".format(self.winner()))
+            self.is_playing = False
+
     def position_value(self):
         """ Compute static value of current position (win, draw, etc.) """
         if self.is_a_win(self.players[1].name):
@@ -91,8 +97,8 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
 
     def winner(self):
         if self.position_value() == self.board.ai_win:
-            return "computer"
+            return self.players[1].name
         elif self.position_value() == self.board.opp_win:
-            return "human"
+            return self.players[0].name
         else:
             return "nobody"
