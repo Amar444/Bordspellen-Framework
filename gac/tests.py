@@ -5,6 +5,7 @@ Unit Tests for the GAC framework
 import unittest
 
 from boards import TwoDimensionalBoard
+from client import OutgoingCommand, IncomingCommand
 from exceptions import InvalidCoordinatesException
 from games import Game
 
@@ -32,6 +33,7 @@ class TestBoards(unittest.TestCase):
             board.get(100, 100)
             board.get(-5, 0)
 
+
 class TestGames(unittest.TestCase):
     """ Test Case for the various game implementation classes """
 
@@ -53,6 +55,40 @@ class TestGames(unittest.TestCase):
 
         # Now assume we got round to actually being able to play
         self.assertTrue(game.turn_ok)
+
+
+class TestClient(unittest.TestCase):
+    """ Test Case for the client classes """
+
+    def test_commands(self):
+        """ Tests constructing and parsing commands """
+        # Test constructing commands to be sent to the server
+        cmd = OutgoingCommand('UT')
+        self.assertEqual(str(cmd), 'UT')
+        self.assertEqual(cmd.command, 'UT')
+        self.assertIsNone(cmd.arguments)
+        self.assertFalse(cmd.has_arguments)
+
+        cmd = OutgoingCommand('UT', 'GAME', ['example1', 'example2'])
+        self.assertEqual(str(cmd), 'UT GAME ["example1", "example2"]')
+        self.assertEqual(cmd.command, 'UT')
+        self.assertEqual(cmd.arguments, ('GAME', ['example1', 'example2']))
+        self.assertTrue(cmd.has_arguments)
+
+        # Test parsing commands from the server
+        cmd = IncomingCommand('UT')
+        self.assertEqual(str(cmd), 'UT')
+        self.assertEqual(cmd.command, 'UT')
+        self.assertIsNone(cmd.arguments)
+        self.assertFalse(cmd.has_arguments)
+
+        cmd = IncomingCommand('UT GAME ["example1", "example2"]')
+        self.assertEqual(str(cmd), 'UT GAME ["example1", "example2"]')
+        self.assertEqual(cmd.command, 'UT')
+        self.assertEqual(cmd.arguments[0], 'GAME')
+        self.assertEqual(cmd.arguments[1], ['example1', 'example2'])
+        self.assertTrue(cmd.has_arguments)
+
 
 if __name__ == '__main__':
     unittest.main()
