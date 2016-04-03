@@ -79,11 +79,12 @@ class IncomingCommand(BaseCommand):
 class Client(object):
     """ Used for communicating between the server and the local application """
 
-    endpoint = ('localhost', 7789)
-    thread = None
-    running = False
-    connection = None
-    listeners = {}
+    def __init__(self):
+        self.endpoint = ('localhost', 7789)
+        self.thread = None
+        self.running = False
+        self.connection = None
+        self.listeners = {}
 
     def connect(self, endpoint=None):
         """ Initializes a new connection to a server at the specified endpoint """
@@ -141,7 +142,6 @@ class Client(object):
 
     def emit(self, event_name, data=None):
         """ Emits an event to all listening handlers """
-        print("Emitting event {}".format(event_name))
         if event_name in self.listeners:
             for handler in self.listeners[event_name]:
                 try:
@@ -158,10 +158,9 @@ class Client(object):
 
     def send(self, command):
         """ Sends an OutgoingCommand instance into the server """
-        self.connection.send("{}\n".format(command).encode())
-
-    def login(self, nickname):  # Reviewers: Move this out of the client class maybe, into an .api? Share your thoughts!
-        self.send(OutgoingCommand("LOGIN", nickname))
+        message = "{}\n".format(command)
+        print("C: {}".format(message)[:-1])
+        self.connection.send(message.encode())
 
     def disconnect(self):
         self.connection.close()
