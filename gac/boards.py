@@ -77,4 +77,4 @@ class TwoDimensionalBoard(Board):
 
     def __str__(self):
         """ Returns the current board as a string """
-        return "\n".join(["".join([y or '-' for y in x]) for x in self.state])
+        return "\n".join(["".join([(lambda y: str(y) if y else None)(y) or '-' for y in x]) for x in self.state])
