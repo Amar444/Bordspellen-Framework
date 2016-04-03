@@ -26,7 +26,7 @@ answer = str(input("Would you like to play against the computer? y/n"))
 if answer == "y":
     players += (AIPlayer(name="O", board=game.board, game=game),)
 else:
-    players += (AIPlayer(name="O", board=game.board),)
+    players += (DemoCliPlayer(name="O", board=game.board),)
 
 game.set_players(players)
 game.play()
