@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Reversion & TicTacToe - The Game</title>
     <meta charset="utf-8"/>
     <link rel="stylesheet" href="fonts/stylesheet.css"/>
     <link rel="stylesheet" href="css/style.css"/>
@@ -26,32 +27,41 @@
         <div id="game-main-content">
           <div class="field">
             <div class="tictactoe">
-              <div class="tictactoe-position" style="border-right: 3px solid black; border-bottom: 3px solid black;">
-                <img src="img/cross.svg">
+              <div class="tictactoe-position" data-position="1">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position" style="border-right: 3px solid black; border-bottom: 3px solid black; border-left: 3px solid black;">
-
+              <div class="tictactoe-position" data-position="2">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position"  style="border-left: 3px solid black; border-bottom: 3px solid black;">
-                <img src="img/cross.svg">
+              <div class="tictactoe-position" data-position="3">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position" style="border-top: 3px solid black; border-bottom: 3px solid black; border-right: 3px solid black;">
-                <img src="img/circle.svg">
+              <div class="tictactoe-position" data-position="4">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position" style="border-top: 3px solid black; border-bottom: 3px solid black; border-left: 3px solid black; border-right:3px solid black;">
-
+              <div class="tictactoe-position" data-position="5">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position" style="border-top: 3px solid black; border-bottom: 3px solid black; border-left: 3px solid black;">
-                <img src="img/cross.svg">
+              <div class="tictactoe-position" data-position="6">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position" style="border-right: 3px solid black; border-top: 3px solid black;">
-
+              <div class="tictactoe-position" data-position="7">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position" style="border-right: 3px solid black; border-top: 3px solid black; border-left:3px solid black;">
-                <img src="img/circle.svg">
+              <div class="tictactoe-position" data-placed="circle" data-position="8">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position" style="border-left: 3px solid black; border-top: 3px solid black;">
-                <img src="img/circle.svg">
+              <div class="tictactoe-position" data-placed="circle" data-position="9">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
               </div>
             </div>
           </div>
@@ -65,5 +75,16 @@
       var dest = this.getAttribute('data-destination');
       app.main.unloadPage(dest, this);
     }, false);
+
+    // For each element with a data-position attribute.
+    var elems = document.querySelectorAll('[data-position]');
+    for(var i = 0; i < elems.length; i++) {
+      elems[i].addEventListener('click', function() {
+        var placed = this.getAttribute("data-placed");
+        if(typeof placed === "undefined" || placed === "") {
+          this.setAttribute("data-placed='cross'");
+        }
+      }, false);
+    }
   </script>
 </html>

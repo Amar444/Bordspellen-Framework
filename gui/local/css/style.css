@@ -295,13 +295,31 @@ text-align:center;
   width:33.333%;
   height:33.333%;
   box-sizing: border-box;
-  padding:20px;
   text-align:center;
-}
-.tictactoe-position:hover {
-  background:#eee;
 }
 .tictactoe-position img {
   height:100%;
+  display:none;
+}
+.tictactoe-position:not([data-placed]) {
+  cursor:pointer;
+}
+.tictactoe-position:hover:not([data-placed]) img.cross {
+    display:inline;
+    opacity:0.3;
+}
+.tictactoe-position[data-placed="cross"] img.cross {
   display:inline;
 }
+.tictactoe-position[data-placed="circle"] img.circle {
+  display:inline;
+}
+div[data-position="1"] {border-right: 3px solid black; border-bottom: 3px solid black;}
+div[data-position="2"] {border-right: 3px solid black; border-bottom: 3px solid black; border-left: 3px solid black;}
+div[data-position="3"] {border-left: 3px solid black; border-bottom: 3px solid black;}
+div[data-position="4"] {border-top: 3px solid black; border-bottom: 3px solid black; border-right: 3px solid black;}
+div[data-position="5"] {border-top: 3px solid black; border-bottom: 3px solid black; border-left: 3px solid black; border-right:3px solid black;}
+div[data-position="6"] {border-top: 3px solid black; border-bottom: 3px solid black; border-left: 3px solid black;}
+div[data-position="7"] {border-right: 3px solid black; border-top: 3px solid black;}
+div[data-position="8"] {border-right: 3px solid black; border-top: 3px solid black; border-left:3px solid black;}
+div[data-position="9"] {border-left: 3px solid black; border-top: 3px solid black;}
