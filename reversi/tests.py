@@ -1,7 +1,10 @@
 """
 Unit Tests for the Reversi implementation
 """
+import unittest
+
 from game import ReversiBoard, ReversiGame
+from exceptions import InvalidCoordinatesException
 
 _PLAYER_ONE = "w"
 _PLAYER_TWO = "b"
@@ -123,112 +126,100 @@ def init_test_boards():
     board_state_two.set(5, 3, _PLAYER_ONE)
 
 
-def test_legal_moves():
-    """ tests the get_legal_moves function, implcitly tests is_legal_move"""
-    test_game = ReversiGame()
-    test_game.board = initial_board
-    print("\nTesting legal moves")
-    print("Testing initial_board")
-    print(len(test_game.get_legal_moves(_PLAYER_ONE)) == 4)
-    print(len(test_game.get_legal_moves(_PLAYER_TWO)) == 4)
+class TestLegalMoves(unittest.TestCase):
+    """ tests the get_legal_moves function, implicitly tests is_legal_move"""
+    def test_legal_moves(self):
+        test_game = ReversiGame()
+        test_game.board = initial_board
+        print("\nTesting legal moves")
+        print("Testing initial_board")
+        self.assertEqual(len(test_game.get_legal_moves(_PLAYER_ONE)), 4)
+        self.assertEqual(len(test_game.get_legal_moves(_PLAYER_TWO)), 4)
 
-    test_game.board = player_one_win_board
-    print("Testing p1win")
-    print(len(test_game.get_legal_moves(_PLAYER_ONE)) == 0)
-    print(len(test_game.get_legal_moves(_PLAYER_TWO)) == 0)
+        test_game.board = player_one_win_board
+        print("Testing p1win")
+        self.assertEqual(len(test_game.get_legal_moves(_PLAYER_ONE)), 0)
+        self.assertEqual(len(test_game.get_legal_moves(_PLAYER_TWO)), 0)
 
-    test_game.board = player_two_win_board
-    print("Testing p2win")
-    print(len(test_game.get_legal_moves(_PLAYER_ONE)) == 0)
-    print(len(test_game.get_legal_moves(_PLAYER_TWO)) == 0)
+        test_game.board = player_two_win_board
+        print("Testing p2win")
+        self.assertEqual(len(test_game.get_legal_moves(_PLAYER_ONE)), 0)
+        self.assertEqual(len(test_game.get_legal_moves(_PLAYER_TWO)), 0)
 
-    test_game.board = board_state_one
-    print("Testing board state 1")
-    print(len(test_game.get_legal_moves(_PLAYER_ONE)) == 5)
-    print(len(test_game.get_legal_moves(_PLAYER_TWO)) == 7)
+        test_game.board = board_state_one
+        print("Testing board state 1")
+        self.assertEqual(len(test_game.get_legal_moves(_PLAYER_ONE)), 5)
+        self.assertEqual(len(test_game.get_legal_moves(_PLAYER_TWO)), 7)
 
-    test_game.board = board_state_two
-    print("Testing board state 2")
-    print(len(test_game.get_legal_moves(_PLAYER_ONE)) == 12)
-    print(len(test_game.get_legal_moves(_PLAYER_TWO)) == 11)
+        test_game.board = board_state_two
+        print("Testing board state 2")
+        self.assertEqual(len(test_game.get_legal_moves(_PLAYER_ONE)), 12)
+        self.assertEqual(len(test_game.get_legal_moves(_PLAYER_TWO)), 11)
 
 
-def test_execute_move():
+class TestExecuteMove(unittest.TestCase):
     """ Test the execute move method"""
-    print("\nTesting stone placements")
-    test_game = ReversiGame()
-    test_game.board = initial_board
-    try:
+    def test_execute_move(self):
+        print("\nTesting stone placements")
+        test_game = ReversiGame()
+        test_game.board = initial_board
         test_game.execute_move(_PLAYER_ONE, 2, 4)
-        if test_game.board.get(2, 4) == _PLAYER_ONE:
-            print("True")
-        else:
-            print("False: stone didn't change")
-    except:
-        print("This shouldn't be thrown")
-    try:
-        test_game.execute_move(_PLAYER_ONE, 0, 0)
-        print("False")
-    except:
-        print("Exception succesfully thrown")
-
-    test_game.board = board_state_two
-    try:
+        self.assertEqual(test_game.board.get(2, 4), _PLAYER_ONE)
+        with self.assertRaises(ValueError):
+            test_game.execute_move(_PLAYER_ONE, 0, 0)
+        test_game.board = board_state_two
         test_game.execute_move(_PLAYER_ONE, 5, 4)
-        if test_game.board.get(5, 4) == _PLAYER_ONE and test_game.board.get(4, 4) == _PLAYER_ONE:
-            print("True")
-        else:
-            print("Error: Stone didn't change")
-    except:
-        print("This Shouldn't Be Thrown")
+        self.assertEqual(test_game.board.get(5, 4) == _PLAYER_ONE and test_game.board.get(4, 4) == _PLAYER_ONE, True)
 
 
-def test_scores():
-    print("\nTesting get_score")
-    test_game = ReversiGame()
-    test_game.board = initial_board
-    print(test_game.get_score(_PLAYER_ONE) == 2)
-    print(test_game.get_score(_PLAYER_TWO) == 2)
+class TestScores(unittest.TestCase):
+    def test_scores(self):
+        print("\nTesting get_score")
+        test_game = ReversiGame()
+        test_game.board = initial_board
+        self.assertEqual(test_game.get_score(_PLAYER_ONE), 2)
+        self.assertEqual(test_game.get_score(_PLAYER_TWO), 2)
 
-    test_game.board = player_one_win_board
-    print(test_game.get_score(_PLAYER_ONE) == 17)
-    print(test_game.get_score(_PLAYER_TWO) == 12)
+        test_game.board = player_one_win_board
+        self.assertEqual(test_game.get_score(_PLAYER_ONE), 17)
+        self.assertEqual(test_game.get_score(_PLAYER_TWO), 12)
 
-    test_game.board = player_two_win_board
-    print(test_game.get_score(_PLAYER_ONE) == 3)
-    print(test_game.get_score(_PLAYER_TWO) == 19)
+        test_game.board = player_two_win_board
+        self.assertEqual(test_game.get_score(_PLAYER_ONE), 3)
+        self.assertEqual(test_game.get_score(_PLAYER_TWO), 19)
 
-    test_game.board = board_state_one
-    print(test_game.get_score(_PLAYER_ONE) == 5)
-    print(test_game.get_score(_PLAYER_TWO) == 5)
+        test_game.board = board_state_one
+        self.assertEqual(test_game.get_score(_PLAYER_ONE), 5)
+        self.assertEqual(test_game.get_score(_PLAYER_TWO), 5)
 
-    test_game.board = board_state_two
-    print(test_game.get_score(_PLAYER_ONE) == 9)
-    print(test_game.get_score(_PLAYER_TWO) == 6)
+        test_game.board = board_state_two
+        self.assertEqual(test_game.get_score(_PLAYER_ONE), 9)
+        self.assertEqual(test_game.get_score(_PLAYER_TWO), 6)
 
 
-def test_game_value():
-    print("\n Testing Game Values")
-    test_game = ReversiGame()
-    test_game.board = initial_board
-    print(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO) == 2)
+class TestGameValue(unittest.TestCase):
+    def test_game_value(self):
+        print("\nTesting Game Values")
+        test_game = ReversiGame()
+        test_game.board = initial_board
+        self.assertEqual(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO), 2)
 
-    test_game.board = player_one_win_board
-    print(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO) == 3)
+        test_game.board = player_one_win_board
+        self.assertEqual(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO), 3)
 
-    test_game.board = player_two_win_board
-    print(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO) == 0)
+        test_game.board = player_two_win_board
+        self.assertEqual(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO), 0)
 
-    test_game.board = board_state_one
-    print(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO) == 2)
+        test_game.board = board_state_one
+        self.assertEqual(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO), 2)
 
-    test_game.board = board_state_two
-    print(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO) == 2)
+        test_game.board = board_state_two
+        self.assertEqual(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO), 2)
 
 if __name__ == '__main__':
     print("Testing Reversi Methods")
     init_test_boards()
-    test_legal_moves()
-    test_scores()
-    test_game_value()
-    test_execute_move()
+    TestLegalMoves().test_legal_moves()
+    TestScores().test_scores()
+    TestGameValue().test_game_value()
+    TestExecuteMove().test_execute_move()
