@@ -32,6 +32,42 @@ var app = {
               clearInterval(fadeout);
             }
           }, 50);
+        },
+        "playMusic" : function() {
+            if(statusAudio()) {
+                window.playAudio.play();
+            }
+        },
+        "statusAudio" : function() {
+            if(app._utilities.getCookie("mute-sound") == "" || app._utilities.getCookie("mute-sound") == "on") {
+                return true;
+            } else {
+                return false
+            }
+        },
+        "toggleAudio" : function() {
+            var status;
+            if(statusAudio()) {
+                document.cookie = "mute-sound=off"
+                app._utilities.fadeOutVolume(window.playAudio);
+                status = false;
+            } else {
+                document.cookie = "mute-sound=on"
+                app._utilities.fadeInVolume(window.playAudio);
+                window.playAudio.play();
+                status = true;
+            }
+             return status;
+        },
+        "getCookie" : function(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0; i<ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1);
+                if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+            }
+            return "";
         }
     },
   "main" : {
@@ -70,50 +106,10 @@ window.playAudio.addEventListener('ended', function() {
 }, false);
 
 if(window.home != true) {
-  window.playAudio.currentTime = getCookie("musicTime");
+  window.playAudio.currentTime = app._utilities.getCookie("musicTime");
 }
 
 window.playAudio.volume = 0;
 app._utilities.fadeInVolume(window.playAudio);
 
-playMusic();
-
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0; i<ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1);
-        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-    }
-    return "";
-}
-
-function toggleAudio() {
-    var status;
-    if(statusAudio()) {
-        document.cookie = "mute-sound=off"
-        app._utilities.fadeOutVolume(window.playAudio);
-        status = false;
-    } else {
-        document.cookie = "mute-sound=on"
-        app._utilities.fadeInVolume(window.playAudio);
-        window.playAudio.play();
-        status = true;
-    }
-     return status;
-}
-
-function statusAudio() {
-    if(getCookie("mute-sound") == "" || getCookie("mute-sound") == "on") {
-        return true;
-    } else {
-        return false
-    }
-}
-
-function playMusic() {
-    if(statusAudio()) {
-        window.playAudio.play();
-    }
-}
+app._utilities.playMusic();
