@@ -1,4 +1,4 @@
-from players import BoardPlayerMixin, NamedPlayerMixin, ExternalInputPlayerMixin
+from players import BoardPlayerMixin, NamedPlayerMixin, ClientInputPlayerMixin
 from threading import Condition
 
 """
@@ -30,12 +30,12 @@ class CommandLinePlayer(BoardPlayerMixin, NamedPlayerMixin):
             self.play()
 
 
-class ExternalInputPlayer(BoardPlayerMixin, NamedPlayerMixin, ExternalInputPlayerMixin):
+class ClientInputPlayer(BoardPlayerMixin, NamedPlayerMixin, ClientInputPlayerMixin):
     """
     TicTacToe player that receives input from a server
     """
 
-    condition =  None
+    condition = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -63,10 +63,10 @@ class ExternalInputPlayer(BoardPlayerMixin, NamedPlayerMixin, ExternalInputPlaye
             """
             raise ExplosionWithFireException()
 
-    def handle_move(self, move):
-        """ tictactoe specific move handling """
+    def handle_command(self, command):
+        """ tictactoe specific command handling """
         # NOTE: temporary because we do not know yet what the move argument looks like
-        self.lastMove.x = move.x
-        self.lastMove.y = move.y
+        self.lastMove.x = command.x
+        self.lastMove.y = command.y
         self.condition.notify()
-        super().handle_move(move)
+        super().handle_command(command)

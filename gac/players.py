@@ -45,16 +45,17 @@ class NamedPlayerMixin(Player):
         return self.name
 
 
-class ExternalInputPlayerMixin(Player):
+class ClientInputPlayerMixin(Player):
     """ Player mixin that supports input from a server """
 
-    framework = None
+    client = None
     lastMove = None
 
-    def __init__(self, framework, *args, **kwargs):
+    def __init__(self, client, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        framework.on("SRV", self.handle_move)
+        self.client = client
+        client.on("SRV", self.handle_move)
 
-    def handle_move(self, move):
-        """ handles a move passed from the framework, handling needs to be specified by siblings of this class """
+    def handle_command(self, command):
+        """ handles a command passed from the client, handling needs to be specified by siblings of this class """
         pass
