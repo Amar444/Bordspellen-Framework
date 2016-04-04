@@ -32,7 +32,7 @@ class ReversiGame(TurnBasedGame, BoardGame):
         capture_directions = []
         for direction in range(len(_DIRECTIONS)):
             spotted_opponent = False
-            for distance in range(_REVERSI_BOARD_SIZE):
+            for distance in range(max(self.board.size)):
                 row_to_check = row + (distance + 1) * _DIRECTIONS[direction][0]
                 col_to_check = col + (distance + 1) * _DIRECTIONS[direction][1]
                 try:
@@ -54,8 +54,8 @@ class ReversiGame(TurnBasedGame, BoardGame):
     def get_legal_moves(self, player: any):
         """ Functions that figures out which legal moves there currently are for the player"""
         moves = []
-        for row in range(_REVERSI_BOARD_SIZE):
-            for col in range(_REVERSI_BOARD_SIZE):
+        for row in range(self.board.size[0]):
+            for col in range(self.board.size[1]):
                 if len(self.is_legal_move(player, row, col)) > 0:
                     moves.append((row, col))
         return moves
@@ -67,7 +67,7 @@ class ReversiGame(TurnBasedGame, BoardGame):
             raise ValueError("{} is not allowed to play at {},{} at this time.".format(player, row, col))
         self.board.set(row, col, player)
         for direction in directions:
-            for distance in range(_REVERSI_BOARD_SIZE):
+            for distance in range(max(self.board.size)):
                 col_to_change = col + (distance + 1) * _DIRECTIONS[direction][1]
                 row_to_change = row + (distance + 1) * _DIRECTIONS[direction][0]
                 if self.board.get(row_to_change, col_to_change) == player:
@@ -79,8 +79,8 @@ class ReversiGame(TurnBasedGame, BoardGame):
 
     def get_score(self, player: any):
         score = 0
-        for row in range(_REVERSI_BOARD_SIZE):
-            for col in range(_REVERSI_BOARD_SIZE):
+        for row in range(self.board.size[0]):
+            for col in range(self.board.size[1]):
                 if self.board.get(row, col) == player:
                     score += 1
         return score
