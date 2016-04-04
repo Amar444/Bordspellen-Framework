@@ -290,6 +290,7 @@ text-align:center;
 @keyframes fadeIn {
   from { opacity: 0; }
 }
+
 .field {
   position:absolute;
   left:40px;

@@ -34,7 +34,7 @@
             <div class="participant">
               <div class="participant-buttons">
                 <a class="button" data-listener="challenge" data-game="tictactoe" data-player="Mark Nijboer">Challenge TicTacToe</a>
-                <a class="button" data-listener="challenge" data-game="Reversion" data-player="Mark Nijboer">Challenge Reversion</a>
+                <a class="button" data-listener="challenge" data-game="reversion" data-player="Mark Nijboer">Challenge Reversion</a>
               </div>
               <div class="participant-info">
                 <label class="label">NAME</label>
@@ -84,6 +84,7 @@
     </div>
   </body>
   <script src="js/main.js"></script>
+  <script src="js/protocolparser.js"></script>
   <script>
     document.querySelector('.title-bar-button').addEventListener('click', function() {
       var dest = this.getAttribute('data-destination');
@@ -137,6 +138,14 @@
             var turntime = document.querySelector('#turntimechallenge').value;
 
             // Now we know the player, game and turntime -> Use protocol -> Wait for protocol and execute.
+
+            alert(protocol.createParser.createChallenge(player, game, turntime));
+
+
+            // save this player name in sessionStorage when protocol is executed to show both players in next page
+
+            app._utilities.storage.set("opponentPlayer", player);
+
 
             app.main.unloadPage(game + ".html", null);
       //}, 5000);
