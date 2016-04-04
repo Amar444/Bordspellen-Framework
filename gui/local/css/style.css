@@ -139,7 +139,8 @@ body {
     to   { content:''; }
 }
 @keyframes wrongInput {
-    0%   { margin-left:-30px; }
+    0%   { margin-left:0px; }
+    10%   { margin-left:-30px; }
     40%   { margin-left:25px; }
     60%   { margin-left:-20px; }
     80%   { margin-left:15px; }
@@ -196,7 +197,8 @@ display: block;
   -webkit-transition:1s;
    padding: 6px;
   width: 100%;
-    margin-bottom: 4px;
+  margin-bottom: 4px;
+  text-align: center;
 }
 a.button:hover {
   background:black;
@@ -253,7 +255,6 @@ text-align:center;
 #localPlayer, #RemotePlayer {
   word-break: break-all;
 }
-
 .volume {
   cursor:pointer;
 }
@@ -275,9 +276,50 @@ text-align:center;
 @keyframes fadeIn {
   from { opacity: 0; }
 }
-
-
-
-
-
-
+.field {
+  position:absolute;
+  left:40px;
+  top:40px;
+  bottom:80px;
+  right:40px;
+  background:white;
+  box-shadow:0px 3px 6px rgba(0,0,0,0.2);
+}
+.tictactoe {
+  height:100%;
+  width:100%;
+  position:relative;
+}
+.tictactoe-position {
+  float:left;
+  width:33.333%;
+  height:33.333%;
+  box-sizing: border-box;
+  text-align:center;
+}
+.tictactoe-position img {
+  height:100%;
+  display:none;
+}
+.tictactoe-position:not([data-placed]) {
+  cursor:pointer;
+}
+.tictactoe-position:hover:not([data-placed]) img.cross {
+    display:inline;
+    opacity:0.3;
+}
+.tictactoe-position[data-placed="cross"] img.cross {
+  display:inline;
+}
+.tictactoe-position[data-placed="circle"] img.circle {
+  display:inline;
+}
+div[data-position="1"] {border-right: 3px solid black; border-bottom: 3px solid black;}
+div[data-position="2"] {border-right: 3px solid black; border-bottom: 3px solid black; border-left: 3px solid black;}
+div[data-position="3"] {border-left: 3px solid black; border-bottom: 3px solid black;}
+div[data-position="4"] {border-top: 3px solid black; border-bottom: 3px solid black; border-right: 3px solid black;}
+div[data-position="5"] {border-top: 3px solid black; border-bottom: 3px solid black; border-left: 3px solid black; border-right:3px solid black;}
+div[data-position="6"] {border-top: 3px solid black; border-bottom: 3px solid black; border-left: 3px solid black;}
+div[data-position="7"] {border-right: 3px solid black; border-top: 3px solid black;}
+div[data-position="8"] {border-right: 3px solid black; border-top: 3px solid black; border-left:3px solid black;}
+div[data-position="9"] {border-left: 3px solid black; border-top: 3px solid black;}

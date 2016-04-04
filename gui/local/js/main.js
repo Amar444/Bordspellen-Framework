@@ -5,14 +5,12 @@ var app = {
       var vol = audio.volume;
       var fadeout = setInterval(
         function() {
-          // Reduce volume by 0.05 as long as it is above 0
-          // This works as long as you start with a multiple of 0.05!
           if (vol > 0) {
             vol -= 0.05;
+            if(vol < 0)
+              vol = 0;
             audio.volume = vol;
-          }
-          else {
-            // Stop the setInterval when 0 is reached
+          } else {
             clearInterval(fadeout);
           }
         }, 50);
@@ -21,17 +19,49 @@ var app = {
         var vol = audio.volume;
         var fadeout = setInterval(
           function() {
-            // Reduce volume by 0.05 as long as it is above 0
-            // This works as long as you start with a multiple of 0.05!
             if (vol < 1) {
               vol += 0.05;
+              if(vol > 1)
+                vol = 1;
               audio.volume = vol;
-            }
-            else {
-              // Stop the setInterval when 0 is reached
+            } else {
               clearInterval(fadeout);
             }
           }, 50);
+        },
+        "statusAudio" : function() {
+            if(app._utilities.storage.get("mute-sound") == "" || app._utilities.storage.get("mute-sound") == "on") {
+                return true;
+            } else {
+                return false
+            }
+        },
+        "playMusic" : function() {
+            if(app._utilities.statusAudio()) {
+                window.playAudio.play();
+            }
+        },
+        "toggleAudio" : function() {
+            var status;
+            if(app._utilities.statusAudio()) {
+                app._utilities.storage.set('mute-sound', "off");
+                app._utilities.fadeOutVolume(window.playAudio);
+                status = false;
+            } else {
+                app._utilities.storage.set('mute-sound', "on");
+                app._utilities.fadeInVolume(window.playAudio);
+                window.playAudio.play();
+                status = true;
+            }
+             return status;
+        },
+        "storage" : {
+          "get" : function(name) {
+            return sessionStorage.getItem(name);
+          },
+          "set" : function(name, value) {
+            sessionStorage.setItem(name, value);
+          }
         }
     },
   "main" : {
@@ -42,7 +72,7 @@ var app = {
       app._utilities.fadeOutVolume(window.playAudio);
 
       setTimeout(function() {
-        document.cookie = "musicTime=" + window.playAudio.currentTime;
+        app._utilities.storage.set("musicTime", window.playAudio.currentTime);
         window.location=dest;
       }, 1000);
     }
@@ -70,50 +100,9 @@ window.playAudio.addEventListener('ended', function() {
 }, false);
 
 if(window.home != true) {
-  window.playAudio.currentTime = getCookie("musicTime");
+  window.playAudio.currentTime = app._utilities.storage.get("musicTime");
 }
 
 window.playAudio.volume = 0;
 app._utilities.fadeInVolume(window.playAudio);
-
-playMusic();
-
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0; i<ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1);
-        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-    }
-    return "";
-}
-
-function toggleAudio() {
-    var status;
-    if(statusAudio()) {
-        document.cookie = "mute-sound=off"
-        app._utilities.fadeOutVolume(window.playAudio);
-        status = false;
-    } else {
-        document.cookie = "mute-sound=on"
-        app._utilities.fadeInVolume(window.playAudio);
-        window.playAudio.play();
-        status = true;
-    }
-     return status;
-}
-
-function statusAudio() {
-    if(getCookie("mute-sound") == "" || getCookie("mute-sound") == "on") {
-        return true;
-    } else {
-        return false
-    }
-}
-
-function playMusic() {
-    if(statusAudio()) {
-        window.playAudio.play();
-    }
-}
+app._utilities.playMusic();

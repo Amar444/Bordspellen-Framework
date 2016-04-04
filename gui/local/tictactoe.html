@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reversion & TicTacToe - The Game</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="fonts/stylesheet.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+  </head>
+  <body>
+    <div class="global">
+      <div class="background fadeIn">
+        <div class="scroll-background">
+
+        </div>
+      </div>
+      <div class="content fadeIn">
+        <div class="top-bar">
+          <div class="title-bar">
+            <div id="lobbyMessage">
+                TicTacToe
+            </div>
+          </div>
+          <div class="title-bar-button" data-destination="index.html">
+            <
+          </div>
+        </div>
+        <div id="game-main-content">
+          <div class="field">
+            <div class="tictactoe">
+              <div class="tictactoe-position" data-position="1">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
+              </div>
+              <div class="tictactoe-position" data-position="2">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
+              </div>
+              <div class="tictactoe-position" data-position="3">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
+              </div>
+              <div class="tictactoe-position" data-position="4">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
+              </div>
+              <div class="tictactoe-position" data-position="5">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
+              </div>
+              <div class="tictactoe-position" data-position="6">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
+              </div>
+              <div class="tictactoe-position" data-position="7">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
+              </div>
+              <div class="tictactoe-position" data-placed="circle" data-position="8">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
+              </div>
+              <div class="tictactoe-position" data-placed="circle" data-position="9">
+                <img src="img/circle.svg" class="circle">
+                <img src="img/cross.svg" class="cross">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="js/main.js"></script>
+  <script>
+    document.querySelector('.title-bar-button').addEventListener('click', function() {
+      var dest = this.getAttribute('data-destination');
+      app.main.unloadPage(dest, this);
+    }, false);
+
+    // For each element with a data-position attribute.
+    var elems = document.querySelectorAll('[data-position]');
+    for(var i = 0; i < elems.length; i++) {
+      elems[i].addEventListener('click', function() {
+        var placed = this.getAttribute("data-placed");
+        if(typeof placed === "undefined" || placed === "") {
+          this.setAttribute("data-placed='cross'");
+        }
+      }, false);
+    }
+  </script>
+</html>

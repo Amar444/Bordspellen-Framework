@@ -2,6 +2,7 @@
 <html>
 <head>
     <head>
+        <title>Reversion & TicTacToe - The Game</title>
         <meta charset="utf-8"/>
         <link rel="stylesheet" href="fonts/stylesheet.css"/>
         <link rel="stylesheet" href="css/style.css"/>
@@ -53,7 +54,7 @@
       if(name != "") {
         var dest = this.getAttribute('data-destination');
 
-        document.cookie = "localName=" + name;
+        app._utilities.storage.set("localName", name);
 
         app.main.unloadPage(dest, this);
       } else {
@@ -75,21 +76,19 @@
     }, false);
 
     document.querySelector('[data-action="mute-unmute"]').addEventListener('click', function() {
-           var status = toggleAudio();
+           var status = app._utilities.toggleAudio();
            setMuteImage(status);
     }, false);
 
 
-    setMuteImage(statusAudio());
+    setMuteImage(app._utilities.statusAudio());
 
     function setMuteImage(status) {
-
         if(status) {
             document.getElementById("mute-button").src="img/sound.png";
         } else {
             document.getElementById("mute-button").src="img/mute.png";
         }
-
     }
 
 
