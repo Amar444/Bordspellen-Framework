@@ -14,10 +14,6 @@ class Board(object):
     last_turn = None
     state = []
 
-    def get_last_turn(self):
-        """ Returns the last turn """
-        return self.last_turn
-
 class TwoDimensionalBoard(Board):
     """
     Represents a 2-dimensional board
@@ -66,6 +62,17 @@ class TwoDimensionalBoard(Board):
         self.check_coordinates(x, y)
         return self.state[x][y]
 
+    def is_full(self):
+        """
+        Check whether the board is full. The method is doing this with checking the entries in the two arrays from
+        the board and will directly return it's result when it finds out if there is still place for another move
+        """
+        for j in range(self.size[0]):
+            for i in range(self.size[1]):
+                if self.state[j][i] is None:
+                    return False
+        return True
+
     def __str__(self):
         """ Returns the current board as a string """
-        return "\n".join(["".join([y or '-' for y in x]) for x in self.state])
+        return "\n".join(["".join([(lambda y: str(y) if y else None)(y) or '-' for y in x]) for x in self.state])
