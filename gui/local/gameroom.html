@@ -95,14 +95,14 @@
 
     var elems = document.querySelectorAll('[data-listener="challenge"]');
 
-    document.querySelector('#lobbyMessage').innerHTML = (getCookie("localName") + ", " + document.querySelector('#lobbyMessage').innerHTML) ;
+    document.querySelector('#lobbyMessage').innerHTML = (app._utilities.storage.get("localName") + ", " + document.querySelector('#lobbyMessage').innerHTML) ;
 
     for (var i = 0; i < elems.length; i++) {
       elems[i].addEventListener('click', function() {
         var remoteName = this.getAttribute('data-player');
         var game = this.getAttribute('data-game');
 
-        document.querySelector('#localPlayer').innerHTML = getCookie("localName");
+        document.querySelector('#localPlayer').innerHTML = app._utilities.storage.get("localName");
 
         document.querySelector('.screen-1').style.display="block";
         document.querySelector('.screen-2').style.display="none";
@@ -121,11 +121,11 @@
 
 
     document.querySelector('[data-action="mute-unmute"]').addEventListener('click', function() {
-           var status = toggleAudio();
+           var status = app._utilities.toggleAudio();
            setMuteImage(status);
     }, false);
 
-    setMuteImage(statusAudio());
+    setMuteImage(app._utilities.statusAudio());
 
     function setMuteImage(status) {
 
