@@ -59,9 +59,12 @@
           <div class="center font">
             VS.
           </div>
-          <h3 class="font" id="gameName"></h3>
+          <h3 class="center font super" id="gameName"></h3>
           <div class="challenge-settings">
-            Settings and shit
+            <div class="turntime">
+                <label class="challenge-label">The minimal turn time of this challenge</label>
+                <input type="number" class="input terminal-blink" id="turntimechallenge" name="turntime-input" min="1" step="1" value="10">
+            </div>
           </div>
           <div class="challenge-buttons">
             <a class="button cancel-button">Cancel</a>
@@ -123,10 +126,20 @@
       document.querySelector('.screen-2').style.display="block";
 
       // Wait till someone accepted:
-      setTimeout(function(){
+      //setTimeout(function(){
+
+            var screen1 = document.querySelector('.screen-1');
+
+            var player = screen1.querySelector('#remotePlayer').innerHTML;
+
             var game = app._utilities.storage.get("selectedGame");
+
+            var turntime = document.querySelector('#turntimechallenge').value;
+
+            // Now we know the player, game and turntime -> Use protocol -> Wait for protocol and execute.
+
             app.main.unloadPage(game + ".html", null);
-      }, 5000);
+      //}, 5000);
     });
 
 

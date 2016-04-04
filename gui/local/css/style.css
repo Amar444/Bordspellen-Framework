@@ -81,6 +81,14 @@ body {
   font-weight: bold;
   margin-bottom: 4px;
 }
+
+.challenge-label {
+  display: block;
+  text-align: center;
+  font-size: 28px;
+  align: center;
+  margin-bottom: 20px;
+}
 .index-label {
   display: inline-block;
 }
@@ -89,6 +97,13 @@ body {
 }
 .font.big {
   font-size:32px;
+}
+
+.font.super {
+  font-size:52px;
+  animation-name: colorsuper;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
 }
 .participant-buttons {
   margin-right: 10px;
@@ -103,7 +118,6 @@ body {
   width: 50%;
   text-align: center;
 }
-
 
 
 .background {
@@ -314,6 +328,16 @@ text-align:center;
 .tictactoe-position[data-placed="circle"] img.circle {
   display:inline;
 }
+
+@keyframes colorsuper {
+    0%   {color: red;}
+    25%  {color: yellow;}
+    50%  {color: blue;}
+    100% {color: green;}
+}
+
+/* The element to apply the animation to */
+
 div[data-position="1"] {border-right: 3px solid black; border-bottom: 3px solid black;}
 div[data-position="2"] {border-right: 3px solid black; border-bottom: 3px solid black; border-left: 3px solid black;}
 div[data-position="3"] {border-left: 3px solid black; border-bottom: 3px solid black;}
