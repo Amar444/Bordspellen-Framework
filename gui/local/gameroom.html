@@ -33,7 +33,7 @@
           <div class="participants">
             <div class="participant">
               <div class="participant-buttons">
-                <a class="button" data-listener="challenge" data-game="TicTacToe" data-player="Mark Nijboer">Challenge TicTacToe</a>
+                <a class="button" data-listener="challenge" data-game="tictactoe" data-player="Mark Nijboer">Challenge TicTacToe</a>
                 <a class="button" data-listener="challenge" data-game="Reversion" data-player="Mark Nijboer">Challenge Reversion</a>
               </div>
               <div class="participant-info">
@@ -104,6 +104,7 @@
         var game = this.getAttribute('data-game');
 
         document.querySelector('#localPlayer').innerHTML = app._utilities.storage.get("localName");
+        app._utilities.storage.set("selectedGame", game);
 
         document.querySelector('.screen-1').style.display="block";
         document.querySelector('.screen-2').style.display="none";
@@ -112,12 +113,20 @@
         document.querySelector('#gameName').innerHTML = game;
 
         document.querySelector('.challenge-overlay').classList.remove('hidden');
+
+
       }, false);
     }
 
     document.querySelector('#challenge').addEventListener('click', function() {
       document.querySelector('.screen-1').style.display="none";
       document.querySelector('.screen-2').style.display="block";
+
+      // Wait till someone accepted:
+      setTimeout(function(){
+            var game = app._utilities.storage.get("selectedGame");
+            app.main.unloadPage(game + ".html", null);
+      }, 5000);
     });
 
 
