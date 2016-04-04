@@ -112,12 +112,19 @@
         document.querySelector('#gameName').innerHTML = game;
 
         document.querySelector('.challenge-overlay').classList.remove('hidden');
+
+
       }, false);
     }
 
     document.querySelector('#challenge').addEventListener('click', function() {
       document.querySelector('.screen-1').style.display="none";
       document.querySelector('.screen-2').style.display="block";
+
+      // Wait till someone accepted:
+      setTimeout(function(){
+            app.main.unloadPage("tictactoe.html", null);
+      }, 5000);
     });
 
 
