@@ -1,6 +1,6 @@
 var protocol = {
 
-  "parser": {
+  "createParser": {
   "createChallenge" : function(challengedPlayer, gameName, turnTime) {
           if(gameName != null && challengedPlayer != null) {
             if(gameName != "" && challengedPlayer != "") {
@@ -27,7 +27,10 @@ var protocol = {
         return null;
     },
     "getPlayerList" :function() {
-      return protocol.parser.getProtocol("playerlist");
+      return protocol.createParser.getProtocol("playerlist");
+    },
+    "getGameList" : function() {
+      return protocol.createParser.getProtocol("gamelist");
     },
     "getProtocol": function(name) {
       if(name != null && name != "") {
@@ -39,6 +42,6 @@ var protocol = {
   }
 }
 
-console.log(protocol.parser.createChallenge("nameplayer", "namegame", 5));
-console.log(protocol.parser.createLogin("nameplayer"));
-console.log(protocol.parser.getPlayerList());
+console.log(protocol.createParser.createChallenge("nameplayer", "namegame", 5));
+console.log(protocol.createParser.createLogin("nameplayer"));
+console.log(protocol.createParser.getPlayerList());
