@@ -79,11 +79,12 @@ class IncomingCommand(BaseCommand):
 class Client(object):
     """ Used for communicating between the server and the local application """
 
-    endpoint = ('localhost', 7789)
-    thread = None
-    running = False
-    connection = None
-    listeners = {}
+    def __init__(self):
+        self.endpoint = ('localhost', 7789)
+        self.thread = None
+        self.running = False
+        self.connection = None
+        self.listeners = {}
 
     def connect(self, endpoint=None):
         """ Initializes a new connection to a server at the specified endpoint """
@@ -98,36 +99,41 @@ class Client(object):
         """ This thread checks for incoming messages from the server """
 
         try:
-            # Connect to the remote server
-            self.connection = socket.socket()
-            self.connection.connect(self.endpoint)
-
-            # Notify the console
-            print("Connected to {} on port {}\n".format(self.endpoint[0], self.endpoint[1]))
-
-            # Process incoming commands
-            ignore = -2
-            for raw in self._readcmd():
-                print("S:", raw)
-
-                if ignore <= 0:  # ignore the welcome message
-                    ignore += 1
-                    if ignore == 0:
-                        self.emit(EVENT_CONNECTED)
-                    continue
-
-                # Try to parse the incoming commands and then emit them to all
-                # listeners through the emit method
-                try:
-                    cmd = IncomingCommand(raw)
-                    self.emit(cmd.command, cmd)
-                except Exception as e:
-                    print("Could not process incoming command due to: {}", e)
+            self._setup()
+            self._listen()
         except Exception as e:
             self.emit(EVENT_CONNECT_ERR, e)
             print("Could not connect to {} on port {}".format(self.endpoint[0], self.endpoint[1]))
 
         self.running = False
+
+    def _setup(self):
+        # Connect to the remote server
+        self.connection = socket.socket()
+        self.connection.connect(self.endpoint)
+
+        # Notify the console
+        print("Connected to {} on port {}\n".format(self.endpoint[0], self.endpoint[1]))
+
+    def _listen(self):
+        # Process incoming commands
+        ignore = -2
+        for raw in self._readcmd():
+            print("S:", raw)
+
+            if ignore <= 0:  # ignore the welcome message
+                ignore += 1
+                if ignore == 0:
+                    self.emit(EVENT_CONNECTED)
+                continue
+
+            # Try to parse the incoming commands and then emit them to all
+            # listeners through the emit method
+            try:
+                cmd = IncomingCommand(raw)
+                self.emit(cmd.command, cmd)
+            except Exception as e:
+                print("Could not process incoming command due to: {}", e)
 
     def _readcmd(self):
         """ Reads from the socket and yields all incoming data back to the caller """
@@ -136,12 +142,10 @@ class Client(object):
 
     def emit(self, event_name, data=None):
         """ Emits an event to all listening handlers """
-        # todo: make this thread safe!!!
-        print("Emitting event {}".format(event_name))
         if event_name in self.listeners:
             for handler in self.listeners[event_name]:
                 try:
-                    handler(data)
+                    Thread(target=handler, args=(data,)).run()
                 except Exception as e:
                     print("Could not emit event {} to one of the listeners due to: {}".format(event_name, e))
 
@@ -154,10 +158,9 @@ class Client(object):
 
     def send(self, command):
         """ Sends an OutgoingCommand instance into the server """
-        self.connection.send("{}\n".format(command).encode())
-
-    def login(self, nickname):  # Reviewers: Move this out of the client class maybe, into an .api? Share your thoughts!
-        self.send(OutgoingCommand("LOGIN", nickname))
+        message = "{}\n".format(command)
+        print("C: {}".format(message)[:-1])
+        self.connection.send(message.encode())
 
     def disconnect(self):
         self.connection.close()

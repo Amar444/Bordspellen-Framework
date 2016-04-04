@@ -1,49 +1,63 @@
+from game import STATUS_WINNER, STATUS_DRAW, TicTacToeGame
 from players import BoardPlayerMixin, NamedPlayerMixin
 from utils import Best
 
 
-class AIPlayer(BoardPlayerMixin, NamedPlayerMixin):
-    def __init__(self, game, *args, **kwargs):
-        """ Initializes a new game and sets up the board class """
+class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
+    opponent = None
+
+    def __init__(self, game: TicTacToeGame, *args, **kwargs):
+        """ Initializes the AIPlayer instance """
         super().__init__(*args, **kwargs)
         self.game = game
 
     def play(self):
-        best_move = self.choose_move(self.name)
-        self.board.set(best_move.row, best_move.column, self.name)
+        """ Picks the best move, updates the board and prints the move to the the console """
+        super().play()
+        self.setup()
+        self.do_move()
+        print("AI placed {} on coords {},{}\n\n".format(self.name, self.board.last_turn[0], self.board.last_turn[1]))
 
-    def choose_move(self, side):
+    def setup(self):
+        """ Sets up any initial properties """
+        if self.opponent is None:
+            for player in self.game.players:
+                if player != self:
+                    self.opponent = player
+                    break
+
+    def do_move(self):
+        """ Attempts to calculate the best move and update the board accordingly """
+        if self.board.last_turn is None:
+            return self.board.set(1, 1, self)
+
+        best_move = self.calc_best_move(self)
+        self.board.set(best_move.row, best_move.column, self)
+
+    def calc_best_move(self, player):
         """ Find best move for winning the game """
-        best_row = 0
-        best_column = 0
+        # Don't go further if the game is in a WIN or DRAW state
+        status, winner = self.game.state
+        if status == STATUS_WINNER:
+            return Best(3 if winner == self else 0)
+        elif status == STATUS_DRAW:
+            return Best(1)
 
-        simple_eval = self.game.position_value()
-        if simple_eval != self.board.unclear:
-            return Best(simple_eval)
+        # Select opponent
+        best_x, best_y = (0, 0)
+        opp, v = (self.opponent, 0) if player == self else (self, 3)
 
-        # select opponent and value
-        if side == self.name:
-            opp, value = (self.game.players[0].name, self.board.opp_win)
-        else:
-            opp, value = (self.name, self.board.ai_win)
+        # Look for best move
+        for x in range(3):
+            for y in range(3):
+                if self.board.is_available(x, y):
+                    # Spot is free - do this move
+                    self.board.set(x, y, player)
+                    reply = self.calc_best_move(opp)
+                    self.board.set(x, y, None)
 
-        # look for best move
-        for col in range(3):
-            for row in range(3):
-                if self.board.is_available(row, col):
-                    # move to this square
-                    self.board.set(row, col, side)
-                    # continue playing
-                    reply = self.choose_move(opp)
-                    # clear position just used
-                    self.board.set(row, col, None)
+                    # Check if current player is winning
+                    if (player == self and reply.val > v) or (player == self.opponent and reply.val < v):
+                        v, best_x, best_y = (reply.val, x, y)
 
-                    # check if current player is winning
-                    if (side == self.name and reply.val > value) or \
-                            (side == self.game.players[0].name and reply.val < value):
-                        # current player is winning
-                        value = reply.val
-                        # coordinates best move
-                        best_row = row
-                        best_column = col
-        return Best(value, best_row, best_column)
+        return Best(v, best_x, best_y)
