@@ -17,8 +17,17 @@ var protocol = {
             return null;
           }
           return null;
+    },
+    "createLogin" : function(playerName) {
+        if(playerName != null && playerName != "") {
+          var protocol = "login ";
+          protocol += "\"" + playerName + "\"";
+          return protocol;
+        }
+        return null;
     }
   }
 }
 
 console.log(protocol.parser.createChallenge("nameplayer", "namegame", 5));
+console.log(protocol.parser.createLogin("nameplayer"));
