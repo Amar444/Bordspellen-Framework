@@ -153,3 +153,6 @@ following protocols needs to used when communication with the GUI.
 - This protocol is based on the following tic-tac-toe situation:
 <br>
 ![alt text](http://i.imgur.com/MBcncKw.png "Logo Title Text 1")
+
+- When no move was set on a certain place on the board, a simple null will satisfy
+ the protocol's need.
