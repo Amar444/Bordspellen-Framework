@@ -32,31 +32,31 @@
         <div id="game-main-content">
           <div class="field">
             <div class="tictactoe">
-              <div class="tictactoe-position" data-position="1">
+              <div class="tictactoe-position" data-placed="" data-position="1">
                 <img src="img/circle.svg" class="circle">
                 <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position" data-position="2">
+              <div class="tictactoe-position" data-placed="" data-position="2">
                 <img src="img/circle.svg" class="circle">
                 <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position" data-position="3">
+              <div class="tictactoe-position" data-placed="" data-position="3">
                 <img src="img/circle.svg" class="circle">
                 <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position" data-position="4">
+              <div class="tictactoe-position" data-placed="" data-position="4">
                 <img src="img/circle.svg" class="circle">
                 <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position" data-position="5">
+              <div class="tictactoe-position" data-placed="" data-position="5">
                 <img src="img/circle.svg" class="circle">
                 <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position" data-position="6">
+              <div class="tictactoe-position" data-placed="" data-position="6">
                 <img src="img/circle.svg" class="circle">
                 <img src="img/cross.svg" class="cross">
               </div>
-              <div class="tictactoe-position" data-position="7">
+              <div class="tictactoe-position" data-placed="" data-position="7">
                 <img src="img/circle.svg" class="circle">
                 <img src="img/cross.svg" class="cross">
               </div>
@@ -85,9 +85,10 @@
     var elems = document.querySelectorAll('[data-position]');
     for(var i = 0; i < elems.length; i++) {
       elems[i].addEventListener('click', function() {
+        console.log(this);
         var placed = this.getAttribute("data-placed");
-        if(typeof placed === "undefined" || placed === "") {
-          this.setAttribute("data-placed='cross'");
+        if(placed == "") {
+          this.setAttribute("data-placed", "cross");
         }
       }, false);
     }

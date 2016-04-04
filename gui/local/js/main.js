@@ -1,3 +1,9 @@
+/*  WebSocket Connection */
+window.activeWebSocket = new WebSocket("ws://127.0.0.1:8888/");
+window.activeWebSocket.onmessage = function (e) {
+  console.log(e.data);
+}
+
 /* Application */
 var app = {
   "_utilities" : {
@@ -93,7 +99,6 @@ view.frameContent.classList.remove('hideElem');
 view.frameBackground.classList.remove('hideElem');
 
 window.playAudio = new Audio('sounds/sound.mp3');
-
 window.playAudio.addEventListener('ended', function() {
     this.currentTime = 0;
     this.play();
