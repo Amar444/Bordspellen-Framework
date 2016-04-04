@@ -1,4 +1,5 @@
 from players import BoardPlayerMixin, NamedPlayerMixin, ExternalInputPlayerMixin
+from threading import Condition
 
 """
 Assembles and implements player classes for the TicTacToe game
@@ -34,8 +35,11 @@ class ExternalInputPlayer(BoardPlayerMixin, NamedPlayerMixin, ExternalInputPlaye
     TicTacToe player that receives input from a server
     """
 
+    condition =  None
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.condition = Condition()
 
     def play(self):
         """ This player needs to make a move """
@@ -43,12 +47,10 @@ class ExternalInputPlayer(BoardPlayerMixin, NamedPlayerMixin, ExternalInputPlaye
 
         # loop/wait until we got a move from the server
         # todo: make this work... Because it is in a loop it cannot do handle_move and thus never end the loop.
-        while True:
-            if self.lastMove is not None:
-                x = self.lastMove.x
-                y = self.lastMove.y
-                x, y = None
-                break
+        self.condition.wait();
+        x = self.lastMove.x
+        y = self.lastMove.y
+        x, y = None
 
         try:
             self.board.set(int(x), int(y), self.name[0:1])
@@ -66,4 +68,5 @@ class ExternalInputPlayer(BoardPlayerMixin, NamedPlayerMixin, ExternalInputPlaye
         # NOTE: temporary because we do not know yet what the move argument looks like
         self.lastMove.x = move.x
         self.lastMove.y = move.y
+        self.condition.notify()
         super().handle_move(move)

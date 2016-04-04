@@ -53,7 +53,7 @@ class ExternalInputPlayerMixin(Player):
 
     def __init__(self, framework, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        framework.on("_MOVE_FROM_OPPONENT", self.handle_move)
+        framework.on("SRV", self.handle_move)
 
     def handle_move(self, move):
         """ handles a move passed from the framework, handling needs to be specified by siblings of this class """
