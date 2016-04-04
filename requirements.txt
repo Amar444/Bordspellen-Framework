@@ -1,5 +1,3 @@
-<<<<<<< HEAD
 tornado==4.3
-=======
 pyparsing==2.1.1
->>>>>>> origin/master
+

@@ -50,3 +50,8 @@ class RunServer(threading.Thread):
         if(len(RunServer.connection) > 0) :
             for singleServer in RunServer.connection:
                 singleServer.write_message(data)
+
+
+if __name__ == '__main__':
+    rs = RunServer()
+    rs.start()
