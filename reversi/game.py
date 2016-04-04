@@ -40,7 +40,7 @@ class ReversiGame(TurnBasedGame, BoardGame):
                     stone = self.board.get(row_to_check, col_to_check)
                     if stone is None:
                         break
-                    elif stone == player and spotted_opponent is False:
+                    elif stone == player and not spotted_opponent:
                         break
                     elif stone == player and spotted_opponent:
                         capture_directions.append(direction)
