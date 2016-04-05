@@ -17,10 +17,12 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
 
     @property
     def state(self):
+        winner = self.winner
         if self.board.is_full():
-            return STATUS_DRAW, None
+            if winner is None:
+                return STATUS_DRAW, None
+            return STATUS_WINNER, winner
         else:
-            winner = self.winner
             if winner is None:
                 return STATUS_UNCLEAR, None
             return STATUS_WINNER, winner
