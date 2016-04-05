@@ -48,8 +48,8 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         opp, v = (self.opponent, 0) if player == self else (self, 3)
 
         # Look for best move
-        for x in range(3):
-            for y in range(3):
+        for y in range(3):
+            for x in range(3):
                 if self.board.is_available(x, y):
                     # Spot is free - do this move
                     self.board.set(x, y, player)

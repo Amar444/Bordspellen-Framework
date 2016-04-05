@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reversion & TicTacToe - The Game</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="fonts/stylesheet.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+  </head>
+  <body>
+    <div class="global">
+      <div class="background fadeIn">
+        <div class="scroll-background">
+
+        </div>
+      </div>
+      <div class="content fadeIn">
+        <div class="top-bar">
+          <div class="title-bar">
+            <div id="lobbyMessage">
+                Welcome in the lobby
+            </div>
+          </div>
+          <div class="title-bar-button" data-destination="index.html">
+            <
+          </div>
+          <div class="title-bar-volume">
+            <div class="volume">
+              <img id="mute-button" data-action="mute-unmute" src="img/sound.png">
+            </div>
+          </div>
+        </div>
+        <div id="game-main-content">
+          <div class="participants">
+            <div class="participant">
+              <div class="participant-buttons">
+                <a class="button" data-listener="challenge" data-game="tictactoe" data-player="Mark Nijboer">Challenge TicTacToe</a>
+                <a class="button" data-listener="challenge" data-game="reversion" data-player="Mark Nijboer">Challenge Reversion</a>
+              </div>
+              <div class="participant-info">
+                <label class="label">NAME</label>
+                <div class="participant-name">
+                  Mark Nijboer
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="challenge-overlay hidden">
+      <div class="challenge">
+        <div class="screen-1">
+          <div class="overflow-hidden">
+            <div class="half font big" id="localPlayer">
+            </div>
+            <div class="half font big" id="remotePlayer">
+            </div>
+          </div>
+          <div class="center font">
+            VS.
+          </div>
+          <h3 class="center font super" id="gameName"></h3>
+          <div class="challenge-settings">
+            <div class="turntime">
+                <label class="challenge-label">The minimal turn time of this challenge</label>
+                <input type="number" class="input terminal-blink" id="turntimechallenge" name="turntime-input" min="1" step="1" value="10">
+            </div>
+          </div>
+          <div class="challenge-buttons">
+            <a class="button cancel-button">Cancel</a>
+            <a class="button" id="challenge">Challenge</a>
+          </div>
+        </div>
+        <div class="screen-2" style="display:none;">
+          <div class="waiting-animation">
+            <h2 class="font">Waiting for opponent...</h2>
+          </div>
+
+          <div class="challenge-buttons">
+            <a class="button cancel-button">Cancel</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="js/main.js"></script>
+  <script src="js/protocolparser.js"></script>
+  <script>
+    document.querySelector('.title-bar-button').addEventListener('click', function() {
+      var dest = this.getAttribute('data-destination');
+      app.main.unloadPage(dest, this);
+    }, false);
+
+    var elems = document.querySelectorAll('.cancel-button');
+    for (var i = 0; i < elems.length; i++) {
+      elems[i].addEventListener('click', function() {
+        document.querySelector('.challenge-overlay').classList.add('hidden');
+      }, false);
+    }
+
+    var elems = document.querySelectorAll('[data-listener="challenge"]');
+
+    document.querySelector('#lobbyMessage').innerHTML = (app._utilities.storage.get("localName") + ", " + document.querySelector('#lobbyMessage').innerHTML) ;
+
+    for (var i = 0; i < elems.length; i++) {
+      elems[i].addEventListener('click', function() {
+        var remoteName = this.getAttribute('data-player');
+        var game = this.getAttribute('data-game');
+
+        document.querySelector('#localPlayer').innerHTML = app._utilities.storage.get("localName");
+        app._utilities.storage.set("selectedGame", game);
+
+        document.querySelector('.screen-1').style.display="block";
+        document.querySelector('.screen-2').style.display="none";
+
+        document.querySelector('#remotePlayer').innerHTML = remoteName;
+        document.querySelector('#gameName').innerHTML = game;
+
+        document.querySelector('.challenge-overlay').classList.remove('hidden');
+
+
+      }, false);
+    }
+
+    document.querySelector('#challenge').addEventListener('click', function() {
+      document.querySelector('.screen-1').style.display="none";
+      document.querySelector('.screen-2').style.display="block";
+
+            var screen1 = document.querySelector('.screen-1');
+            var player = screen1.querySelector('#remotePlayer').innerHTML;
+            var game = app._utilities.storage.get("selectedGame");
+            var turntime = document.querySelector('#turntimechallenge').value;
+
+            // Now we know the player, game and turntime -> Use protocol -> Wait for protocol and execute.
+
+            var stringProtocol = protocol.createParser.createChallenge(player, game, turntime);
+
+            if(stringProtocol != null) {
+              window.activeWebSocket.send(stringProtocol);
+              window.selectedPlayer = player;
+            // save this player name in sessionStorage when protocol is executed to show both players in next page
+
+            }
+      //}, 5000);
+    });
+
+
+    document.querySelector('[data-action="mute-unmute"]').addEventListener('click', function() {
+           var status = app._utilities.toggleAudio();
+           setMuteImage(status);
+    }, false);
+
+    setMuteImage(app._utilities.statusAudio());
+
+    function setMuteImage(status) {
+
+        if(status) {
+            document.getElementById("mute-button").src="img/sound.png";
+        } else {
+            document.getElementById("mute-button").src="img/mute.png";
+        }
+
+    }
+
+
+    document.addEventListener('challengeAccepted', function() {
+      app._utilities.storage.set("opponentPlayer", window.selectedPlayer);
+      app.main.unloadPage(game + ".html", null);
+    });
+  </script>
+</html>
