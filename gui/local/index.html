@@ -53,10 +53,7 @@
 
       if(name != "") {
         var dest = this.getAttribute('data-destination');
-
-        app._utilities.storage.set("localName", name);
-
-        app.main.unloadPage(dest, this);
+        window.activeWebSocket.send("login \"" + name + "\"");
       } else {
         document.querySelector('#name').classList.add('wrongInput');
         setTimeout(function() {
@@ -91,12 +88,19 @@
         }
     }
 
+    // EVENT LISTENERS
 
-
-
-
-
-
+    document.addEventListener('loginStatus', function(e) {
+      if(e.detail.status == "success") {
+        app._utilities.storage.set("localName", e.detail.playerName);
+        app.main.unloadPage("gameroom.html", this);
+      } else {
+        document.querySelector('#name').classList.add('wrongInput');
+        setTimeout(function() {
+          document.querySelector('#name').classList.remove('wrongInput')
+        }, 500);
+      }
+    }, false);
 
 </script>
 </html>

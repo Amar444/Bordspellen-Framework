@@ -62,4 +62,4 @@ if __name__ == '__main__':
     rs.start()
 
     time.sleep(20)
-    rs.sendToClient("challenge accepted")
+    rs.sendToClient(json.dumps({"listener": "challengeAccepted", "detail" : {"playerName" : "Frank Noorlander", "gameName" : "TicTacToe"}}))
