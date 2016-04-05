@@ -1,16 +1,3 @@
-/*  WebSocket Connection */
-window.activeWebSocket = new WebSocket("ws://127.0.0.1:8888/johan");
-window.activeWebSocket.onmessage = function (e) {
-  try {
-    var obj = JSON.parse(e.data);
-    var event = new CustomEvent(obj.listener, {"detail" : obj.detail});
-    document.dispatchEvent(event);
-  } catch(e) {
-    console.warn("Invalid JSON: " + e.data)
-  }
-}
-
-
 
 /* Application */
 var app = {
@@ -71,7 +58,7 @@ var app = {
         },
         "storage" : {
           "get" : function(name) {
-            return sessionStorage.getItem(name);
+            return typeof sessionStorage.getItem(name) !== "undefined" ? sessionStorage.getItem(name) : false;
           },
           "set" : function(name, value) {
             sessionStorage.setItem(name, value);
@@ -92,6 +79,23 @@ var app = {
     }
   }
 };
+
+/*  WebSocket Connection */
+var name = app._utilities.storage.get("localName");
+if(name != false) {
+  window.activeWebSocket = new WebSocket("ws://127.0.0.1:8888/"+name);
+} else {
+  window.activeWebSocket = new WebSocket("ws://127.0.0.1:8888/");
+}
+window.activeWebSocket.onmessage = function (e) {
+  try {
+    var obj = JSON.parse(e.data);
+    var event = new CustomEvent(obj.listener, {"detail" : obj.detail});
+    document.dispatchEvent(event);
+  } catch(e) {
+    console.warn("Invalid JSON: " + e.data)
+  }
+}
 
 
 /* Initialize */

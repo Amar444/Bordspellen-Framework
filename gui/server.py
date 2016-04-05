@@ -56,12 +56,17 @@ class RunServer(threading.Thread):
 
     @staticmethod
     def getClientPlayer(name):
-        if name in RunServer.clients:
+        if name in RunServer.clients and name != "":
             return RunServer.clients[name]
         else:
             pl = ClientPlayer(RunServer.getInstance())
-            RunServer.clients[name] = pl
+            if name is not "":
+                RunServer.clients[name] = pl
             return pl
+
+    @staticmethod
+    def setClientPlayer(player, name):
+        RunServer.clients[name] = player
 
     @staticmethod
     def run():
