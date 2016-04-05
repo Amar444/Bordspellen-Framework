@@ -7,8 +7,8 @@ import json
 import socket
 
 from threading import Thread
-from exceptions import InvalidCommandException
-from utils import parse_fakeson
+from gac.exceptions import InvalidCommandException
+from gac.utils import parse_fakeson
 
 
 EVENT_CONNECTED = '_CONNECTED'
