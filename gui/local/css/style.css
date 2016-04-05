@@ -381,13 +381,17 @@ div[data-position="1"],[data-position="2"],[data-position="3"],[data-position="4
     [data-position="46"],[data-position="47"],[data-position="49"] ,[data-position="50"],
     [data-position="51"],[data-position="52"],[data-position="53"] ,[data-position="54"],
     [data-position="55"]
-    {border-right: 3px solid black; border-bottom: 3px solid black;}
+    {border-right: 3px solid black; border-bottom: 3px solid black; padding: 10px;}
 
 div[data-position="8"],[data-position="16"],[data-position="24"] ,[data-position="32"],
     [data-position="40"],[data-position="48"],[data-position="56"]
-    {border-bottom: 3px solid black;}
+    {border-bottom: 3px solid black; padding: 10px;}
 
 div[data-position="57"],[data-position="58"] ,[data-position="59"],[data-position="60"],
     [data-position="61"],[data-position="62"] ,[data-position="63"]
-    {border-right: 3px solid black;}
+    {border-right: 3px solid black; padding: 10px;}
+
+div[data-position="64"] {
+    padding: 10px;
+}
 
