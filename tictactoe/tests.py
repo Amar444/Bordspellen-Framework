@@ -21,6 +21,18 @@ class TestTicTacToe(unittest.TestCase):
 
     game.set_players(players)
 
+    def test_win_horizontal(self):
+        """ Test winning horizontal """
+        self.game.board.set(0, 0, self.players[0])
+        self.game.board.set(1, 2, self.players[1])
+        self.game.board.set(0, 2, self.players[0])
+        self.game.board.set(2, 0, self.players[1])
+        self.game.board.set(0, 1, self.players[0])
+
+        self.assertEqual(self.game.has_won_horizontal(self.players[0]), True)
+
+        self.game.board.clear()
+
     def test_state(self):
         """ Test state of the game """
         self.game.board.set(0, 0, self.players[0])
@@ -30,6 +42,8 @@ class TestTicTacToe(unittest.TestCase):
         self.game.board.set(1, 1, self.players[0])
 
         self.assertEqual(self.game.state, (1, self.players[0]))
+
+        self.game.board.clear()
 
 if __name__ == '__main__':
     unittest.main()
