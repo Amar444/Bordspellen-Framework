@@ -2,6 +2,9 @@
 Provides implementation for Player objects
 """
 
+from client import *
+from gui.server import *
+import json
 
 class Player(object):
     """ Player is used to define a player in the game """
@@ -59,3 +62,42 @@ class ClientPlayerMixin(Player):
     def handle_command(self, command):
         """ handles a command passed from the client, handling needs to be specified by siblings of this class """
         pass
+
+
+class ClientPlayer(Client):
+
+    def __init__(self):
+        super().__init__()
+
+    def handle_message(self, message):
+        action = str.split(message)[0]
+
+        if action == 'login':
+            print('you asked to login')
+            self.login(str.split(message)[1])
+        else:
+            print(message)
+
+    def login(self, nickname):
+        self.on(EVENT_CONNECTED, self.on_connected)
+        self.nickname = nickname
+        self.connect()
+
+    def on_connected(self, data):
+        self.on("OK", self.login_succes)
+        self.on("ERR", self.login_failed)
+        self.send(OutgoingCommand('LOGIN', self.nickname))
+
+    def login_succes(self, data):
+        RunServer.sendToClient(json.dumps(
+            {
+                'listener': 'loginStatus',
+                'detail': {
+                    'status': 'succes',
+                    'playerName': self.nickname
+                }
+            }
+        ))
+
+    def login_failed(self, data):
+        RunServer.sendToClient('login failed')

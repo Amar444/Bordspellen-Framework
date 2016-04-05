@@ -10,9 +10,13 @@ import tornado.websocket
 import threading
 import time
 
+from players import ClientPlayer
+
 
 class WebsocketConnection(tornado.websocket.WebSocketHandler):
     """ Every new connection becomes an instance of this class """
+
+    client = ClientPlayer()
 
     def open(self):
         """ Method for a new connection. Subscribe to list. """
@@ -21,7 +25,7 @@ class WebsocketConnection(tornado.websocket.WebSocketHandler):
 
     def on_message(self, message):
         """ Method for an incomming message """
-        print(message);
+        self.client.handle_message(message)
 
     def on_close(self):
         """ Method on closing the connection. Removes from list. """
