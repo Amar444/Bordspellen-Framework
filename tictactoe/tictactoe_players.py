@@ -1,4 +1,4 @@
-from players import BoardPlayerMixin, NamedPlayerMixin, ClientInputPlayerMixin
+from players import BoardPlayerMixin, NamedPlayerMixin, ClientPlayerMixin
 from threading import Condition
 
 """
@@ -30,7 +30,7 @@ class CommandLinePlayer(BoardPlayerMixin, NamedPlayerMixin):
             self.play()
 
 
-class ClientInputPlayer(BoardPlayerMixin, NamedPlayerMixin, ClientInputPlayerMixin):
+class ClientInputPlayer(BoardPlayerMixin, NamedPlayerMixin, ClientPlayerMixin):
     """
     TicTacToe player that receives input from a server
     """

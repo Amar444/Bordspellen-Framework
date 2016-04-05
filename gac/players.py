@@ -45,7 +45,7 @@ class NamedPlayerMixin(Player):
         return self.name
 
 
-class ClientInputPlayerMixin(Player):
+class ClientPlayerMixin(Player):
     """ Player mixin that supports input from a server """
 
     client = None
