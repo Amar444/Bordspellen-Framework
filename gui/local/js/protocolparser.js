@@ -21,11 +21,7 @@ var protocol = {
     "createLogin" : function(playerName) {
         if(playerName != null && playerName != "") {
           var protocol = "login ";
-          protocol += "\"" + playerName + "\"";
-          return protocol;
-        }
-        return null;
-    },
+      )
     "getPlayerList" :function() {
       return protocol.createParser.getProtocol("playerlist");
     },
@@ -39,6 +35,11 @@ var protocol = {
         return null;
       }
     }
+  },
+
+
+  "responseParser" : {
+
   }
 }
 
