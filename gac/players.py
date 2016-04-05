@@ -75,7 +75,7 @@ class ClientPlayer(Client):
         action = str.split(message)[0]
 
         if action == 'login':
-            self.login(str.split(message)[1])
+            self.login(message[6:])
         elif action == 'playerlist':
             self.get_playerlist()
         else:
@@ -108,16 +108,6 @@ class ClientPlayer(Client):
         players = data.raw[16:-1]
         players = players.replace('"', '')
         players = players.split(', ')
-        print(players)
-
-        print(
-            {
-                'listener': 'playerList',
-                'detail': {
-                    'players': players
-                }
-            }
-        )
 
         self.run_server.sendToClient(json.dumps(
             {
