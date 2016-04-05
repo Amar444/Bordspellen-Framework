@@ -5,8 +5,6 @@ Unit Tests for the TicTacToe implementation
 import unittest
 from game import TicTacToeGame
 from players import Player, BoardPlayerMixin, NamedPlayerMixin
-from ai import AIPlayer
-from utils import Best
 
 
 class TestPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):
