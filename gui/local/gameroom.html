@@ -138,6 +138,7 @@
             if(stringProtocol != null) {
               window.activeWebSocket.send(stringProtocol);
               window.selectedPlayer = player;
+              window.selectedGame = game;
             // save this player name in sessionStorage when protocol is executed to show both players in next page
 
             }
@@ -163,9 +164,10 @@
     }
 
 
-    document.addEventListener('challengeAccepted', function() {
+    document.addEventListener('challengeAccepted', function(e) {
+      console.log(e);
       app._utilities.storage.set("opponentPlayer", window.selectedPlayer);
-      app.main.unloadPage(game + ".html", null);
+      //app.main.unloadPage(window.selectedGame + ".html", null);
     });
   </script>
 </html>
