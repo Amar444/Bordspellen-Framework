@@ -8,27 +8,11 @@ GUI CALLS:
 -----
 #### When the GUI is in need for the player-list:
 ```
-GUI -> : gui get playerlist
-GUI <- : <playerlist>
-GUI -> : OK    
+GUI -> : playerlist
+GUI <- : {'detail': {'players': ['henk', 'Jur', 'Johankladder']}, 'listener': 'playerList'}
 ```
-- This player list needs to be of the following format (JSON):
-
-```json
-{
-  "playerList": [
-    {
-      "playerName": "PlayerOne"
-    },
-    {
-      "playerName": "PlayerTwo"
-    },
-    {
-      "playerName": "PlayerThree"
-    }
-  ]
-}
-```
+- The 'listener' entry in the return JSON String is the listener that needs to be invoked when
+the GUI received the response of the server.
 
 <br>
 <br>
@@ -38,28 +22,11 @@ GUI -> : OK
 #### When the GUI is in need for the game-list:
 
 ```
-GUI -> : gui get gamelist
-GUI <- : <gamelist>
-GUI -> : OK
+GUI -> : gamelist
+GUI <- : {'detail': {'games': ['Game one', 'GameTwo', 'GameThree']}, 'listener': 'gameList'}
 ```
-- This game list needs to be of the following format (JSON):
-
-```json
-{
-  "gameList": [
-    {
-      "gameName": "GameOne"
-    },
-    {
-      "gameName": "GameTwo"
-    },
-    {
-      "gameName": "GameThree"
-    }
-  ]
-}
-```
-
+- The 'listener' entry in the return JSON String is the listener that needs to be invoked when
+the GUI received the response of the server.
 <br>
 <br>
 <br>
@@ -68,13 +35,19 @@ GUI -> : OK
 #### When the GUI is in need to challenge a player:
 
 ```
-GUI -> : gui challenge <playerName> <gameName> <n>
+GUI -> :{
+            "challenge":  {
+              "playerName":  <playerName>,
+              "gameName": <gameName>,
+              "turnTime": <n>
+            }
+        }
 GUI <- : OK
 ```
-- n can be included or excluded, but will almost certainly be included when playing
-in the GUI environment. The n parameter stands for the turn time of the game in seconds and
-if not given, the server will use it's default time. 'n' must be given without quotationmarks.
-
+- In this protocol the turn time does'nt need to be set, but the key will always be included.
+When n is not included, than n will always be null.
+- N will be always filled in without quotation's marks, since it will be handled by the external
+server as an Integer.
 
 <br>
 <br>
