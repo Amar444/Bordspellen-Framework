@@ -88,6 +88,9 @@ class ClientPlayer(Client):
 
     def on_connected(self, data):
         self.send(OutgoingCommand('LOGIN', self.nickname))
+        self.on('SVR', self.send_playerlist)
+
+        self.run_server.setClientPlayer(self, self.nickname)
         self.run_server.sendToClient(json.dumps(
             {
                 'listener': 'loginStatus',
@@ -99,18 +102,28 @@ class ClientPlayer(Client):
         ))
 
     def get_playerlist(self):
-        self.on('SVR', self.send_playerlist)
-        if self.connection is None:
-            print('connection is niet meer')
-            exit()
         self.send(OutgoingCommand('get playerlist'))
 
     def send_playerlist(self, data):
+        players = data.raw[16:-1]
+        players = players.replace('"', '')
+        players = players.split(', ')
+        print(players)
+
+        print(
+            {
+                'listener': 'playerList',
+                'detail': {
+                    'players': players
+                }
+            }
+        )
+
         self.run_server.sendToClient(json.dumps(
             {
                 'listener': 'playerList',
                 'detail': {
-                    data
+                    'players': players
                 }
             }
         ))
