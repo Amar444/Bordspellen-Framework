@@ -1,22 +1,22 @@
 var protocol = {
 
   "createParser": {
-  "createChallenge" : function(challengedPlayer, gameName, turnTime) {
-          if(gameName != null && challengedPlayer != null) {
-            if(gameName != "" && challengedPlayer != "") {
-              var protocol = "challenge \"";
-              protocol += challengedPlayer + "\" ";
-              protocol += "\"" + gameName + "\" ";
+    "createChallenge" : function(challengedPlayer, gameName, turnTime) {
+        if(gameName != null && challengedPlayer != null) {
+          if(gameName != "" && challengedPlayer != "") {
+            var protocol = "challenge \"";
+            protocol += challengedPlayer + "\" ";
+            protocol += "\"" + gameName + "\" ";
 
-              if(turnTime != "" && turnTime != null) {
-                protocol += turnTime;
-              }
-
-              return protocol;
+            if(turnTime != "" && turnTime != null) {
+              protocol += turnTime;
             }
-            return null;
+
+            return protocol;
           }
           return null;
+        }
+        return null;
     },
     "createLogin" : function(playerName) {
         if(playerName != null && playerName != "") {

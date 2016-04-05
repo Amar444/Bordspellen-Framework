@@ -126,15 +126,9 @@
       document.querySelector('.screen-1').style.display="none";
       document.querySelector('.screen-2').style.display="block";
 
-      // Wait till someone accepted:
-      //setTimeout(function(){
-
             var screen1 = document.querySelector('.screen-1');
-
             var player = screen1.querySelector('#remotePlayer').innerHTML;
-
             var game = app._utilities.storage.get("selectedGame");
-
             var turntime = document.querySelector('#turntimechallenge').value;
 
             // Now we know the player, game and turntime -> Use protocol -> Wait for protocol and execute.
@@ -142,13 +136,9 @@
             var stringProtocol = protocol.createParser.createChallenge(player, game, turntime);
 
             if(stringProtocol != null) {
-            window.activeWebSocket.send(stringProtocol);
-
+              window.activeWebSocket.send(stringProtocol);
+              window.selectedPlayer = player;
             // save this player name in sessionStorage when protocol is executed to show both players in next page
-
-            app._utilities.storage.set("opponentPlayer", player);
-
-            app.main.unloadPage(game + ".html", null);
 
             }
       //}, 5000);
@@ -171,5 +161,11 @@
         }
 
     }
+
+
+    document.addEventListener('challengeAccepted', function() {
+      app._utilities.storage.set("opponentPlayer", window.selectedPlayer);
+      app.main.unloadPage(game + ".html", null);
+    });
   </script>
 </html>
