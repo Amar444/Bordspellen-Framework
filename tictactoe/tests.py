@@ -5,6 +5,8 @@ Unit Tests for the TicTacToe implementation
 import unittest
 from game import TicTacToeGame
 from players import Player, BoardPlayerMixin, NamedPlayerMixin
+from ai import AIPlayer
+from utils import Best
 
 
 class TestPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):
@@ -66,6 +68,22 @@ class TestTicTacToe(unittest.TestCase):
         self.game.board.set(1, 1, self.players[0])
 
         self.assertEqual(self.game.has_won_diagonal(self.players[0]), True)
+
+        self.game.board.clear()
+
+    def test_draw(self):
+        """ Test draw """
+        self.game.board.set(0, 0, self.players[0])
+        self.game.board.set(0, 1, self.players[1])
+        self.game.board.set(1, 1, self.players[0])
+        self.game.board.set(0, 2, self.players[1])
+        self.game.board.set(1, 2, self.players[0])
+        self.game.board.set(1, 0, self.players[1])
+        self.game.board.set(2, 0, self.players[0])
+        self.game.board.set(2, 2, self.players[1])
+        self.game.board.set(2, 1, self.players[0])
+
+        self.assertEqual(self.game.state, (2, None))
 
         self.game.board.clear()
 
