@@ -1,12 +1,16 @@
 The communication-protocol between the GUI and the main GameApplication:
 =====
 
-<br>
-<br>
+
 
 GUI CALLS:
------
+---
+
+<br>
+
 #### When the GUI is in need for the player-list:
+
+-----
 ```
 GUI -> : playerlist
 GUI <- : {'detail': {'players': ['henk', 'Jur', 'Johankladder']}, 'listener': 'playerList'}
@@ -18,9 +22,10 @@ the GUI received the response of the server.
 <br>
 <br>
 
----
+
 #### When the GUI is in need for the game-list:
 
+---
 ```
 GUI -> : gamelist
 GUI <- : {'detail': {'games': ['Game one', 'GameTwo', 'GameThree']}, 'listener': 'gameList'}
@@ -31,9 +36,10 @@ the GUI received the response of the server.
 <br>
 <br>
 
----
+
 #### When the GUI is in need to challenge a player:
 
+---
 ```
 GUI -> :{
             "challenge":  {
@@ -52,6 +58,21 @@ server as an Integer.
 <br>
 <br>
 <br>
+
+
+#### When the gui is in need to accept a challenge:
+
+---
+
+```
+GUI -> : accept n
+GUI <- : OK / ERR
+```
+
+- Whereas n is the challenge number the GUI likes to accept.
+- Response OK, when the 'challenge-accept' is a valid command at the time of sending.
+- Response ERR, when the challenged can't be found.
+
 <br>
 
 GUI UPDATES:
@@ -60,7 +81,34 @@ GUI UPDATES:
 The GUI's sockets also listens to certain command i.e. for updating the view. The
 following protocols needs to used when communication with the GUI.
 
+#### Challenged:
+
+---
+
+```
+GUI <- :
+    {
+        'challenged': {
+            'challenger': <playerName>,
+            'gameName': <gameName>,
+            'challengeNumber': <challengeNumber>,
+            'turnTime': <turnTime>
+        },
+        'listener': 'challengedListener'
+    }
+
+```
+
+- The 'listener' entry in the return JSON String is the listener that needs to be invoked when
+the GUI received the response of the server.
+
+
+<br>
+<br>
+
 #### Game update
+
+---
 ```json
 {
   "game":
