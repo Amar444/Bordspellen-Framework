@@ -1,7 +1,6 @@
 """ All kinds of utilities """
 
 from pyparsing import *
-import pyparsing
 
 
 class Best(object):
@@ -24,7 +23,7 @@ def convert_values(s, l, tokens):
 
 
 def convert_fakeson(l):
-    if type(l) == pyparsing.ParseResults:
+    if type(l) == ParseResults:
         if l.haskeys():
             return l.asDict()
         return l.asList()
