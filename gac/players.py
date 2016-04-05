@@ -2,7 +2,7 @@
 Provides implementation for Player objects
 """
 
-from client import *
+from gac.client import *
 import json
 
 class Player(object):
