@@ -51,9 +51,10 @@ class TwoDimensionalBoard(Board):
         self.check_coordinates(x, y)
         return self.state[x][y] is None
 
-    def set(self, x: int, y: int, value: any):
+    def set(self, x: int, y: int, value: any, check: bool=True):
         """ Saves a given value to the board on the given X and Y positions """
-        self.check_coordinates(x, y)
+        if check:
+            self.check_coordinates(x, y)
         self.state[x][y] = value
         self.last_turn = (x, y, value)
 
