@@ -81,7 +81,7 @@ class ClientPlayer(Client):
     def login(self, nickname):
         self.on(EVENT_CONNECTED, self.on_connected)
         self.nickname = nickname
-        self.connect()
+        self.connect(('82.72.96.63', 7789))
 
     def on_connected(self, data):
         self.on('OK', self.login_success)

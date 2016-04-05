@@ -50,7 +50,6 @@ class RunServer(threading.Thread):
 
     @staticmethod
     def setInstance(rs):
-        print('been here')
         RunServer.instance = rs
 
     @staticmethod
