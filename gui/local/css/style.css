@@ -329,6 +329,35 @@ text-align:center;
 .tictactoe-position[data-placed="circle"] img.circle {
   display:inline;
 }
+.reversion {
+  height:100%;
+  width:100%;
+  position:relative;
+}
+.reversion-position {
+  float:left;
+  width:12.500%;
+  height:12.500%;
+  box-sizing: border-box;
+  text-align:center;
+}
+.reversion-position img {
+  height:100%;
+  display:none;
+}
+.reversion-position:not([data-placed]) {
+  cursor:pointer;
+}
+.reversion-position:hover:not([data-placed]) img.cross {
+    display:inline;
+    opacity:0.3;
+}
+.reversion-position[data-placed="cross"] img.cross {
+  display:inline;
+}
+.reversion-position[data-placed="circle"] img.circle {
+  display:inline;
+}
 
 @keyframes colorsuper {
     0%   {color: red;}
@@ -339,12 +368,26 @@ text-align:center;
 
 /* The element to apply the animation to */
 
-div[data-position="1"] {border-right: 3px solid black; border-bottom: 3px solid black;}
-div[data-position="2"] {border-right: 3px solid black; border-bottom: 3px solid black; border-left: 3px solid black;}
-div[data-position="3"] {border-left: 3px solid black; border-bottom: 3px solid black;}
-div[data-position="4"] {border-top: 3px solid black; border-bottom: 3px solid black; border-right: 3px solid black;}
-div[data-position="5"] {border-top: 3px solid black; border-bottom: 3px solid black; border-left: 3px solid black; border-right:3px solid black;}
-div[data-position="6"] {border-top: 3px solid black; border-bottom: 3px solid black; border-left: 3px solid black;}
-div[data-position="7"] {border-right: 3px solid black; border-top: 3px solid black;}
-div[data-position="8"] {border-right: 3px solid black; border-top: 3px solid black; border-left:3px solid black;}
-div[data-position="9"] {border-left: 3px solid black; border-top: 3px solid black;}
+div[data-position="1"],[data-position="2"],[data-position="3"],[data-position="4"],
+    [data-position="5"],[data-position="6"],[data-position="7"] ,[data-position="9"],
+    [data-position="10"],[data-position="11"],[data-position="12"] ,[data-position="13"],
+    [data-position="14"],[data-position="15"],[data-position="17"] ,[data-position="18"],
+    [data-position="19"],[data-position="20"],[data-position="21"] ,[data-position="22"],
+    [data-position="23"],[data-position="25"],[data-position="26"] ,[data-position="27"],
+    [data-position="28"],[data-position="29"],[data-position="30"] ,[data-position="31"],
+    [data-position="33"],[data-position="34"],[data-position="35"] ,[data-position="36"],
+    [data-position="37"],[data-position="38"],[data-position="39"] ,[data-position="41"],
+    [data-position="42"],[data-position="43"],[data-position="44"] ,[data-position="45"],
+    [data-position="46"],[data-position="47"],[data-position="49"] ,[data-position="50"],
+    [data-position="51"],[data-position="52"],[data-position="53"] ,[data-position="54"],
+    [data-position="55"]
+    {border-right: 3px solid black; border-bottom: 3px solid black;}
+
+div[data-position="8"],[data-position="16"],[data-position="24"] ,[data-position="32"],
+    [data-position="40"],[data-position="48"],[data-position="56"]
+    {border-bottom: 3px solid black;}
+
+div[data-position="57"],[data-position="58"] ,[data-position="59"],[data-position="60"],
+    [data-position="61"],[data-position="62"] ,[data-position="63"]
+    {border-right: 3px solid black;}
+
