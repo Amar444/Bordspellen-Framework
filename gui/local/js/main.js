@@ -8,7 +8,6 @@ window.activeWebSocket.onmessage = function (e) {
   } catch(e) {
     console.warn("Invalid JSON: " + e.data)
   }
-
 }
 
 
