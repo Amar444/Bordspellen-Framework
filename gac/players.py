@@ -3,7 +3,6 @@ Provides implementation for Player objects
 """
 
 from client import *
-from gui.server import *
 import json
 
 class Player(object):
@@ -65,15 +64,16 @@ class ClientPlayerMixin(Player):
 
 
 class ClientPlayer(Client):
+    run_server = None
 
-    def __init__(self):
+    def __init__(self, run_server):
         super().__init__()
+        self.run_server = run_server
 
     def handle_message(self, message):
         action = str.split(message)[0]
 
         if action == 'login':
-            print('you asked to login')
             self.login(str.split(message)[1])
         else:
             print(message)
@@ -84,20 +84,39 @@ class ClientPlayer(Client):
         self.connect()
 
     def on_connected(self, data):
-        self.on("OK", self.login_succes)
-        self.on("ERR", self.login_failed)
+        self.on('OK', self.login_success)
+        self.on('ERR', self.login_failed)
         self.send(OutgoingCommand('LOGIN', self.nickname))
-
-    def login_succes(self, data):
-        RunServer.sendToClient(json.dumps(
+        self.run_server.sendToClient(json.dumps(
             {
                 'listener': 'loginStatus',
                 'detail': {
-                    'status': 'succes',
+                    'status': 'success',
+                    'playerName': self.nickname
+                }
+            }
+        ))
+
+    def login_success(self, data):
+        print("i received OK")
+        self.run_server.sendToClient(json.dumps(
+            {
+                'listener': 'loginStatus',
+                'detail': {
+                    'status': 'success',
                     'playerName': self.nickname
                 }
             }
         ))
 
     def login_failed(self, data):
-        RunServer.sendToClient('login failed')
+        print("i received ERR")
+        self.run_server.sendToClient(json.dumps(
+            {
+                'listener': 'loginStatus',
+                'detail': {
+                    'status': 'failed',
+                    'playerName': self.nickname
+                }
+            }
+        ))

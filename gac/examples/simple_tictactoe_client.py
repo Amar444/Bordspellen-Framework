@@ -1,6 +1,4 @@
 from client import Client, EVENT_CONNECTED, OutgoingCommand
-from tictactoe.game import TicTacToeGame
-from tictactoe.tictactoe_players import CommandLinePlayer, ClientInputPlayer
 import time
 
 
@@ -11,6 +9,7 @@ class PlayerClient(Client):
         self.nickname = nickname
 
     def on_connected(self, data):
+        self.on('OK', self.on_OK)
         self.send(OutgoingCommand('LOGIN', self.nickname))
 
     def on_OK(self, data):
@@ -18,6 +17,7 @@ class PlayerClient(Client):
 
 
 client = PlayerClient("Knarf")
+client.on('OK', client.on_OK)
 client.connect()
 time.sleep(1)
 client.on('OK', client.on_OK)

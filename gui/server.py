@@ -16,7 +16,12 @@ from players import ClientPlayer
 class WebsocketConnection(tornado.websocket.WebSocketHandler):
     """ Every new connection becomes an instance of this class """
 
-    client = ClientPlayer()
+    client = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        print(RunServer.getInstance())
+        self.client = ClientPlayer(RunServer.getInstance())
 
     def open(self):
         """ Method for a new connection. Subscribe to list. """
@@ -41,6 +46,16 @@ class RunServer(threading.Thread):
 
     # The array that will hold all the active connections
     connection = [];
+    instance = None
+
+    @staticmethod
+    def setInstance(rs):
+        print('been here')
+        RunServer.instance = rs
+
+    @staticmethod
+    def getInstance():
+        return RunServer.instance
 
     @staticmethod
     def run():
@@ -59,6 +74,7 @@ class RunServer(threading.Thread):
 
 if __name__ == '__main__':
     rs = RunServer()
+    RunServer.setInstance(rs)
     rs.start()
 
     time.sleep(20)
