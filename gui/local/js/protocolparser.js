@@ -21,7 +21,8 @@ var protocol = {
     "createLogin" : function(playerName) {
         if(playerName != null && playerName != "") {
           var protocol = "login ";
-      )
+        }
+      },
     "getPlayerList" :function() {
       return protocol.createParser.getProtocol("playerlist");
     },
@@ -42,7 +43,3 @@ var protocol = {
 
   }
 }
-
-console.log(protocol.createParser.createChallenge("nameplayer", "namegame", 5));
-console.log(protocol.createParser.createLogin("nameplayer"));
-console.log(protocol.createParser.getPlayerList());

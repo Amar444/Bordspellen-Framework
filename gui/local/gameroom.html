@@ -139,15 +139,19 @@
 
             // Now we know the player, game and turntime -> Use protocol -> Wait for protocol and execute.
 
-            alert(protocol.createParser.createChallenge(player, game, turntime));
+            var protocol = protocol.createParser.createChallenge(player, game, turntime);
 
+            if(protocol != null) {
+
+            window.activeWebSocket.send(protocol);
 
             // save this player name in sessionStorage when protocol is executed to show both players in next page
 
             app._utilities.storage.set("opponentPlayer", player);
 
-
             app.main.unloadPage(game + ".html", null);
+
+            }
       //}, 5000);
     });
 
