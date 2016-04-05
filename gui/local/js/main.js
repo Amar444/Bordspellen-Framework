@@ -1,10 +1,12 @@
 /*  WebSocket Connection */
 window.activeWebSocket = new WebSocket("ws://127.0.0.1:8888/");
 window.activeWebSocket.onmessage = function (e) {
-  console.log(e.data)
-  if(e.data=="challenge accepted") {
-    var event = new Event('challengeAccepted')
+  try {
+    var obj = JSON.parse(e.data);
+    var event = new CustomEvent(obj.listener, {"detail" : obj.detail});
     document.dispatchEvent(event);
+  } catch(e) {
+    console.warn("Invalid JSON: " + e.data)
   }
 }
 
