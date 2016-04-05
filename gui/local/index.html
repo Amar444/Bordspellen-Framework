@@ -53,7 +53,7 @@
 
       if(name != "") {
         var dest = this.getAttribute('data-destination');
-        window.activeWebSocket.send("login \"" + name + "\"");
+        window.activeWebSocket.send("login " + name);
       } else {
         document.querySelector('#name').classList.add('wrongInput');
         setTimeout(function() {

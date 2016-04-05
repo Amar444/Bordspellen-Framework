@@ -30,19 +30,8 @@
           </div>
         </div>
         <div id="game-main-content">
-          <div class="participants">
-            <div class="participant">
-              <div class="participant-buttons">
-                <a class="button" data-listener="challenge" data-game="tictactoe" data-player="Mark Nijboer">Challenge TicTacToe</a>
-                <a class="button" data-listener="challenge" data-game="reversion" data-player="Mark Nijboer">Challenge Reversion</a>
-              </div>
-              <div class="participant-info">
-                <label class="label">NAME</label>
-                <div class="participant-name">
-                  Mark Nijboer
-                </div>
-              </div>
-            </div>
+          <div class="participants" id="participants">
+
           </div>
         </div>
       </div>
@@ -146,6 +135,13 @@
     });
 
 
+    // Retrieve player list
+    setInterval(function() {
+      window.activeWebSocket.send("playerlist");
+    }, 5000);
+    window.activeWebSocket.send("playerlist");
+
+
     document.querySelector('[data-action="mute-unmute"]').addEventListener('click', function() {
            var status = app._utilities.toggleAudio();
            setMuteImage(status);
@@ -167,7 +163,16 @@
     document.addEventListener('challengeAccepted', function(e) {
       console.log(e);
       app._utilities.storage.set("opponentPlayer", window.selectedPlayer);
-      //app.main.unloadPage(window.selectedGame + ".html", null);
+      app.main.unloadPage(window.selectedGame + ".html", null);
+    });
+
+    document.addEventListener('playerList', function(e) {
+      var html = "";
+      for (var i = 0; i < e.detail.players.length; i++) {
+        var str = '<div class="participant"> <div class="participant-buttons"> <a class="button" data-listener="challenge" data-game="tictactoe" data-player="'+e.detail.players[i]+'">Challenge TicTacToe</a> <a class="button" data-listener="challenge" data-game="reversion" data-player="'+e.detail.players[i]+'">Challenge Reversion</a> </div> <div class="participant-info"> <label class="label">NAME</label> <div class="participant-name">'+e.detail.players[i]+'</div> </div> </div>'
+        html += str;
+      }
+      document.querySelector('#participants').innerHTML = html;
     });
   </script>
 </html>
