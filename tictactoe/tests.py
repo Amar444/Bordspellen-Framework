@@ -33,6 +33,42 @@ class TestTicTacToe(unittest.TestCase):
 
         self.game.board.clear()
 
+    def test_win_vertical(self):
+        """ Test winning vertical """
+        self.game.board.set(0, 1, self.players[0])
+        self.game.board.set(1, 2, self.players[1])
+        self.game.board.set(2, 1, self.players[0])
+        self.game.board.set(2, 0, self.players[1])
+        self.game.board.set(1, 1, self.players[0])
+
+        self.assertEqual(self.game.has_won_vertical(self.players[0]), True)
+
+        self.game.board.clear()
+
+    def test_win_diagonal1(self):
+        """ Test winning diagonal / """
+        self.game.board.set(2, 0, self.players[0])
+        self.game.board.set(1, 2, self.players[1])
+        self.game.board.set(0, 2, self.players[0])
+        self.game.board.set(2, 2, self.players[1])
+        self.game.board.set(1, 1, self.players[0])
+
+        self.assertEqual(self.game.has_won_diagonal(self.players[0]), True)
+
+        self.game.board.clear()
+
+    def test_win_diagonal2(self):
+        """ Test winning diagonal \ """
+        self.game.board.set(0, 0, self.players[0])
+        self.game.board.set(1, 2, self.players[1])
+        self.game.board.set(2, 2, self.players[0])
+        self.game.board.set(2, 0, self.players[1])
+        self.game.board.set(1, 1, self.players[0])
+
+        self.assertEqual(self.game.has_won_diagonal(self.players[0]), True)
+
+        self.game.board.clear()
+
     def test_state(self):
         """ Test state of the game """
         self.game.board.set(0, 0, self.players[0])
