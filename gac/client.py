@@ -156,7 +156,7 @@ class Client(object):
             self.listeners[event_name] = []
         self.listeners[event_name].append(handler)
 
-    def on(self, event_name, handler):
+    def off(self, event_name, handler):
         """ unSubscribe for a specific event """
         # todo: make this thread safe!!!
         if event_name in self.listeners and handler in self.listeners[event_name]:
