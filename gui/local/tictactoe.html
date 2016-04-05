@@ -74,40 +74,54 @@
       </div>
     </div>
   </body>
+  <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
   <script src="js/main.js"></script>
   <script>
-    document.querySelector('.title-bar-button').addEventListener('click', function() {
-      var dest = this.getAttribute('data-destination');
-      app.main.unloadPage(dest, this);
-    }, false);
+  $(function () {
 
-    // For each element with a data-position attribute.
-    var elems = document.querySelectorAll('[data-position]');
-    for(var i = 0; i < elems.length; i++) {
-      elems[i].addEventListener('click', function() {
-        console.log(this);
-        var placed = this.getAttribute("data-placed");
-        if(placed == "") {
-          this.setAttribute("data-placed", "cross");
+    /* FUNCTIONS */
+
+    // Change mute image based on the status
+    var setMuteImage = function(status) {
+        if(status) {
+            $("#mute-button").attr("src", "img/sound.png");
+        } else {
+            $("#mute-button").attr("src", "img/mute.png");
         }
-      }, false);
     }
 
-        document.querySelector('[data-action="mute-unmute"]').addEventListener('click', function() {
-           var status = app._utilities.toggleAudio();
-           setMuteImage(status);
-    }, false);
+    
 
+    /* INITIALISATION */
+
+    // Init the mute image
     setMuteImage(app._utilities.statusAudio());
 
-    function setMuteImage(status) {
 
-        if(status) {
-            document.getElementById("mute-button").src="img/sound.png";
-        } else {
-            document.getElementById("mute-button").src="img/mute.png";
-        }
+    /* EVENTS */
 
-    }
+    // On click go back to index
+    $(".title-bar-button").click(function() {
+      var dest = $(this).attr("data-destination");
+      app.main.unloadPage(dest, this);
+    });
+
+
+    // Toggle mute - unmute
+    $('[data-action="mute-unmute"]').click(function() {
+      var status = app._utilities.toggleAudio();
+
+      setMuteImage(status);
+    });
+
+    // Place item on click in empty field position
+    $("[data-position]").click(function() {
+      var placed = $(this).attr("data-placed");
+      if(placed == "") {
+        $(this).attr("data-placed", "cross");
+      }
+    });
+
+  });
   </script>
 </html>

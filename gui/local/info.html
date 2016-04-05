@@ -28,13 +28,17 @@
     </div>
 </div>
 </body>
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script src="js/main.js"></script>
 <script>
-        document.querySelector('.title-bar-button').addEventListener('click', function() {
-      var dest = this.getAttribute('data-destination');
+  $(function() {
+    /* EVENTS */
+
+    // On click go back to index
+    $(".title-bar-button").click(function() {
+      var dest = $(this).attr("data-destination");
       app.main.unloadPage(dest, this);
-    }, false);
-
-
+    });
+  });
 </script>
 </html>

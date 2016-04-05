@@ -46,51 +46,66 @@
 </div>
 </body>
 <script>window.home = true;</script>
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script src="js/main.js"></script>
 <script>
-    document.querySelector('[data-action="unload-page"]').addEventListener('click', function() {
-      var name = document.querySelector('#name').value.trim();
+  $(function() {
+    /* FUNCTIONS */
 
-      if(name != "") {
-        var dest = this.getAttribute('data-destination');
-        window.activeWebSocket.send("login " + name);
-      } else {
-        document.querySelector('#name').classList.add('wrongInput');
-        setTimeout(function() {
-          document.querySelector('#name').classList.remove('wrongInput')
-        }, 500);
-      }
-
-    }, false);
-    document.querySelector('.terminal-blink').addEventListener('focus', function() {
-      this.classList.remove('terminal-blink');
-    }, false);
-
-
-    document.querySelector('[data-action="show-info"]').addEventListener('click', function() {
-        app.main.unloadPage("info.html", this);
-
-    }, false);
-
-    document.querySelector('[data-action="mute-unmute"]').addEventListener('click', function() {
-           var status = app._utilities.toggleAudio();
-           setMuteImage(status);
-    }, false);
-
-
-    setMuteImage(app._utilities.statusAudio());
-
-    function setMuteImage(status) {
+    // Change mute image based on the status
+    var setMuteImage = function(status) {
         if(status) {
-            document.getElementById("mute-button").src="img/sound.png";
+            $("#mute-button").attr("src", "img/sound.png");
         } else {
-            document.getElementById("mute-button").src="img/mute.png";
+            $("#mute-button").attr("src", "img/mute.png");
         }
     }
 
-    // EVENT LISTENERS
 
-    document.addEventListener('loginStatus', function(e) {
+
+    /* INITIALISATION */
+
+    // Init mute image
+    setMuteImage(app._utilities.statusAudio());
+
+
+
+    /* EVENTS */
+
+    // Set action listener for unload buttons
+    $('[data-action="unload-page"]').click(function() {
+      var name = $("#name").val().trim();
+
+      if(name !== "") {
+        var dest = $(this).attr('data-destination');
+        window.activeWebSocket.send("login " + name);
+      } else {
+        $("#name").addClass("wrongInput");
+        setTimeout(function() {
+          $("#name").removeClass("wrongInput");
+        }, 500);
+      }
+    });
+
+
+    // Set listener for info button
+    $('[data-action="show-info"]').click(function() {
+      app.main.unloadPage("info.html", this);
+    });
+
+
+    // Set listener for mute - unmute button
+    $('[data-action="mute-unmute"]').click(function() {
+      var status = app._utilities.toggleAudio();
+      setMuteImage(status);
+    });
+
+
+
+    /* API EVENTS */
+
+    // When the server replies to the login
+    $(document).on("loginStatus", function(e) {
       if(e.detail.status == "success") {
         app._utilities.storage.set("localName", e.detail.playerName);
         app.main.unloadPage("gameroom.html", this);
@@ -100,7 +115,10 @@
           document.querySelector('#name').classList.remove('wrongInput')
         }, 500);
       }
-    }, false);
+    });
+
+    
+  });
 
 </script>
 </html>

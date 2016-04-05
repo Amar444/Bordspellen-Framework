@@ -72,109 +72,125 @@
       </div>
     </div>
   </body>
+  <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
   <script src="js/main.js"></script>
   <script src="js/protocolparser.js"></script>
   <script>
-    document.querySelector('.title-bar-button').addEventListener('click', function() {
-      var dest = this.getAttribute('data-destination');
-      app.main.unloadPage(dest, this);
-    }, false);
+    $(function() {
+      /* FUNCTIONS */
 
-    var elems = document.querySelectorAll('.cancel-button');
-    for (var i = 0; i < elems.length; i++) {
-      elems[i].addEventListener('click', function() {
-        document.querySelector('.challenge-overlay').classList.add('hidden');
-      }, false);
-    }
+      // Change mute image based on the status
+      var setMuteImage = function(status) {
+          if(status) {
+              $("#mute-button").attr("src", "img/sound.png");
+          } else {
+              $("#mute-button").attr("src", "img/mute.png");
+          }
+      }
 
-    var elems = document.querySelectorAll('[data-listener="challenge"]');
 
-    document.querySelector('#lobbyMessage').innerHTML = (app._utilities.storage.get("localName") + ", " + document.querySelector('#lobbyMessage').innerHTML) ;
 
-    for (var i = 0; i < elems.length; i++) {
-      elems[i].addEventListener('click', function() {
-        var remoteName = this.getAttribute('data-player');
-        var game = this.getAttribute('data-game');
+      /* INITIALISATION */
 
-        document.querySelector('#localPlayer').innerHTML = app._utilities.storage.get("localName");
+      // Setting the lobby message
+      var message = $("#lobbyMessage").html();
+      var name = app._utilities.storage.get("localName");
+      $("#lobbyMessage").html(name + ", " + message);
+
+
+      // Request playerlist every five seconds
+      setInterval(function() {
+        window.activeWebSocket.send("playerlist");
+      }, 5000);
+      window.activeWebSocket.onopen = function () {
+        window.activeWebSocket.send("playerlist");
+      }
+
+
+      // Init the mute image
+      setMuteImage(app._utilities.statusAudio());
+
+
+
+      /* EVENTS */
+
+      // On click go back to index
+      $(".title-bar-button").click(function() {
+        var dest = $(this).attr("data-destination");
+        app.main.unloadPage(dest, this);
+      });
+
+
+      // Hide overlay when cancel is clicked
+      $(".cancel-button").click(function() {
+        $(".challenge-overlay").addClass("hidden");
+      });
+
+
+      // Setting up the GUI when someone is challenged
+      $(document).on("click", "[data-listener='challenge']", function() {
+        var remoteName = $(this).attr('data-player'),
+            game = $(this).attr('data-game');
+
+        $("#localPlayer").html(app._utilities.storage.get("localName"));
         app._utilities.storage.set("selectedGame", game);
 
-        document.querySelector('.screen-1').style.display="block";
-        document.querySelector('.screen-2').style.display="none";
+        $(".screen-1").show();
+        $(".screen-2").hide();
 
-        document.querySelector('#remotePlayer').innerHTML = remoteName;
-        document.querySelector('#gameName').innerHTML = game;
+        $("#remotePlayer").html(remoteName);
+        $("#gameName").html(game);
 
-        document.querySelector('.challenge-overlay').classList.remove('hidden');
-
-
-      }, false);
-    }
-
-    document.querySelector('#challenge').addEventListener('click', function() {
-      document.querySelector('.screen-1').style.display="none";
-      document.querySelector('.screen-2').style.display="block";
-
-            var screen1 = document.querySelector('.screen-1');
-            var player = screen1.querySelector('#remotePlayer').innerHTML;
-            var game = app._utilities.storage.get("selectedGame");
-            var turntime = document.querySelector('#turntimechallenge').value;
-
-            // Now we know the player, game and turntime -> Use protocol -> Wait for protocol and execute.
-
-            var stringProtocol = protocol.createParser.createChallenge(player, game, turntime);
-
-            if(stringProtocol != null) {
-              window.activeWebSocket.send(stringProtocol);
-              window.selectedPlayer = player;
-              window.selectedGame = game;
-            // save this player name in sessionStorage when protocol is executed to show both players in next page
-
-            }
-      //}, 5000);
-    });
+        $(".challenge-overlay").removeClass('hidden');
+      });
 
 
-    // Retrieve player list
-    setInterval(function() {
-      window.activeWebSocket.send("playerlist");
-    }, 5000);
-    window.activeWebSocket.onopen = function () {
-      window.activeWebSocket.send("playerlist");
-    }
+      // On challenge, send request to server
+      $("#challenge").click(function() {
+        var player = $(".screen-1").find("#remotePlayer").html(),
+            game = app._utilities.storage.get("selectedGame"),
+            turntime = $("#turntimechallenge").val();
+            stringProtocol = protocol.createParser.createChallenge(player, game, turntime);
 
-
-    document.querySelector('[data-action="mute-unmute"]').addEventListener('click', function() {
-           var status = app._utilities.toggleAudio();
-           setMuteImage(status);
-    }, false);
-
-    setMuteImage(app._utilities.statusAudio());
-
-    function setMuteImage(status) {
-
-        if(status) {
-            document.getElementById("mute-button").src="img/sound.png";
-        } else {
-            document.getElementById("mute-button").src="img/mute.png";
+        if (stringProtocol !== null) {
+          window.activeWebSocket.send(stringProtocol);
+          window.selectedPlayer = player;
+          window.selectedGame = game;
         }
 
-    }
+        $(".screen-1").hide();
+        $(".screen-2").show();
+      });
 
 
-    document.addEventListener('challengeAccepted', function(e) {
-      console.log(e);
-      app._utilities.storage.set("opponentPlayer", window.selectedPlayer);
-      app.main.unloadPage(window.selectedGame + ".html", null);
-    });
+      // Toggle mute - unmute
+      $('[data-action="mute-unmute"]').click(function() {
+        var status = app._utilities.toggleAudio();
 
-    document.addEventListener('playerList', function(e) {
-      var html = "";
-      for (var i = 0; i < e.detail.players.length; i++) {
-        var str = '<div class="participant"> <div class="participant-buttons"> <a class="button" data-listener="challenge" data-game="tictactoe" data-player="'+e.detail.players[i]+'">Challenge TicTacToe</a> <a class="button" data-listener="challenge" data-game="reversion" data-player="'+e.detail.players[i]+'">Challenge Reversion</a> </div> <div class="participant-info"> <label class="label">NAME</label> <div class="participant-name">'+e.detail.players[i]+'</div> </div> </div>'
-        html += str;
-      }
-      document.querySelector('#participants').innerHTML = html;
+        setMuteImage(status);
+      });
+
+
+
+      /* API EVENTS */
+
+      // Go to next screen when challenge is accepted
+      $(document).on("challengeAccepted", function(e) {
+        app._utilities.storage.set("opponentPlayer", window.selectedPlayer);
+        app.main.unloadPage(window.selectedGame + ".html", null);
+      });
+
+
+      // When received, put playerlist in view
+      $(document).on("playerList", function(e) {
+        var html = "";
+
+        for (var i = 0; i < e.detail.players.length; i++) {
+          var str = '<div class="participant"> <div class="participant-buttons"> <a class="button" data-listener="challenge" data-game="tictactoe" data-player="'+e.detail.players[i]+'">Challenge TicTacToe</a> <a class="button" data-listener="challenge" data-game="reversion" data-player="'+e.detail.players[i]+'">Challenge Reversion</a> </div> <div class="participant-info"> <label class="label">NAME</label> <div class="participant-name">'+e.detail.players[i]+'</div> </div> </div>'
+          html += str;
+        }
+        $('#participants').html(html);
+      });
     });
   </script>
 </html>
