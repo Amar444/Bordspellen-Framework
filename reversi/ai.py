@@ -2,6 +2,7 @@
 from game import ReversiGame, _UNCLEAR, _PLAYER_ONE_WIN, _PLAYER_TWO_WIN, _DRAW
 from players import BoardPlayerMixin, NamedPlayerMixin
 from utils import Best
+import copy
 
 class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     opponent = None
@@ -41,13 +42,14 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
             best_reply = Best(0,0,0)
             # iterate over all possible moves
             moves = self.game.get_legal_moves(player)
+            board_state = copy.deepcopy(self.board)
             if len(moves) == 0:
                 # skip if no possible moves
                 return self.calc_best_move(self if player == self.opponent else self.opponent, depth-1)
             for move in self.game.get_legal_moves(player):
                 self.game.execute_move(player, move[0], move[1])
                 reply = self.calc_best_move(self if player == self.opponent else self.opponent, depth-1)
-                # TODO: MAKE A FUNCTION TO RESTORE BOARD STATES
+                self.board = board_state
                 # set as best reply if lowest or highest value
                 if (player == self and reply.val > best_reply.val) or (player == self.opponent and reply.val < best_reply.val):
                     best_reply = reply
