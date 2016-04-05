@@ -139,7 +139,9 @@
     setInterval(function() {
       window.activeWebSocket.send("playerlist");
     }, 5000);
-    window.activeWebSocket.send("playerlist");
+    window.activeWebSocket.onopen = function () {
+      window.activeWebSocket.send("playerlist");
+    }
 
 
     document.querySelector('[data-action="mute-unmute"]').addEventListener('click', function() {

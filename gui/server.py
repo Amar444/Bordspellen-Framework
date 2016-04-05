@@ -17,15 +17,12 @@ class WebsocketConnection(tornado.websocket.WebSocketHandler):
     """ Every new connection becomes an instance of this class """
 
     client = None
+    name = None
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        print(RunServer.getInstance())
-        self.client = ClientPlayer(RunServer.getInstance())
-
-    def open(self):
+    def open(self, name):
         """ Method for a new connection. Subscribe to list. """
         RunServer.connection.append(self);
+        self.client = RunServer.getClientPlayer(name)
         print("Client connection established! Yeeeehaaaa!!");
 
     def on_message(self, message):
@@ -45,7 +42,8 @@ class RunServer(threading.Thread):
     """ This is the class that runs the server and pushes messages. """
 
     # The array that will hold all the active connections
-    connection = [];
+    connection = []
+    clients = {}
     instance = None
 
     @staticmethod
@@ -57,9 +55,18 @@ class RunServer(threading.Thread):
         return RunServer.instance
 
     @staticmethod
+    def getClientPlayer(name):
+        if name in RunServer.clients:
+            return RunServer.clients[name]
+        else:
+            pl = ClientPlayer(RunServer.getInstance())
+            RunServer.clients[name] = pl
+            return pl
+
+    @staticmethod
     def run():
         """ This method will start the thread and sets up the server """
-        app = tornado.web.Application([(r"/", WebsocketConnection)])
+        app = tornado.web.Application([(r"/(.*)", WebsocketConnection)])
         app.listen(8888)
         tornado.ioloop.IOLoop.current().start()
 

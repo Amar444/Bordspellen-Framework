@@ -1,5 +1,5 @@
 /*  WebSocket Connection */
-window.activeWebSocket = new WebSocket("ws://127.0.0.1:8888/");
+window.activeWebSocket = new WebSocket("ws://127.0.0.1:8888/johan");
 window.activeWebSocket.onmessage = function (e) {
   try {
     var obj = JSON.parse(e.data);
