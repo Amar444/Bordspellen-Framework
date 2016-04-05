@@ -3,6 +3,7 @@ Provides implementation for Player objects
 """
 
 from gac.client import *
+from gac.utils import *
 import json
 
 class Player(object):
@@ -75,6 +76,8 @@ class ClientPlayer(Client):
 
         if action == 'login':
             self.login(str.split(message)[1])
+        elif action == 'playerlist':
+            self.get_playerlist()
         else:
             print(message)
 
@@ -84,8 +87,6 @@ class ClientPlayer(Client):
         self.connect(('82.72.96.63', 7789))
 
     def on_connected(self, data):
-        self.on('OK', self.login_success)
-        self.on('ERR', self.login_failed)
         self.send(OutgoingCommand('LOGIN', self.nickname))
         self.run_server.sendToClient(json.dumps(
             {
@@ -97,26 +98,19 @@ class ClientPlayer(Client):
             }
         ))
 
-    def login_success(self, data):
-        print("i received OK")
-        self.run_server.sendToClient(json.dumps(
-            {
-                'listener': 'loginStatus',
-                'detail': {
-                    'status': 'success',
-                    'playerName': self.nickname
-                }
-            }
-        ))
+    def get_playerlist(self):
+        self.on('SVR', self.send_playerlist)
+        if self.connection is None:
+            print('connection is niet meer')
+            exit()
+        self.send(OutgoingCommand('get playerlist'))
 
-    def login_failed(self, data):
-        print("i received ERR")
+    def send_playerlist(self, data):
         self.run_server.sendToClient(json.dumps(
             {
-                'listener': 'loginStatus',
+                'listener': 'playerList',
                 'detail': {
-                    'status': 'failed',
-                    'playerName': self.nickname
+                    data
                 }
             }
         ))

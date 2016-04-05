@@ -9,17 +9,11 @@ class PlayerClient(Client):
         self.nickname = nickname
 
     def on_connected(self, data):
-        self.on('OK', self.on_OK)
         self.send(OutgoingCommand('LOGIN', self.nickname))
-
-    def on_OK(self, data):
-        print(data)
 
 
 client = PlayerClient("Knarf")
-client.on('OK', client.on_OK)
-client.connect()
+client.connect(('82.72.96.63', 7789))
 time.sleep(1)
-client.on('OK', client.on_OK)
 
-client.send(OutgoingCommand('get gamelist'))
+client.send(OutgoingCommand('get playerlist'))
