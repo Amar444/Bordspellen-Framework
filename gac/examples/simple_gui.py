@@ -1,5 +1,5 @@
 from gui.server import RunServer
-from players import ClientPlayer
+from gac.players import ClientPlayer
 
 rs = RunServer()
 RunServer.setInstance(rs)

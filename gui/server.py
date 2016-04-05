@@ -10,7 +10,7 @@ import tornado.websocket
 import threading
 import time
 
-from players import ClientPlayer
+from gac.players import ClientPlayer
 
 
 class WebsocketConnection(tornado.websocket.WebSocketHandler):
