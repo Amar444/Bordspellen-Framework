@@ -1,7 +1,13 @@
 /*  WebSocket Connection */
 window.activeWebSocket = new WebSocket("ws://127.0.0.1:8888/");
 window.activeWebSocket.onmessage = function (e) {
-  console.log(e.data);
+
+  console.log(e.data)
+  if(e.data=="challenge accepted") {
+    var event = new Event('challengeAccepted')
+    document.dispatchEvent(event);
+  }
+
 }
 
 

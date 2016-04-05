@@ -8,6 +8,7 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket
 import threading
+import time
 
 
 class WebsocketConnection(tornado.websocket.WebSocketHandler):
@@ -55,3 +56,6 @@ class RunServer(threading.Thread):
 if __name__ == '__main__':
     rs = RunServer()
     rs.start()
+
+    time.sleep(20)
+    rs.sendToClient("challenge accepted")
