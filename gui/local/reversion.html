@@ -73,13 +73,10 @@
     });
     //onderstaande functie plaats een </div>  direct na data-placed=,
     window.onload = function() {
-        var wrapper = document.createElement("div");
+        var wrapper = document.createElement("reversion");
         wrapper.innerHTML
         for (i = 1; i <= 64; i++) {
-            wrapper.innerHTML += "<div class=" + 'reversion-position ' + " data-position=" + [i] +  " data-placed= "+ '  ' + ">" + "<img src=" + 'img/reversion-white.svg' + " class=" + 'circle ' + ">" + "<img src=" + 'img/reversion-black.svg' + " class=" + 'cross' + ">"
-            //wrapper.innerHTML +=
-            //wrapper.innerHTML +=
-            wrapper.innerHTML += "</div>"
+            wrapper.innerHTML += '<div class=' + "reversion-position " +  'data-position=' + i +  ' data-placed= '+ '"" '+'>' + '<img src=' + "img/reversion-white.svg" + ' class=' + "circle" + '>' + '<img src=' + "img/reversion-black.svg" + ' class=' + "cross" + '>'
         }
         var container = document.getElementById("reversion")
         container.appendChild(wrapper)
