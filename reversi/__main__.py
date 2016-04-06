@@ -19,16 +19,15 @@ class DemoCliPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):
 
 
 game = ReversiGame()
-players = (DemoCliPlayer(name="W", board=game.board),)
+players = (DemoCliPlayer(name="W", board=game.board), DemoCliPlayer(name="B", board=game.board),)
 
-answer = str(input("Would you like to play against the computer? y/n"))
-if answer == "y":
-    print("Tough luck, that's not yet implemented.")
-    exit()
-    players += (AIPlayer(name="B", board=game.board, game=game),)
-else:
-    players += (DemoCliPlayer(name="B", board=game.board),)
+# answer = str(input("Would you like to play against the computer? y/n"))
+# if answer == "y":
+#     print("Tough luck, that's not yet implemented.")
+#     exit()
+#     players += (AIPlayer(name="B", board=game.board, game=game),)
+# else:
+# players += (DemoCliPlayer(name="B", board=game.board),)
 
 game.set_players(players)
-game.init_board(players[0], players[1])
 game.play()
