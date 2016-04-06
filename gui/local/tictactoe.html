@@ -90,7 +90,7 @@
         }
     }
 
-    
+
 
     /* INITIALISATION */
 
@@ -115,7 +115,7 @@
     });
 
     // Place item on click in empty field position
-    $("[data-position]").click(function() {
+    $(document).on("click", "data-position]", function() {
       var placed = $(this).attr("data-placed");
       if(placed == "") {
         $(this).attr("data-placed", "cross");

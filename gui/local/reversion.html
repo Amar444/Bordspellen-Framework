@@ -32,8 +32,6 @@
         <div id="game-main-content">
           <div class="field">
             <div class="reversion" id="reversion">
-
-              </div>
             </div>
           </div>
         </div>
@@ -92,14 +90,14 @@
     });
 
     // Place item on click in empty field position
-    $("[data-position]").click(function() {
+    $(document).on("click", "data-position]", function() {
       var placed = $(this).attr("data-placed");
       if(placed == "") {
         $(this).attr("data-placed", "cross");
       }
     });
 
-    
+
   });
   </script>
 </html>
