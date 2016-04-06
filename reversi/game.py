@@ -26,13 +26,54 @@ class ReversiGame(TurnBasedGame, BoardGame):
     """ Represents Reversi game"""
     board_class = ReversiBoard
 
-    def init_board(self, player_one: Player, player_two: Player):
-        self.board.set(3, 3, player_one.name[0:1])
-        self.board.set(4, 4, player_one.name[0:1])
-        self.board.set(3, 4, player_two.name[0:1])
-        self.board.set(4, 3, player_two.name[0:1])
+    @property
+    def status(self):
+        player_one, player_two = self.players
+        if self.has_legal_moves(player_one) or self.has_legal_moves(player_two):
+            return _UNCLEAR
 
-    def is_legal_move(self, player: any, row: int, col: int):
+        player_one_score, player_two_score = self.scores
+        if player_one_score == player_two_score:
+            return _DRAW
+        elif player_one_score > player_two_score:
+            return _PLAYER_ONE_WIN
+        else:
+            return _PLAYER_TWO_WIN
+
+    @property
+    def scores(self):
+        # This calcs the scores for both players so that we don't have to loop over the
+        # board state array twice - that's pretty expensive and this just saves us a
+        # few clock cycles :)
+
+        score_one = 0
+        score_two = 0
+
+        player_one = self.players[0]
+        player_two = self.players[1]
+
+        for row in range(self.board.size[0]):
+            for col in range(self.board.size[1]):
+                player = self.board.get(row, col)
+                if player == player_one:
+                    score_one += 1
+                elif player == player_two:
+                    score_two += 1
+
+        return score_one, score_two
+
+    def set_players(self, players: tuple):
+        if len(players) != 2:
+            raise Exception("You must play reversi with exactly two players.")
+
+        super().set_players(players)
+
+        self.board.set(3, 3, players[0])
+        self.board.set(4, 4, players[0])
+        self.board.set(3, 4, players[1])
+        self.board.set(4, 3, players[1])
+
+    def is_legal_move(self, player: Player, row: int, col: int):
         """Determine if the play on a square is an legal move"""
         if self.board.is_available(row, col) is False:
             return []
@@ -58,14 +99,23 @@ class ReversiGame(TurnBasedGame, BoardGame):
                     break
         return capture_directions
 
-    def get_legal_moves(self, player: any):
-        """ Functions that figures out which legal moves there currently are for the player"""
-        moves = []
-        for row in range(self.board.size[0]):
-            for col in range(self.board.size[1]):
-                if len(self.is_legal_move(player, row, col)) > 0:
-                    moves.append((row, col))
-        return moves
+    def iterate_legal_moves(self, player: Player):
+        """ Iterates on all moves for the given player and yields all legal moves """
+        rows, cols = self.board.size
+        for row in range(rows):
+            for col in range(cols):
+                if len(self.is_legal_move(player, col, row)) > 0:
+                    yield (row, col)
+
+    def get_legal_moves(self, player: Player):
+        """ Returns a list of legal moves for the given player """
+        # You'd really want to use iterate_legal_moves due to memory consumption and other performance issues, tho
+        return [move for move in self.iterate_legal_moves(player)]
+
+    def has_legal_moves(self, player: Player):
+        """ Checks wheter the given player has any legal moves left """
+        for move in self.iterate_legal_moves(player):
+            return True
 
     def execute_move(self, player, row, col):
         """ Places a stone on the board and flips the opponents stones"""
@@ -83,25 +133,3 @@ class ReversiGame(TurnBasedGame, BoardGame):
                     print("How the hell did you get here?")
                 else:
                     self.board.set(row_to_change, col_to_change, player)
-
-    def get_score(self, player: any):
-        score = 0
-        for row in range(self.board.size[0]):
-            for col in range(self.board.size[1]):
-                if self.board.get(row, col) == player:
-                    score += 1
-        return score
-
-    def get_value(self, player_one: any, player_two: any):
-        player_one_has_moves = len(self.get_legal_moves(player_one)) > 0
-        player_two_has_moves = len(self.get_legal_moves(player_two)) > 0
-        if player_one_has_moves or player_two_has_moves:
-            return _UNCLEAR
-        player_one_score = self.get_score(player_one)
-        player_two_score = self.get_score(player_two)
-        if player_one_score == player_two_score:
-            return _DRAW
-        if player_one_score > player_two_score:
-            return _PLAYER_ONE_WIN
-        else:
-            return _PLAYER_TWO_WIN

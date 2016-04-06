@@ -29,10 +29,10 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     def do_move(self):
         """ Attempts to calculate the best move and update the board accordingly """
         if self.board.last_turn is None:
-            return self.board.set(1, 1, self)
+            return self.board.set(1, 1, self, False)
 
         best_move = self.calc_best_move(self)
-        self.board.set(best_move.row, best_move.column, self)
+        self.board.set(best_move.row, best_move.column, self, False)
 
     def calc_best_move(self, player):
         """ Find best move for winning the game """
@@ -48,13 +48,13 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         opp, v = (self.opponent, 0) if player == self else (self, 3)
 
         # Look for best move
-        for x in range(3):
-            for y in range(3):
+        for y in range(3):
+            for x in range(3):
                 if self.board.is_available(x, y):
                     # Spot is free - do this move
-                    self.board.set(x, y, player)
+                    self.board.set(x, y, player, False)
                     reply = self.calc_best_move(opp)
-                    self.board.set(x, y, None)
+                    self.board.set(x, y, None, False)
 
                     # Check if current player is winning
                     if (player == self and reply.val > v) or (player == self.opponent and reply.val < v):
