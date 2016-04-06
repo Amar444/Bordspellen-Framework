@@ -5,7 +5,7 @@ from game import ReversiGame
 from players import BoardPlayerMixin, NamedPlayerMixin, Player
 
 
-class DemoCliPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):
+class DemoCliPlayer(NamedPlayerMixin, BoardPlayerMixin):
     def play(self):
         super().play()
 
