@@ -7,10 +7,8 @@ from game import TicTacToeGame, STATUS_WINNER, STATUS_UNCLEAR, STATUS_DRAW
 from players import Player, BoardPlayerMixin, NamedPlayerMixin
 
 
-class TestPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):
-    """ Create player to test with """
-    def play(self):
-        super().play()
+class TestPlayer(NamedPlayerMixin, BoardPlayerMixin):
+    pass
 
 
 class TestTicTacToe(unittest.TestCase):
