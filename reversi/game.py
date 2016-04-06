@@ -29,7 +29,7 @@ class ReversiGame(TurnBasedGame, BoardGame):
     @property
     def status(self):
         player_one, player_two = self.players
-        if len(self.get_legal_moves(player_one)) > 0 or len(self.get_legal_moves(player_two)) > 0:
+        if self.has_legal_moves(player_one) or self.has_legal_moves(player_two):
             return _UNCLEAR
 
         player_one_score, player_two_score = self.get_score(player_one), self.get_score(player_two)
@@ -51,7 +51,7 @@ class ReversiGame(TurnBasedGame, BoardGame):
         self.board.set(3, 4, players[1].name[0:1])
         self.board.set(4, 3, players[1].name[0:1])
 
-    def is_legal_move(self, player: any, row: int, col: int):
+    def is_legal_move(self, player: Player, row: int, col: int):
         """Determine if the play on a square is an legal move"""
         if self.board.is_available(row, col) is False:
             return []
@@ -77,14 +77,23 @@ class ReversiGame(TurnBasedGame, BoardGame):
                     break
         return capture_directions
 
-    def get_legal_moves(self, player: any):
-        """ Functions that figures out which legal moves there currently are for the player"""
-        moves = []
-        for row in range(self.board.size[0]):
-            for col in range(self.board.size[1]):
-                if len(self.is_legal_move(player, row, col)) > 0:
-                    moves.append((row, col))
-        return moves
+    def iterate_legal_moves(self, player: Player):
+        """ Iterates on all moves for the given player and yields all legal moves """
+        rows, cols = self.board.size
+        for row in range(rows):
+            for col in range(cols):
+                if len(self.is_legal_move(player, col, row)) > 0:
+                    yield (row, col)
+
+    def get_legal_moves(self, player: Player):
+        """ Returns a list of legal moves for the given player """
+        # You'd really want to use iterate_legal_moves due to memory consumption and other performance issues, tho
+        return [move for move in self.iterate_legal_moves(player)]
+
+    def has_legal_moves(self, player: Player):
+        """ Checks wheter the given player has any legal moves left """
+        for move in self.iterate_legal_moves(player):
+            return True
 
     def execute_move(self, player, row, col):
         """ Places a stone on the board and flips the opponents stones"""
