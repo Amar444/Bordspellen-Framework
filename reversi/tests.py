@@ -7,6 +7,11 @@ from game import ReversiBoard, ReversiGame
 _PLAYER_ONE = "w"
 _PLAYER_TWO = "b"
 
+def new_game():
+    game = ReversiGame()
+    game.set_players((_PLAYER_ONE, _PLAYER_TWO))
+    return game
+
 def create_initial_board():
     """ Creating initial board Score = 2 for both players, both players have 4 possible moves """
     board = ReversiBoard()
@@ -115,9 +120,19 @@ def create_board_state_two():
 
 class TestLegalMoves(unittest.TestCase):
     """ Tests the get_legal_moves function, implicitly tests is_legal_move"""
+
+    def test_has_legal_moves(self):
+        test_game = new_game()
+
+        self.assertTrue(test_game.has_legal_moves(_PLAYER_ONE))
+        self.assertTrue(test_game.has_legal_moves(_PLAYER_TWO))
+
+        test_game.board = create_player_two_win_board()
+        self.assertFalse(test_game.has_legal_moves(_PLAYER_ONE))
+        self.assertFalse(test_game.has_legal_moves(_PLAYER_TWO))
+
     def test_legal_moves(self):
-        test_game = ReversiGame()
-        test_game.board = create_initial_board()
+        test_game = new_game()
 
         print("\nTesting legal moves")
         print("Testing initial_board")
@@ -148,7 +163,7 @@ class TestLegalMoves(unittest.TestCase):
 class TestExecuteMove(unittest.TestCase):
     """ Test the execute move method"""
     def test_execute_move(self):
-        test_game = ReversiGame()
+        test_game = new_game()
 
         print("\nTesting stone placements")
         test_game.board = create_initial_board()
@@ -166,49 +181,43 @@ class TestExecuteMove(unittest.TestCase):
 
 class TestScores(unittest.TestCase):
     def test_scores(self):
-        test_game = ReversiGame()
+        test_game = new_game()
 
         print("\nTesting get_score")
-        test_game.board = create_initial_board()
-        self.assertEqual(test_game.get_score(_PLAYER_ONE), 2)
-        self.assertEqual(test_game.get_score(_PLAYER_TWO), 2)
+        self.assertEqual(test_game.scores, (2, 2))
 
         test_game.board = create_player_one_win_board()
-        self.assertEqual(test_game.get_score(_PLAYER_ONE), 17)
-        self.assertEqual(test_game.get_score(_PLAYER_TWO), 12)
+        self.assertEqual(test_game.scores, (17, 12))
 
         test_game.board = create_player_two_win_board()
-        self.assertEqual(test_game.get_score(_PLAYER_ONE), 3)
-        self.assertEqual(test_game.get_score(_PLAYER_TWO), 19)
+        self.assertEqual(test_game.scores, (3, 19))
 
         test_game.board = create_board_state_one()
-        self.assertEqual(test_game.get_score(_PLAYER_ONE), 5)
-        self.assertEqual(test_game.get_score(_PLAYER_TWO), 5)
+        self.assertEqual(test_game.scores, (5, 5))
 
         test_game.board = create_board_state_two()
-        self.assertEqual(test_game.get_score(_PLAYER_ONE), 9)
-        self.assertEqual(test_game.get_score(_PLAYER_TWO), 6)
+        self.assertEqual(test_game.scores, (9, 6))
 
 
 class TestGameValue(unittest.TestCase):
     def test_game_value(self):
-        test_game = ReversiGame()
+        test_game = new_game()
 
         print("\nTesting Game Values")
         test_game.board = create_initial_board()
-        self.assertEqual(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO), 2)
+        self.assertEqual(test_game.status, 2)
 
         test_game.board = create_player_one_win_board()
-        self.assertEqual(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO), 3)
+        self.assertEqual(test_game.status, 3)
 
         test_game.board = create_player_two_win_board()
-        self.assertEqual(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO), 0)
+        self.assertEqual(test_game.status, 0)
 
         test_game.board = create_board_state_one()
-        self.assertEqual(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO), 2)
+        self.assertEqual(test_game.status, 2)
 
         test_game.board = create_board_state_two()
-        self.assertEqual(test_game.get_value(_PLAYER_ONE, _PLAYER_TWO), 2)
+        self.assertEqual(test_game.status, 2)
 
 if __name__ == '__main__':
     unittest.main()
