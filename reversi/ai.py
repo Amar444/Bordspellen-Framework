@@ -37,16 +37,15 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         """ Find best move for winning the game """
         if depth == 0:
             # return board value if max depth is reached
-            return self.calc_value(player, self.board_value_method)
+            return Best(self.calc_value(player, self.board_value_method))
         if self.board.get_value() == _UNCLEAR:
             best_reply = Best(99,0,0) if player == self.opponent else Best(0,0,0)
             # iterate over all possible moves
-            moves = self.game.get_legal_moves(player)
             board_state = copy.deepcopy(self.board.state)
-            if len(moves) == 0:
+            if not self.game.has_legal_moves(player):
                 # skip if no possible moves
                 return self.calc_best_move(self if player == self.opponent else self.opponent, depth-1)
-            for move in self.game.get_legal_moves(player):
+            for move in self.game.iterate_legal_moves(player):
                 self.game.execute_move(player, move[0], move[1])
                 reply = self.calc_best_move(self if player == self.opponent else self.opponent, depth-1)
                 self.board.state = board_state
