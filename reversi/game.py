@@ -26,6 +26,20 @@ class ReversiGame(TurnBasedGame, BoardGame):
     """ Represents Reversi game"""
     board_class = ReversiBoard
 
+    @property
+    def status(self):
+        player_one, player_two = self.players
+        if len(self.get_legal_moves(player_one)) > 0 or len(self.get_legal_moves(player_two)) > 0:
+            return _UNCLEAR
+
+        player_one_score, player_two_score = self.get_score(player_one), self.get_score(player_two)
+        if player_one_score == player_two_score:
+            return _DRAW
+        elif player_one_score > player_two_score:
+            return _PLAYER_ONE_WIN
+        else:
+            return _PLAYER_TWO_WIN
+
     def set_players(self, players: tuple):
         if len(players) != 2:
             raise Exception("You must play reversi with exactly two players.")
@@ -96,17 +110,3 @@ class ReversiGame(TurnBasedGame, BoardGame):
                 if self.board.get(row, col) == player:
                     score += 1
         return score
-
-    def get_value(self, player_one: any, player_two: any):
-        player_one_has_moves = len(self.get_legal_moves(player_one)) > 0
-        player_two_has_moves = len(self.get_legal_moves(player_two)) > 0
-        if player_one_has_moves or player_two_has_moves:
-            return _UNCLEAR
-        player_one_score = self.get_score(player_one)
-        player_two_score = self.get_score(player_two)
-        if player_one_score == player_two_score:
-            return _DRAW
-        if player_one_score > player_two_score:
-            return _PLAYER_ONE_WIN
-        else:
-            return _PLAYER_TWO_WIN
