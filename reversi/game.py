@@ -26,11 +26,16 @@ class ReversiGame(TurnBasedGame, BoardGame):
     """ Represents Reversi game"""
     board_class = ReversiBoard
 
-    def init_board(self, player_one: Player, player_two: Player):
-        self.board.set(3, 3, player_one.name[0:1])
-        self.board.set(4, 4, player_one.name[0:1])
-        self.board.set(3, 4, player_two.name[0:1])
-        self.board.set(4, 3, player_two.name[0:1])
+    def set_players(self, players: tuple):
+        if len(players) != 2:
+            raise Exception("You must play reversi with exactly two players.")
+
+        super().set_players(players)
+
+        self.board.set(3, 3, players[0].name[0:1])
+        self.board.set(4, 4, players[0].name[0:1])
+        self.board.set(3, 4, players[1].name[0:1])
+        self.board.set(4, 3, players[1].name[0:1])
 
     def is_legal_move(self, player: any, row: int, col: int):
         """Determine if the play on a square is an legal move"""
