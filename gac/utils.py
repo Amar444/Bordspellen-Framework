@@ -22,8 +22,17 @@ def convert_values(s, l, tokens):
         return n
 
 
+def convert_fakeson(l):
+    if type(l) == ParseResults:
+        if l.haskeys():
+            return l.asDict()
+        return l.asList()
+    return l
+
+
 def parse_fakeson(data):
-    return fakesonParser.parseString(data).asList()
+    l = fakesonParser.parseString(data)
+    return [convert_fakeson(item) for item in l]
 
 
 fakesonStringValue = Word(alphas + "_") | dblQuotedString.setParseAction(removeQuotes)
@@ -32,7 +41,7 @@ fakesonStringValue.setParseAction(convert_values)
 fakesonArrayValues = delimitedList(fakesonStringValue)
 fakesonArray = Suppress('[') + Optional(fakesonArrayValues) + Suppress(']')
 
-fakesonKeypairValue = Group(Word(alphas + "_") + Suppress(':') + fakesonStringValue)
+fakesonKeypairValue = Group(Word(alphas + "_") + Suppress(Literal(':')) + fakesonStringValue)
 fakesonObjectValues = delimitedList(fakesonKeypairValue)
 fakesonObject = Dict(Suppress('{') + Optional(fakesonObjectValues) + Suppress('}'))
 
