@@ -100,10 +100,10 @@
 
       // Request playerlist every five seconds
       setInterval(function() {
-        window.activeWebSocket.send("{\"command\": \"playerlist\"}");
+        window.activeWebSocket.send('{ "command": "playerlist"}');
       }, 5000);
       window.activeWebSocket.onopen = function () {
-        window.activeWebSocket.send("playerlist");
+       window.activeWebSocket.send('{ "command": "playerlist"}');
       }
 
 
