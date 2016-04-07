@@ -133,3 +133,17 @@ class ReversiGame(TurnBasedGame, BoardGame):
                     print("How the hell did you get here?")
                 else:
                     self.board.set(row_to_change, col_to_change, player)
+
+    def next_turn(self):
+        """ Check, for each turn, whether someone has won already """
+        super().next_turn()
+        status = self.status
+        if status != _UNCLEAR:
+            if status == _PLAYER_TWO_WIN or status == _PLAYER_ONE_WIN:
+                self.is_playing = False
+                print("Game over! Player {} has won this round! with a score of {} to {}"
+                      .format(self.players[0] if status == _PLAYER_ONE_WIN else
+                                                    self.players[1], self.scores[0], self.scores[1]))
+            elif status == _DRAW:
+                self.is_playing = False
+                print("Game over! It's a tie!")

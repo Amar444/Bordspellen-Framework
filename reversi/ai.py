@@ -2,13 +2,15 @@
 from game import ReversiGame, _UNCLEAR, _PLAYER_ONE_WIN, _PLAYER_TWO_WIN, _DRAW
 from players import BoardPlayerMixin, NamedPlayerMixin
 from utils import Best
-import copy
+
+
 
 class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     opponent = None
     board_value_method = "greedy"
+    _DEFAULT_DEPTH = 6
 
-    def __init__(self, game: ReversiGame, *args, **kwargs):
+    def __init__(self, game: ReversiGame, depth=_DEFAULT_DEPTH, *args, **kwargs):
         """ Initializes the AIPlayer instance """
         super().__init__(*args, **kwargs)
         self.game = game
@@ -20,7 +22,6 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
             return
         self.setup()
         self.do_move()
-        print("AI placed {} on coords {},{}\n\n".format(self.name, self.board.last_turn[0], self.board.last_turn[1]))
 
     def setup(self):
         """ Sets up any initial properties """
@@ -33,9 +34,11 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     def do_move(self):
         """ Attempts to calculate the best move and update the board accordingly """
         print(self.game.get_legal_moves(self))
-        best_move = self.calc_best_move(self, 6)
-        print(self.game.board.__str__() == self.board.__str__())
+        best_move = self.calc_best_move(self, self.depth)
+        print(self.game.board.__str__())
+        print(self.game.get_legal_moves(self))
         self.game.execute_move(self, best_move.row, best_move.column)
+        print("AI placed {} on coords {},{}\n\n".format(self.name, best_move.row, best_move.column))
 
     def calc_best_move(self, player, depth: int):
         """ Find best move for winning the game """
@@ -45,11 +48,14 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         if self.game.status == _UNCLEAR:
             best_reply = None
             # iterate over all possible moves
-            board_state = copy.deepcopy(self.game.board.state)
             if not self.game.has_legal_moves(player):
                 # skip if no possible moves
                 return self.calc_best_move(self if player == self.opponent else self.opponent, depth-1)
             for move in self.game.iterate_legal_moves(player):
+                board_state = [[] for x in range(len(self.board.state))]
+                for row in range(len(board_state)):
+                    for element in self.game.board.state[row]:
+                        board_state[row].append(element)
                 self.game.execute_move(player, move[0], move[1])
                 reply = self.calc_best_move(self if player == self.opponent else self.opponent, depth-1)
                 self.game.board.state = board_state

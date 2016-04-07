@@ -19,14 +19,17 @@ class DemoCliPlayer(NamedPlayerMixin, BoardPlayerMixin):
 
 
 game = ReversiGame()
-players = (DemoCliPlayer(name="W", board=game.board),)
+players = []
 
-answer = str(input("Would you like to play against the computer? y/n"))
-if answer == "y":
-    players += (AIPlayer(name="B", board=game.board, game=game),)
+answer = str(input("Choose a gametype:\n"
+                   "1: Human vs Human\n"
+                   "2: Human vs AI\n"
+                   "3: AI vs AI\n"))
+if answer == "3":
+    players += (AIPlayer(name="W", board=game.board, game=game), AIPlayer(name="B", board=game.board, game=game),)
+elif answer == "2":
+    players += (DemoCliPlayer(name="W", board=game.board), AIPlayer(name="B", board=game.board), )
 else:
-    players += (DemoCliPlayer(name="B", board=game.board),)
-
+    players += (DemoCliPlayer(name="W", board=game.board), DemoCliPlayer(name="B", board=game.board), )
 game.set_players(players)
-print(game.get_legal_moves(players[0]))
 game.play()
