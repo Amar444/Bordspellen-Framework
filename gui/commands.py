@@ -58,7 +58,7 @@ class CommandLogin(Command):
         """ initializes a command to login """
         super().__init__(controller, client)
         self.nickname = message['nickname']
-        self.connect_to_server('82.72.96.63', 7789)
+        self.connect_to_server(message['IP'], message['port'])
 
     def connect_to_server(self, ip, port):
         """ connects to a server with the given IP and port """

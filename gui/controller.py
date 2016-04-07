@@ -56,15 +56,6 @@ class GUIController:
         details['status'] = status
         details['statusMessage'] = status_message
 
-        print(
-            json.dumps(
-                {
-                    'listener': listener,
-                    'detail': details
-                }
-            )
-        )
-
         self.gui.send_to_client(json.dumps(
             {
                 'listener': listener,
