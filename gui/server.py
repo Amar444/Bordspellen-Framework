@@ -10,7 +10,7 @@ import tornado.websocket
 import threading
 import time
 
-from gac.players import ClientPlayer
+from gui.controller import GUIController
 
 
 class WebsocketConnection(tornado.websocket.WebSocketHandler):
@@ -21,9 +21,8 @@ class WebsocketConnection(tornado.websocket.WebSocketHandler):
 
     def open(self, name):
         """ Method for a new connection. Subscribe to list. """
-        RunServer.connection.append(self);
-        self.client = RunServer.getClientPlayer(name)
-        print("Client connection established! Yeeeehaaaa!!");
+        RunServer.connection.append(self)
+        self.client = RunServer.get_client_player(name)
 
     def on_message(self, message):
         """ Method for an incomming message """
@@ -31,7 +30,7 @@ class WebsocketConnection(tornado.websocket.WebSocketHandler):
 
     def on_close(self):
         """ Method on closing the connection. Removes from list. """
-        RunServer.connection.remove(self);
+        RunServer.connection.remove(self)
 
     def check_origin(self, origin):
         """ Method for connection handshake. """
@@ -47,25 +46,25 @@ class RunServer(threading.Thread):
     instance = None
 
     @staticmethod
-    def setInstance(rs):
+    def set_instance(rs):
         RunServer.instance = rs
 
     @staticmethod
-    def getInstance():
+    def get_instance():
         return RunServer.instance
 
     @staticmethod
-    def getClientPlayer(name):
+    def get_client_player(name):
         if name in RunServer.clients and name != "":
             return RunServer.clients[name]
         else:
-            pl = ClientPlayer(RunServer.getInstance())
+            pl = GUIController(RunServer.get_instance())
             if name is not "":
                 RunServer.clients[name] = pl
             return pl
 
     @staticmethod
-    def setClientPlayer(player, name):
+    def set_client_player(player, name):
         RunServer.clients[name] = player
 
     @staticmethod
@@ -76,7 +75,7 @@ class RunServer(threading.Thread):
         tornado.ioloop.IOLoop.current().start()
 
     @staticmethod
-    def sendToClient(data):
+    def send_to_client(data):
         """ This method allows you to send messages to all subscribers """
         if(len(RunServer.connection) > 0) :
             for singleServer in RunServer.connection:
@@ -85,8 +84,8 @@ class RunServer(threading.Thread):
 
 if __name__ == '__main__':
     rs = RunServer()
-    RunServer.setInstance(rs)
+    RunServer.set_instance(rs)
     rs.start()
 
     time.sleep(20)
-    rs.sendToClient(json.dumps({"listener": "challengeAccepted", "detail" : {"playerName" : "Frank Noorlander", "gameName" : "TicTacToe"}}))
+    rs.send_to_client(json.dumps({"listener": "challengeAccepted", "detail" : {"playerName" : "Frank Noorlander", "gameName" : "TicTacToe"}}))
