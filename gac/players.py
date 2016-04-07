@@ -2,6 +2,19 @@
 Provides implementation for Player objects
 """
 
+"""
+NOTE
+
+This file is far from finished and will be refactored a lot!
+Currenlty I (Frank) am just implementing GUI interaction so the GUI team can also make great progress
+This also includes copy-pasting functions and then changing minor things, of course in the future this will be
+majesticly refactored! (don't know if majesticly is a word, but I like it)
+
+refactoring will be done soon ;)
+
+NOTE
+"""
+
 from gac.client import *
 from gac.utils import *
 import json
@@ -78,6 +91,8 @@ class ClientPlayer(Client):
             self.login(message[6:])
         elif action == 'playerlist':
             self.get_playerlist()
+        elif action == 'gamelist':
+            self.get_gamelist()
         else:
             print(message)
 
@@ -89,6 +104,7 @@ class ClientPlayer(Client):
     def on_connected(self, data):
         self.send(OutgoingCommand('LOGIN', self.nickname))
         self.on('SVR', self.send_playerlist)
+        self.on('SVR', self.send_gamelist)
 
         self.run_server.setClientPlayer(self, self.nickname)
         self.run_server.sendToClient(json.dumps(
@@ -105,15 +121,45 @@ class ClientPlayer(Client):
         self.send(OutgoingCommand('get playerlist'))
 
     def send_playerlist(self, data):
-        players = data.raw[16:-1]
-        players = players.replace('"', '')
-        players = players.split(', ')
+        if data.arguments[0] == 'PLAYERLIST':
+            players = data.raw[16:-1]
+            players = players.replace('"', '')
+            players = players.split(', ')
 
-        self.run_server.sendToClient(json.dumps(
-            {
-                'listener': 'playerList',
-                'detail': {
-                    'players': players
+            self.run_server.sendToClient(json.dumps(
+                {
+                    'listener': 'playerList',
+                    'detail': {
+                        'players': players
+                    }
                 }
-            }
-        ))
+            ))
+
+    def get_gamelist(self):
+        self.send(OutgoingCommand('get gamelist'))
+
+    def send_gamelist(self, data):
+        if data.arguments[0] == 'GAMELIST':
+            games = data.raw[14:-1]
+            games = games.replace('"', '')
+            games = games.split(', ')
+
+            print(
+                json.dumps(
+                    {
+                        'listener': 'gameList',
+                        'detail': {
+                            'games': games
+                        }
+                    }
+                )
+            )
+
+            self.run_server.sendToClient(json.dumps(
+                {
+                    'listener': 'gameList',
+                    'detail': {
+                        'games': games
+                    }
+                }
+            ))
