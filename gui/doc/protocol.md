@@ -12,7 +12,7 @@ GUI CALLS:
 
 -----
 ```
-GUI -> : playerlist
+GUI -> : { "command": "playerlist"}
 GUI <- : {'detail': {'players': ['henk', 'Jur', 'Johankladder']}, 'listener': 'playerList'}
 ```
 - The 'listener' entry in the return JSON String is the listener that needs to be invoked when
@@ -23,11 +23,12 @@ the GUI received the response of the server.
 <br>
 
 
+
 #### When the GUI is in need for the game-list:
 
 ---
 ```
-GUI -> : gamelist
+GUI -> :  {"command": "gamelist"}
 GUI <- : {'detail': {'games': ['Game one', 'GameTwo', 'GameThree']}, 'listener': 'gameList'}
 ```
 - The 'listener' entry in the return JSON String is the listener that needs to be invoked when
@@ -41,13 +42,11 @@ the GUI received the response of the server.
 
 ---
 ```
-GUI -> :{
-            "challenge":  {
-              "playerName":  <playerName>,
-              "gameName": <gameName>,
-              "turnTime": <n>
+GUI -> :{ "command": "challenge",
+            "playername": <playerName>,
+            "gamename" : <gameName>,
+            "turntime" : <n>
             }
-        }
 GUI <- : OK
 ```
 - In this protocol the turn time does'nt need to be set, but the key will always be included.
@@ -65,7 +64,10 @@ server as an Integer.
 ---
 
 ```
-GUI -> : accept n
+GUI -> : {
+            "command" : "accept",
+            "challenge" : <challengeNumber>
+          }
 GUI <- : OK / ERR
 ```
 
