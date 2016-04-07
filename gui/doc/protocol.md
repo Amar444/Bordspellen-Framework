@@ -8,21 +8,50 @@ GUI CALLS:
 
 <br>
 
+#### When the GUI wants to login:
+
+-----
+```
+GUI -> : { "command": "login", "nickname": <nickname>}
+GUI <- :
+    {
+        'detail': {
+            'status': <status>
+            'message': <mesage>
+            'playerName': <nickname>
+        },
+        'listener': 'playerList',
+    }
+```
+
+<br>
+<br>
+<br>
+
+#### When the GUI wants to logout:
+
+-----
+```
+GUI -> : { "command": "logout"}
+```
+
+<br>
+<br>
+<br>
+
 #### When the GUI is in need for the player-list:
 
 -----
 ```
 GUI -> : { "command": "playerlist"}
 GUI <- :
-     {
+    {
         'detail': {
-        'players': ['henk', 'Jur', 'Johankladder']
-     },
+            'status': <status>
+            'message': <mesage>
+            'players': ['henk', 'Jur', 'Johankladder']
+        },
         'listener': 'playerList',
-        'status': {
-            'status': <status>,
-            'message': <message>
-        }
     }
 ```
 - The 'listener' entry in the return JSON String is the listener that needs to be invoked when
@@ -38,8 +67,16 @@ the GUI received the response of the server.
 
 ---
 ```
-GUI -> :  {"command": "gamelist"}
-GUI <- : {'detail': {'games': ['Game one', 'GameTwo', 'GameThree']}, 'listener': 'gameList'}
+GUI -> : { "command": "gamelist"}
+GUI <- :
+    {
+        'detail': {
+            'status': <status>
+            'message': <mesage>
+            'games': ['Game one', 'GameTwo', 'GameThree']
+        },
+        'listener': 'playerList',
+    }
 ```
 - The 'listener' entry in the return JSON String is the listener that needs to be invoked when
 the GUI received the response of the server.
@@ -52,19 +89,22 @@ the GUI received the response of the server.
 
 ---
 ```
-GUI -> :{ "command": "challenge",
-            "playername": <playerName>,
-            "gamename" : <gameName>,
-            "turntime" : <n>
-            }
+GUI -> :
+    {
+        "command": "challenge",
+        "playername": <playerName>,
+        "gamename" : <gameName>,
+        "turntime" : <turntime>
+    }
 
-GUI <- :    {
-                'status': {
-                    'status': <status>,
-                    'message': <message>
-                },
-                'listener': 'challengeListener'
-            }
+GUI <- :
+    {
+        'detail': {
+            'status': <status>,
+            'message': <message>
+        },
+        'listener': 'challengeListener'
+    }
 ```
 - In this protocol the turn time does'nt need to be set, but the key will always be included.
 When n is not included, than n will always be null.
