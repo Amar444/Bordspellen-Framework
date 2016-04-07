@@ -199,8 +199,8 @@ class CommandCreateChallange(Command):
         super().send_to_server()
         self.client.on('SVR', self.handle_svr)
         self.client.send(OutgoingCommand('challenge',
-                                         '"' + self.player + '"', '"' + self.game + '"', '"' + self.turntime + '"'),
-                                         {'status': 'OK', 'message': ''})
+                                         '"' + self.player + '"', '"' + self.game + '"', '"' + self.turntime + '"',
+                                         {'status': 'OK', 'message': ''}))
 
     def handle_ok(self, data):
         """ if calling out the challenge succeeded, tell it to the GUI """
@@ -227,3 +227,36 @@ class CommandCreateChallange(Command):
         """ 'unsubscibe' from the server command because we handled it, no need to stay informed about it """
         super().destroy()
         self.client.off('SVR', self.handle_svr)
+
+
+class CommandAcceptChallange(Command):
+    """ Command to accept an incoming challenge """
+    command = 'accept'
+
+    challenge = None
+
+    def __init__(self, controller, client, message):
+        """ Initializes a command to accept a challenge """
+        super().__init__(controller, client)
+        self.challenge = message['challenge']
+        self.send_to_server()
+
+    def send_to_server(self):
+        """ sends a command to the server to accept a challenge """
+        super().send_to_server()
+        self.client.send(OutgoingCommand('challenge', 'accept', self.challenge))
+
+    def handle_ok(self, data):
+        """ if accepting the challenge succeeded, tell it to the GUI """
+        super().handle_ok(data)
+        self.send_to_gui()
+
+    def handle_err(self, data):
+        """ if an error occurred when accepting the challenge """
+        super().handle_ok(data)
+        self.send_to_gui()
+        self.destroy()
+
+    def send_to_gui(self):
+        """ let the GUI know that accepting the challenge succeeded or not """
+        self.controller.send_to_gui('challenge', {}, self.status['status'], self.status['message'])

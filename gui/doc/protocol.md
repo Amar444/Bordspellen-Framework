@@ -131,13 +131,14 @@ GUI -> : {
             "challenge" : <challengeNumber>
           }
 
-GUI <- :    {
-                'listener': 'acceptListener',
-                'status': {
-                    'status': <status>,
-                    'message': <message>
-                }
-            }
+GUI <- :
+    {
+        'detail': {
+            'status': <status>,
+            'message': <message>
+        },
+        'listener': 'acceptListener'
+    }
 ```
 
 - Whereas n is the challenge number the GUI likes to accept.

@@ -21,7 +21,8 @@ class GUIController:
             CommandLogout,
             CommandPlayerlist,
             CommandGamelist,
-            CommandCreateChallange
+            CommandCreateChallange,
+            CommandAcceptChallange
         )
 
     def handle_message(self, message):
@@ -54,6 +55,15 @@ class GUIController:
         """ sends information to the GUI of the controller """
         details['status'] = status
         details['statusMessage'] = status_message
+
+        print(
+            json.dumps(
+                {
+                    'listener': listener,
+                    'detail': details
+                }
+            )
+        )
 
         self.gui.send_to_client(json.dumps(
             {
