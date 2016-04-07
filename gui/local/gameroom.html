@@ -150,12 +150,15 @@
             game = app._utilities.storage.get("selectedGame"),
             turntime = $("#turntimechallenge").val();
 
-          window.activeWebSocket.send('{ "command": "challenge", "playername": "' + player + '",
-            "gamename" : "' + game + '",
-            "turntime" : ' + turntime + '}');
+          window.activeWebSocket.send(JSON.stringify({
+            "command" : "challenge",
+            "playername": player,
+            "gamename" : game,
+            "turntime" : turntime
+          }));
           window.selectedPlayer = player;
           window.selectedGame = game;
-        }
+
 
         $(".screen-1").hide();
         $(".screen-2").show();

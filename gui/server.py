@@ -21,9 +21,9 @@ class WebsocketConnection(tornado.websocket.WebSocketHandler):
 
     def open(self, name):
         """ Method for a new connection. Subscribe to list. """
-        RunServer.connection.append(self);
+        RunServer.connection.append(self)
         self.client = RunServer.getClientPlayer(name)
-        print("Client connection established! Yeeeehaaaa!!");
+        print("Client connection established! Yeeeehaaaa!!")
 
     def on_message(self, message):
         """ Method for an incomming message """
@@ -31,7 +31,15 @@ class WebsocketConnection(tornado.websocket.WebSocketHandler):
 
     def on_close(self):
         """ Method on closing the connection. Removes from list. """
-        RunServer.connection.remove(self);
+        RunServer.connection.remove(self)
+        RunServer.inactiveClients[self.name] = self
+        name = self.name
+        time.sleep(10)
+        if self.name in RunServer.inactiveClients:
+            print("Logging out user: " + name)
+            del RunServer.clients[name]
+            del RunServer.inactiveClients[name]
+            #self.client.logout()
 
     def check_origin(self, origin):
         """ Method for connection handshake. """
@@ -44,6 +52,7 @@ class RunServer(threading.Thread):
     # The array that will hold all the active connections
     connection = []
     clients = {}
+    inactiveClients = {}
     instance = None
 
     @staticmethod
@@ -57,6 +66,8 @@ class RunServer(threading.Thread):
     @staticmethod
     def getClientPlayer(name):
         if name in RunServer.clients and name != "":
+            if name in RunServer.inactiveClients:
+                del RunServer.inactiveClients[name]
             return RunServer.clients[name]
         else:
             pl = ClientPlayer(RunServer.getInstance())
@@ -81,12 +92,3 @@ class RunServer(threading.Thread):
         if(len(RunServer.connection) > 0) :
             for singleServer in RunServer.connection:
                 singleServer.write_message(data)
-
-
-if __name__ == '__main__':
-    rs = RunServer()
-    RunServer.setInstance(rs)
-    rs.start()
-
-    time.sleep(20)
-    rs.sendToClient(json.dumps({"listener": "challengeAccepted", "detail" : {"playerName" : "Frank Noorlander", "gameName" : "TicTacToe"}}))
