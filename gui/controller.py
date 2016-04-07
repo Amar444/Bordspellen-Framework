@@ -6,14 +6,17 @@ NOTE:
 this is the beginning of the much needed refactor. What still needs to be done before it can be reviewed:
 - Add comments/documentation
 - implement the OK and ERR response from the server
-- maybe create a class that represents the get and send command for everye command (get_playerlist, get_gamelist,
-send_playerlist, send_gamelist). But this will be decided once the OK and ERR responses are implemented
+- maybe create a class that represents the get and send command for every command (get_playerlist, get_gamelist,
+  send_playerlist, send_gamelist). But this will be decided once the OK and ERR responses are implemented.
+  Then making an object from this class should be enough to be added in the handle_message, handle_svr and get_* and
+  send_*
 """
 
 
 class GUIController:
     gui = None
     client = None
+    nickname = None
 
     def __init__(self, gui):
         super().__init__()
@@ -31,10 +34,14 @@ class GUIController:
 
         if command == 'login':
             self.login(message['nickname'])
+        elif command == 'logout':
+            self.logout()
         elif command == 'playerlist':
             self.get_playerlist()
         elif command == 'gamelist':
             self.get_gamelist()
+        elif command == 'challange':
+            self.create_challange(message['playername'], message['gamename'], message['turntime'])
         else:
             print("Command not recognized. Command: " + command)
 
@@ -75,26 +82,35 @@ class GUIController:
         else:
             print("Return value not recognized. Value: " + value)
 
-    def send_to_gui(self, listener, details):
+    def send_to_gui(self, listener, details, status):
         self.gui.send_to_client(json.dumps(
             {
                 'listener': listener,
                 'detail': details,
-                'status': {
-                    'status': 'OK',
-                    'message': ''
-                }
+                'status': status
             }
         ))
 
+    def logout(self):
+        self.client.send(OutgoingCommand('logout'))
+
     def get_playerlist(self):
-        self.client.send(OutgoingCommand('get playerlist'))
+        self.client.send(OutgoingCommand('get', 'playerlist'))
 
     def send_playerlist(self, playerlist):
-        self.send_to_gui('playerList', {'players': playerlist})
+        self.send_to_gui('playerList', {'players': playerlist}, {'status': 'OK', 'message': ''})
 
     def get_gamelist(self):
-        self.client.send(OutgoingCommand('get gamelist'))
+        self.client.send(OutgoingCommand('get', 'gamelist'))
 
     def send_gamelist(self, gamelist):
-        self.send_to_gui('gameList', {'games': gamelist})
+        self.send_to_gui('gameList', {'games': gamelist}, {'status': 'OK', 'message': ''})
+
+    def create_challange(self, player, game, turntime):
+        self.client.on('OK', self.handle_ok)
+        self.client.on('ERR', self.handle_ok)
+        self.client.send(OutgoingCommand('challenge', '"' + player + '"', '"' + game + '"', '"' + turntime + '"'), {'status': 'OK', 'message': ''})
+
+    def handle_ok(self, data):
+        print(data.raw)
+

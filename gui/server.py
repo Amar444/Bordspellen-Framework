@@ -16,33 +16,34 @@ from gui.controller import GUIController
 class WebsocketConnection(tornado.websocket.WebSocketHandler):
     """ Every new connection becomes an instance of this class """
 
-    client = None
+    controller = None
     name = None
 
     def open(self, name):
         """ Method for a new connection. Subscribe to list. """
         RunServer.connection.append(self)
-        self.client = RunServer.get_client_player(name)
+        self.controller = RunServer.get_client_player(name)
 
     def on_message(self, message):
         """ Method for an incomming message """
-        self.client.handle_message(message)
+        self.controller.handle_message(message)
 
     def on_close(self):
         """ Method on closing the connection. Removes from list. """
         RunServer.connection.remove(self)
-        if self.client.nickname is not None:
-            RunServer.inactive_clients[self.client.nickname] = self
+        if self.controller.nickname is not None:
+            RunServer.inactive_clients[self.controller.nickname] = self
 
-            lc = LoginChecker(self.client.nickname)
-            lc.start();
+            lc = LoginChecker(self.controller.nickname)
+            lc.start()
 
     def check_origin(self, origin):
         """ Method for connection handshake. """
         return True
 
+
 class LoginChecker(threading.Thread):
-    name = None;
+    name = None
 
     def __init__(self, name_player):
         super().__init__()
@@ -51,7 +52,7 @@ class LoginChecker(threading.Thread):
     def run(self):
         time.sleep(10)
         if self.name in RunServer.inactive_clients:
-            RunServer.clients[self.name].handle_message("{'command' : 'logout'}")
+            RunServer.clients[self.name].handle_message('{"command": "logout"}')
             print("Logging out user: " + self.name)
             del RunServer.clients[self.name]
             del RunServer.inactive_clients[self.name]
