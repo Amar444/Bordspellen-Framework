@@ -205,12 +205,12 @@ class CommandCreateChallange(Command):
     def handle_ok(self, data):
         """ if calling out the challenge succeeded, tell it to the GUI """
         super().handle_ok(data)
-        self.send_to_gui('')
+        self.send_to_gui()
 
     def handle_err(self, data):
         """ if an error occurred send a response to the GUI """
         super().handle_ok(data)
-        self.send_to_gui('')
+        self.send_to_gui()
         self.destroy()
 
     def handle_svr(self, data):
@@ -219,9 +219,9 @@ class CommandCreateChallange(Command):
             self.send_to_gui(data.arguments[1])
             self.destroy()
 
-    def send_to_gui(self, challenge):
+    def send_to_gui(self):
         """ let the GUI know that the challenge has been send or not """
-        self.controller.send_to_gui('challenge', {'': challenge}, self.status['status'], self.status['message'])
+        self.controller.send_to_gui('challenge', {}, self.status['status'], self.status['message'])
 
     def destroy(self):
         """ 'unsubscibe' from the server command because we handled it, no need to stay informed about it """
