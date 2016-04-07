@@ -8,8 +8,7 @@ import socket
 
 from threading import Thread
 from exceptions import InvalidCommandException
-from utils import parse_fakeson
-
+from utils import parse_fakeson, EventEmitter
 
 EVENT_CONNECTED = '_CONNECTED'
 EVENT_CONNECT_ERR = '_CONNECT_ERR'
@@ -76,15 +75,15 @@ class IncomingCommand(BaseCommand):
         return self.raw
 
 
-class Client(object):
+class Client(EventEmitter):
     """ Used for communicating between the server and the local application """
 
     def __init__(self):
+        super().__init__()
         self.endpoint = ('localhost', 7789)
         self.thread = None
         self.running = False
         self.connection = None
-        self.listeners = {}
 
     def connect(self, endpoint=None):
         """ Initializes a new connection to a server at the specified endpoint """
@@ -102,7 +101,7 @@ class Client(object):
             self._setup()
             self._listen()
         except Exception as e:
-            self.emit(EVENT_CONNECT_ERR, e)
+            self.emit_event(EVENT_CONNECT_ERR, e)
             print("Could not connect to {} on port {}".format(self.endpoint[0], self.endpoint[1]))
 
         self.running = False
@@ -124,14 +123,14 @@ class Client(object):
             if ignore <= 0:  # ignore the welcome message
                 ignore += 1
                 if ignore == 0:
-                    self.emit(EVENT_CONNECTED)
+                    self.emit_event(EVENT_CONNECTED)
                 continue
 
             # Try to parse the incoming commands and then emit them to all
             # listeners through the emit method
             try:
                 cmd = IncomingCommand(raw)
-                self.emit(cmd.command, cmd)
+                self.emit_event(cmd.command, cmd)
             except Exception as e:
                 print("Could not process incoming command due to: {}", e)
 
@@ -139,28 +138,6 @@ class Client(object):
         """ Reads from the socket and yields all incoming data back to the caller """
         for line in self.connection.makefile('r'):
             yield line[:-1]
-
-    def emit(self, event_name, data=None):
-        """ Emits an event to all listening handlers """
-        if event_name in self.listeners:
-            for handler in self.listeners[event_name]:
-                try:
-                    Thread(target=handler, args=(data,)).run()
-                except Exception as e:
-                    print("Could not emit event {} to one of the listeners due to: {}".format(event_name, e))
-
-    def on(self, event_name, handler):
-        """ Subscribe for a specific event """
-        # todo: make this thread safe!!!
-        if event_name not in self.listeners:
-            self.listeners[event_name] = []
-        self.listeners[event_name].append(handler)
-
-    def off(self, event_name, handler):
-        """ unSubscribe for a specific event """
-        # todo: make this thread safe!!!
-        if event_name in self.listeners and handler in self.listeners[event_name]:
-            self.listeners[event_name].remove(handler)
 
     def send(self, command):
         """ Sends an OutgoingCommand instance into the server """
