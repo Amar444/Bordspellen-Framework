@@ -16,6 +16,8 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     def play(self):
         """ Picks the best move, updates the board and prints the move to the the console """
         super().play()
+        if self.game.get_legal_moves(self) == 0:
+            return
         self.setup()
         self.do_move()
         print("AI placed {} on coords {},{}\n\n".format(self.name, self.board.last_turn[0], self.board.last_turn[1]))
