@@ -85,16 +85,20 @@ class ClientPlayer(Client):
         self.run_server = run_server
 
     def handle_message(self, message):
-        action = str.split(message)[0]
+        try:
+            message = json.loads(str(message))
+        except Exception as e:
+            print("Could not convert JSON, exception: {}", e)
 
-        if action == 'login':
-            self.login(message[6:])
-        elif action == 'playerlist':
+        command = message['command']
+        if command == 'login':
+            self.login(message['nickname'])
+        elif command == 'playerlist':
             self.get_playerlist()
-        elif action == 'gamelist':
+        elif command == 'gamelist':
             self.get_gamelist()
         else:
-            print(message)
+            print("Command not recognized. Command: " + command)
 
     def login(self, nickname):
         self.on(EVENT_CONNECTED, self.on_connected)
@@ -143,17 +147,6 @@ class ClientPlayer(Client):
             games = data.raw[14:-1]
             games = games.replace('"', '')
             games = games.split(', ')
-
-            print(
-                json.dumps(
-                    {
-                        'listener': 'gameList',
-                        'detail': {
-                            'games': games
-                        }
-                    }
-                )
-            )
 
             self.run_server.sendToClient(json.dumps(
                 {
