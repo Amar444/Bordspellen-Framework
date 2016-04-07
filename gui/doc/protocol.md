@@ -13,7 +13,17 @@ GUI CALLS:
 -----
 ```
 GUI -> : { "command": "playerlist"}
-GUI <- : {'detail': {'players': ['henk', 'Jur', 'Johankladder']}, 'listener': 'playerList'}
+GUI <- :
+     {
+        'detail': {
+        'players': ['henk', 'Jur', 'Johankladder']
+     },
+        'listener': 'playerList',
+        'status': {
+            'status': <status>,
+            'message': <message>
+        }
+    }
 ```
 - The 'listener' entry in the return JSON String is the listener that needs to be invoked when
 the GUI received the response of the server.
@@ -47,12 +57,24 @@ GUI -> :{ "command": "challenge",
             "gamename" : <gameName>,
             "turntime" : <n>
             }
-GUI <- : OK
+
+GUI <- :    {
+                'status': {
+                    'status': <status>,
+                    'message': <message>
+                },
+                'listener': 'challengeListener'
+            }
 ```
 - In this protocol the turn time does'nt need to be set, but the key will always be included.
 When n is not included, than n will always be null.
 - N will be always filled in without quotation's marks, since it will be handled by the external
 server as an Integer.
+- The server returns the details of this request. With this returned request,
+the server will also send a listener that needs to be invoked after the request was completed or
+when an error occurred.
+- The message contains the reason why this request could'nt be accepted. Message does'nt needs
+to be set, so can also be null.
 
 <br>
 <br>
@@ -68,12 +90,21 @@ GUI -> : {
             "command" : "accept",
             "challenge" : <challengeNumber>
           }
-GUI <- : OK / ERR
+
+GUI <- :    {
+                'listener': 'acceptListener',
+                'status': {
+                    'status': <status>,
+                    'message': <message>
+                }
+            }
 ```
 
 - Whereas n is the challenge number the GUI likes to accept.
-- Response OK, when the 'challenge-accept' is a valid command at the time of sending.
-- Response ERR, when the challenged can't be found.
+- The response of the server includes the details of the 'request' and a listener. This
+listener will be invoked when the accept-request was accepted by the main-server.
+- The message contains the reason why this request could'nt be accepted. Message does'nt needs
+to be set, so can also be null.
 
 <br>
 
@@ -110,6 +141,7 @@ the GUI received the response of the server.
 
 #### Game update
 
+- [ROW/ COLUMN  -> 0/2]
 ---
 ```json
 {
