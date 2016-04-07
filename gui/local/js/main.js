@@ -110,7 +110,11 @@ var view = {
 view.frameContent.classList.remove('hideElem');
 view.frameBackground.classList.remove('hideElem');
 
-window.playAudio = new Audio('sounds/sound.mp3');
+if(typeof window.song !== "undefined") {
+  window.playAudio = new Audio('sounds/' + window.song);
+} else {
+  window.playAudio = new Audio('sounds/sound.mp3');
+}
 window.playAudio.addEventListener('ended', function() {
     this.currentTime = 0;
     this.play();
