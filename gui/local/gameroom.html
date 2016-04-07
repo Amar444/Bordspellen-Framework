@@ -150,10 +150,10 @@
         var player = $(".screen-1").find("#remotePlayer").html(),
             game = app._utilities.storage.get("selectedGame"),
             turntime = $("#turntimechallenge").val();
-            stringProtocol = protocol.createParser.createChallenge(player, game, turntime);
 
-        if (stringProtocol !== null) {
-          window.activeWebSocket.send(stringProtocol);
+          window.activeWebSocket.send('{ "command": "challenge", "playername": "' + player + '",
+            "gamename" : "' + game + '",
+            "turntime" : ' + turntime + '}');
           window.selectedPlayer = player;
           window.selectedGame = game;
         }
