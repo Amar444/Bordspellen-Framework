@@ -32,29 +32,31 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
 
     def do_move(self):
         """ Attempts to calculate the best move and update the board accordingly """
-        best_move = self.calc_best_move(self)
-        self.game.execute_move(self, best_move.row, best_move.col)
+        print(self.game.get_legal_moves(self))
+        best_move = self.calc_best_move(self, 6)
+        print(self.game.board.__str__() == self.board.__str__())
+        self.game.execute_move(self, best_move.row, best_move.column)
 
     def calc_best_move(self, player, depth: int):
         """ Find best move for winning the game """
         if depth == 0:
             # return board value if max depth is reached
             return Best(self.calc_value(player, self.board_value_method))
-        if self.board.get_value() == _UNCLEAR:
-            best_reply = Best(99,0,0) if player == self.opponent else Best(0,0,0)
+        if self.game.status == _UNCLEAR:
+            best_reply = None
             # iterate over all possible moves
-            board_state = copy.deepcopy(self.board.state)
+            board_state = copy.deepcopy(self.game.board.state)
             if not self.game.has_legal_moves(player):
                 # skip if no possible moves
                 return self.calc_best_move(self if player == self.opponent else self.opponent, depth-1)
             for move in self.game.iterate_legal_moves(player):
                 self.game.execute_move(player, move[0], move[1])
                 reply = self.calc_best_move(self if player == self.opponent else self.opponent, depth-1)
-                self.board.state = board_state
+                self.game.board.state = board_state
                 # set as best reply if lowest or highest value
-                if (player == self and reply.val > best_reply.val) or \
+                if (best_reply is None or player == self and reply.val > best_reply.val) or \
                         (player == self.opponent and reply.val < best_reply.val):
-                    best_reply = reply
+                    best_reply = Best(reply.val, move[0], move[1])
             return best_reply
 
         else:
@@ -64,4 +66,4 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     def calc_value(self, player, method: str):
         # greedy board value for minimax, You want max stones, opponent wants you to have min stones
         if method == "greedy":
-            return self.game.get_score(self)
+            return self.game.scores[0 if self == self.game.players[0] else 1]
