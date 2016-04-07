@@ -78,7 +78,7 @@
 
       if(name !== "") {
         var dest = $(this).attr('data-destination');
-        window.activeWebSocket.send("login " + name);
+        window.activeWebSocket.send('{ "command": "login", "nickname": "' + name + '"}');
       } else {
         $("#name").addClass("wrongInput");
         setTimeout(function() {
