@@ -92,11 +92,11 @@ GUI -> : {
           }
 
 GUI <- :    {
+                'listener': 'acceptListener',
                 'status': {
                     'status': <status>,
                     'message': <message>
-                },
-                'listener': 'acceptListener'
+                }
             }
 ```
 
