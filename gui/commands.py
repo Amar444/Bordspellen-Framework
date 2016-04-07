@@ -1,4 +1,4 @@
-from gui.controller import *
+from gac.client import *
 
 class Command:
     command = None
