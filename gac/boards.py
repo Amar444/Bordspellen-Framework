@@ -46,9 +46,10 @@ class TwoDimensionalBoard(Board):
         """ Clears the board"""
         self.state = [[None for r in range(0, self.size[0])] for r in range(0, self.size[1])]
 
-    def is_available(self, x: int, y: int):
+    def is_available(self, x: int, y: int, check: bool=True):
         """ Returns whether a given spot on the board is available """
-        self.check_coordinates(x, y)
+        if check:
+            self.check_coordinates(x, y)
         return self.state[x][y] is None
 
     def set(self, x: int, y: int, value: any, check: bool=True):
@@ -58,9 +59,10 @@ class TwoDimensionalBoard(Board):
         self.state[x][y] = value
         self.last_turn = (x, y, value)
 
-    def get(self, x: int, y: int):
+    def get(self, x: int, y: int, check: bool=True):
         """ Returns the saved value from the board on the given X and Y positions """
-        self.check_coordinates(x, y)
+        if check:
+            self.check_coordinates(x, y)
         return self.state[x][y]
 
     def is_full(self):
@@ -68,11 +70,7 @@ class TwoDimensionalBoard(Board):
         Check whether the board is full. The method is doing this with checking the entries in the two arrays from
         the board and will directly return it's result when it finds out if there is still place for another move
         """
-        for j in range(self.size[0]):
-            for i in range(self.size[1]):
-                if self.state[j][i] is None:
-                    return False
-        return True
+        return not any(None in b for b in self.state)
 
     def __str__(self):
         """ Returns the current board as a string """
