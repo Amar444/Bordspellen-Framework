@@ -107,6 +107,7 @@ class Client(EventEmitter):
         self.running = False
 
     def _setup(self):
+        """ Sets up the initial connection the the remote server """
         # Connect to the remote server
         self.connection = socket.socket()
         self.connection.connect(self.endpoint)
@@ -115,6 +116,7 @@ class Client(EventEmitter):
         print("Connected to {} on port {}\n".format(self.endpoint[0], self.endpoint[1]))
 
     def _listen(self):
+        """ Listen for incoming commands and emit them through the EventEmitter """
         # Process incoming commands
         ignore = -2
         for raw in self._readcmd():
@@ -141,10 +143,11 @@ class Client(EventEmitter):
 
     def send(self, command):
         """ Sends an OutgoingCommand instance into the server """
+        print("C:", command)
         message = "{}\n".format(command)
-        print("C: {}".format(message)[:-1])
         self.connection.send(message.encode())
 
     def disconnect(self):
+        """ Disconnect from the remote server """
         self.connection.close()
         self.running = False
