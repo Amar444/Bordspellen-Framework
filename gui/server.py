@@ -10,7 +10,7 @@ import tornado.websocket
 import threading
 import time
 
-from gui.controller import GUIController
+from controller import GUIController
 
 
 class WebsocketConnection(tornado.websocket.WebSocketHandler):
