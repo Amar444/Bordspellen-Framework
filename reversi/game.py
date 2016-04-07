@@ -104,7 +104,7 @@ class ReversiGame(TurnBasedGame, BoardGame):
         rows, cols = self.board.size
         for row in range(rows):
             for col in range(cols):
-                if len(self.is_legal_move(player, col, row)) > 0:
+                if len(self.is_legal_move(player, row, col)) > 0:
                     yield (row, col)
 
     def get_legal_moves(self, player: Player):
