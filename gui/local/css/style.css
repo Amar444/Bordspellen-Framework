@@ -382,7 +382,7 @@ text-align:center;
 .reversion [data-position="55"]
 {border-right: 3px solid black; border-bottom: 3px solid black; padding: 10px;}
 
-.[data-position="8"],.reversion [data-position="16"],.reversion [data-position="24"] ,.reversion [data-position="32"],
+.reversion [data-position="8"],.reversion [data-position="16"],.reversion [data-position="24"] ,.reversion [data-position="32"],
 .reversion [data-position="40"],.reversion [data-position="48"],.reversion [data-position="56"]
 {border-bottom: 3px solid black; padding: 10px;}
 
