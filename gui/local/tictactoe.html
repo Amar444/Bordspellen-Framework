@@ -72,6 +72,14 @@
           </div>
         </div>
       </div>
+      <div class="message">
+        <div class="message-timer">
+          10
+        </div>
+        <div class="message-text">
+          It's your turn
+        </div>
+      </div>
     </div>
   </body>
   <script>
@@ -93,6 +101,7 @@
             $("#mute-button").attr("src", "img/mute.png");
         }
     }
+
 
 
 
@@ -119,7 +128,7 @@
     });
 
     // Place item on click in empty field position
-    $(document).on("click", "data-position]", function() {
+    $(document).on("click", "[data-position]", function() {
       var placed = $(this).attr("data-placed");
       if(placed == "") {
         $(this).attr("data-placed", "cross");

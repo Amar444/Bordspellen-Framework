@@ -63,6 +63,14 @@ var app = {
           "set" : function(name, value) {
             sessionStorage.setItem(name, value);
           }
+        },
+        getXY : function(pos, squareWidth) {
+           row = Math.floor((pos - 1) / squareWidth);
+           col = (pos - 1) % squareWidth;
+           return [row, col];
+        },
+        getPos : function(xy, squareWidth) {
+           return ((xy[0] * squareWidth) + 1) + (xy[1]);
         }
     },
   "main" : {
@@ -76,6 +84,25 @@ var app = {
         app._utilities.storage.set("musicTime", window.playAudio.currentTime);
         window.location=dest;
       }, 1000);
+    },
+    "setGameTimer" : function(message, timer, callback) {
+      $(function() {
+        $(".message-text").html(message);
+        $(".message-timer").html(timer);
+        $(".message").addClass('visible');
+        var i = setInterval(function() {
+          if(window.moveMade == true) {
+            timer = -1;
+          }
+          timer = timer - 1;
+          if(timer < 0) {
+            $(".message").removeClass("visible");
+            clearInterval(i);
+          } else {
+            $(".message-timer").html(timer);
+          }
+        }, 1000);
+      });
     }
   }
 };

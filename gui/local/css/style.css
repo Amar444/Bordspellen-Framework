@@ -333,6 +333,7 @@ text-align:center;
   height:100%;
   width:100%;
   position:relative;
+  background:;
 }
 .reversion-position {
   float:left;
@@ -366,32 +367,69 @@ text-align:center;
     100% {color: green;}
 }
 
-/* The element to apply the animation to */
+[data-position="1"],[data-position="2"],[data-position="3"],[data-position="4"],
+[data-position="5"],[data-position="6"],[data-position="7"] , .reversion [data-position="9"],
+.reversion [data-position="10"],.reversion [data-position="11"],.reversion [data-position="12"] ,.reversion [data-position="13"],
+.reversion [data-position="14"],.reversion [data-position="15"],.reversion [data-position="17"] ,.reversion [data-position="18"],
+.reversion [data-position="19"],.reversion [data-position="20"],.reversion [data-position="21"] ,.reversion [data-position="22"],
+.reversion [data-position="23"],.reversion [data-position="25"],.reversion [data-position="26"] ,.reversion [data-position="27"],
+.reversion [data-position="28"],.reversion [data-position="29"],.reversion [data-position="30"] ,.reversion [data-position="31"],
+.reversion [data-position="33"],.reversion [data-position="34"],.reversion [data-position="35"] ,.reversion [data-position="36"],
+.reversion [data-position="37"],.reversion [data-position="38"],.reversion [data-position="39"] ,.reversion [data-position="41"],
+.reversion [data-position="42"],.reversion [data-position="43"],.reversion [data-position="44"] ,.reversion [data-position="45"],
+.reversion [data-position="46"],.reversion [data-position="47"],.reversion [data-position="49"] ,.reversion [data-position="50"],
+.reversion [data-position="51"],.reversion [data-position="52"],.reversion [data-position="53"] ,.reversion [data-position="54"],
+.reversion [data-position="55"]
+{border-right: 3px solid black; border-bottom: 3px solid black; padding: 10px;}
 
-    [data-position="1"],[data-position="2"],[data-position="3"],[data-position="4"],
-    [data-position="5"],[data-position="6"],[data-position="7"] ,[data-position="9"],
-    [data-position="10"],[data-position="11"],[data-position="12"] ,[data-position="13"],
-    [data-position="14"],[data-position="15"],[data-position="17"] ,[data-position="18"],
-    [data-position="19"],[data-position="20"],[data-position="21"] ,[data-position="22"],
-    [data-position="23"],[data-position="25"],[data-position="26"] ,[data-position="27"],
-    [data-position="28"],[data-position="29"],[data-position="30"] ,[data-position="31"],
-    [data-position="33"],[data-position="34"],[data-position="35"] ,[data-position="36"],
-    [data-position="37"],[data-position="38"],[data-position="39"] ,[data-position="41"],
-    [data-position="42"],[data-position="43"],[data-position="44"] ,[data-position="45"],
-    [data-position="46"],[data-position="47"],[data-position="49"] ,[data-position="50"],
-    [data-position="51"],[data-position="52"],[data-position="53"] ,[data-position="54"],
-    [data-position="55"]
-    {border-right: 3px solid black; border-bottom: 3px solid black; padding: 10px;}
+.[data-position="8"],.reversion [data-position="16"],.reversion [data-position="24"] ,.reversion [data-position="32"],
+.reversion [data-position="40"],.reversion [data-position="48"],.reversion [data-position="56"]
+{border-bottom: 3px solid black; padding: 10px;}
 
-    [data-position="8"],[data-position="16"],[data-position="24"] ,[data-position="32"],
-    [data-position="40"],[data-position="48"],[data-position="56"]
-    {border-bottom: 3px solid black; padding: 10px;}
+.reversion [data-position="57"],.reversion [data-position="58"] ,.reversion [data-position="59"],.reversion [data-position="60"],
+.reversion [data-position="61"],.reversion [data-position="62"] ,.reversion [data-position="63"]
+{border-right: 3px solid black; padding: 10px;}
 
-    [data-position="57"],[data-position="58"] ,[data-position="59"],[data-position="60"],
-    [data-position="61"],[data-position="62"] ,[data-position="63"]
-    {border-right: 3px solid black; padding: 10px;}
-
-    [data-position="64"] {
-    padding: 10px;
+.reversion [data-position="64"] {
+padding: 10px;
 }
 
+.tictactoe [data-position="7"] {
+  border-bottom:0px;
+}
+.tictactoe [data-position="8"] {
+  border-right: 3px solid black;
+}
+.tictactoe [data-position="3"], .tictactoe [data-position="6"] {
+  border-right:0px;
+}
+
+.message {
+  position: fixed;
+  background: white;
+  right: -300px;
+  top: 50px;
+  box-shadow: 0px 3px 6px rgba(0,0,0,0.3);
+  transition:0.5s;
+  -webkit-transition:0.5s;
+}
+.message.visible {
+  right: 10px;
+}
+.message-timer {
+  float: left;
+  height: 60px;
+  font-size: 26px;
+  font-weight: bold;
+  width: 60px;
+  background: #eee;
+  border-right: 1px solid #CCC;
+  text-align: center;
+  line-height: 60px;
+  margin-right: 20px;
+}
+.message-text {
+  height: 60px;
+  width: 200px;
+  line-height: 60px;
+}

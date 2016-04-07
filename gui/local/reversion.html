@@ -69,16 +69,18 @@
       var dest = $(this).attr("data-destination");
       app.main.unloadPage(dest, this);
     });
-    //onderstaande functie plaats een </div>  direct na data-placed=,
-    window.onload = function() {
-        var wrapper = document.createElement("reversion");
-        wrapper.innerHTML
-        for (i = 1; i <= 64; i++) {
-            wrapper.innerHTML += '<div class=' + "reversion-position " +  'data-position=' + i +  ' data-placed= '+ '"" '+'>' + '<img src=' + "img/reversion-white.svg" + ' class=' + "circle" + '>' + '<img src=' + "img/reversion-black.svg" + ' class=' + "cross" + '>'
-        }
-        var container = document.getElementById("reversion")
-        container.appendChild(wrapper)
-    };
+
+
+    //onderstaande functie plaats een </div>  direct na data-placed=
+
+    $(window).load(function() {
+      var wrapper = $("<div class='reversion'></div>");
+
+      for (i = 1; i <= 64; i++) {
+          wrapper.append('<div class=' + "reversion-position " +  'data-position=' + i +  ' data-placed= '+ '"" '+'>' + '<img src=' + "img/reversion-white.svg" + ' class=' + "circle" + '>' + '<img src=' + "img/reversion-black.svg" + ' class=' + "cross" + '>');
+      }
+      $("#reversion").append(wrapper);
+    });
 
 
 
@@ -90,7 +92,7 @@
     });
 
     // Place item on click in empty field position
-    $(document).on("click", "data-position]", function() {
+    $(document).on("click", "[data-position]", function() {
       var placed = $(this).attr("data-placed");
       if(placed == "") {
         $(this).attr("data-placed", "cross");
