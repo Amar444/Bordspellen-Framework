@@ -1,6 +1,15 @@
+"""
+Provides classes for every implemented command that the GUI wants to do.
+"""
+
+"""
+#note: not all commands have documentation yet
+"""
+
 from gac.client import *
 
 class Command:
+    """ The super class of all commands. """
     command = None
     controller = None
     client = None
@@ -10,21 +19,34 @@ class Command:
     }
 
     def __init__(self, controller, client):
+        """
+        Initializes a command by letting it know of the controller that is using it and the client the command
+        should communicate with
+        """
         self.controller = controller
         self.client = client
 
     def send_to_server(self):
+        """
+        'subscribes' to the OK and ERR reaction from the server. Every command send to the server will reply
+        one of these
+        """
         self.client.on('OK', self.handle_ok)
         self.client.on('ERR', self.handle_err)
 
     def handle_ok(self, data):
+        """ sets the status if the server reaction was OK """
         self.status['status'] = 'success'
 
     def handle_err(self, data):
+        """ sets the status if the server reaction was ERR """
         self.status['status'] = 'error'
         self.status['message'] = data[0]
 
     def destroy(self):
+        """
+        should be called after a response is send to the GUI, 'unsubscribes' from the OK and ERR reaction of the server
+        """
         self.client.off('OK', self.handle_ok)
         self.client.off('ERR', self.handle_err)
 
