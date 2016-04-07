@@ -180,8 +180,8 @@ class CommandGamelist(Command):
         self.client.off('SVR', self.handle_svr)
 
 
-# NOTE: this command is not done yet!
 class CommandCreateChallange(Command):
+    """ Command to create a challenge """
     command = 'challenge'
 
     player = None
@@ -189,6 +189,7 @@ class CommandCreateChallange(Command):
     turntime = None
 
     def __init__(self, controller, client, message):
+        """ Initializes a command to challenge someone """
         super().__init__(controller, client)
         self.player = message['playername']
         self.game = message['gamename']
@@ -196,8 +197,8 @@ class CommandCreateChallange(Command):
         self.send_to_server()
 
     def send_to_server(self):
+        """ send the challenge to the server """
         super().send_to_server()
-        self.client.on('SVR', self.handle_svr)
         self.client.send(OutgoingCommand('challenge',
                                          '"' + self.player + '"', '"' + self.game + '"', '"' + self.turntime + '"',
                                          {'status': 'OK', 'message': ''}))
@@ -208,25 +209,14 @@ class CommandCreateChallange(Command):
         self.send_to_gui()
 
     def handle_err(self, data):
-        """ if an error occurred send a response to the GUI """
+        """ if an error occurred with creating a challenge send a response to the GUI """
         super().handle_ok(data)
         self.send_to_gui()
         self.destroy()
 
-    def handle_svr(self, data):
-        """ note: to be implemented right """
-        if data.arguments[0] == 'PLAYERLIST':
-            self.send_to_gui(data.arguments[1])
-            self.destroy()
-
     def send_to_gui(self):
         """ let the GUI know that the challenge has been send or not """
         self.controller.send_to_gui('challenge', {}, self.status['status'], self.status['message'])
-
-    def destroy(self):
-        """ 'unsubscibe' from the server command because we handled it, no need to stay informed about it """
-        super().destroy()
-        self.client.off('SVR', self.handle_svr)
 
 
 class CommandAcceptChallange(Command):
