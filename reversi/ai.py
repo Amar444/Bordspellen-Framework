@@ -8,7 +8,7 @@ from utils import Best
 class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     opponent = None
     board_value_method = "greedy"
-    _DEFAULT_DEPTH = 2
+    _DEFAULT_DEPTH = 4
 
     def __init__(self, game: ReversiGame, depth=_DEFAULT_DEPTH, *args, **kwargs):
         """ Initializes the AIPlayer instance """
@@ -61,7 +61,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
                 reply = self.calc_best_move(self if player == self.opponent else self.opponent, depth-1)
                 self.game.board.state = board_state
                 # set as best reply if lowest or highest value
-                if (best_reply is None or player == self and reply.val > best_reply.val) or \
+                if (best_reply is None or (player == self and reply.val > best_reply.val)) or \
                         (player == self.opponent and reply.val < best_reply.val):
                     best_reply = Best(reply.val, move[0], move[1])
             return best_reply

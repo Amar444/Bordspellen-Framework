@@ -136,13 +136,12 @@ class ReversiGame(TurnBasedGame, BoardGame):
 
     def next_turn(self):
         """ Check, for each turn, whether someone has won already """
-        print(self.status)
         if self.status != _UNCLEAR:
             if self.status == _PLAYER_TWO_WIN or self.status == _PLAYER_ONE_WIN:
                 self.is_playing = False
                 print("Game over! Player {} has won this round! with a score of {} to {}"
                       .format(self.players[0] if self.status == _PLAYER_ONE_WIN else
-                                                    self.players[1], self.scores[0], self.scores[1]))
+                              self.players[1], self.scores[0], self.scores[1]))
             elif self.status == _DRAW:
                 self.is_playing = False
                 print("Game over! It's a tie!")
