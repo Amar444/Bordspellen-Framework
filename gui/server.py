@@ -10,7 +10,7 @@ import tornado.websocket
 import threading
 import time
 
-from gac.players import ClientPlayer
+from gui.controller import GUIController
 
 
 class WebsocketConnection(tornado.websocket.WebSocketHandler):
@@ -22,8 +22,7 @@ class WebsocketConnection(tornado.websocket.WebSocketHandler):
     def open(self, name):
         """ Method for a new connection. Subscribe to list. """
         RunServer.connection.append(self)
-        self.client = RunServer.getClientPlayer(name)
-        print("Client connection established! Yeeeehaaaa!!")
+        self.client = RunServer.get_client_player(name)
 
     def on_message(self, message):
         """ Method for an incomming message """
@@ -32,18 +31,30 @@ class WebsocketConnection(tornado.websocket.WebSocketHandler):
     def on_close(self):
         """ Method on closing the connection. Removes from list. """
         RunServer.connection.remove(self)
-        RunServer.inactiveClients[self.name] = self
-        name = self.name
-        time.sleep(10)
-        if self.name in RunServer.inactiveClients:
-            print("Logging out user: " + name)
-            del RunServer.clients[name]
-            del RunServer.inactiveClients[name]
-            #self.client.logout()
+        if self.client.nickname is not None:
+            RunServer.inactive_clients[self.client.nickname] = self
+
+            lc = LoginChecker(self.client.nickname)
+            lc.start();
 
     def check_origin(self, origin):
         """ Method for connection handshake. """
         return True
+
+class LoginChecker(threading.Thread):
+    name = None;
+
+    def __init__(self, name_player):
+        super().__init__()
+        self.name = name_player
+
+    def run(self):
+        time.sleep(10)
+        if self.name in RunServer.inactive_clients:
+            RunServer.clients[self.name].handle_message("{'command' : 'logout'}")
+            print("Logging out user: " + self.name)
+            del RunServer.clients[self.name]
+            del RunServer.inactive_clients[self.name]
 
 
 class RunServer(threading.Thread):
@@ -52,31 +63,31 @@ class RunServer(threading.Thread):
     # The array that will hold all the active connections
     connection = []
     clients = {}
-    inactiveClients = {}
+    inactive_clients = {}
     instance = None
 
     @staticmethod
-    def setInstance(rs):
+    def set_instance(rs):
         RunServer.instance = rs
 
     @staticmethod
-    def getInstance():
+    def get_instance():
         return RunServer.instance
 
     @staticmethod
-    def getClientPlayer(name):
+    def get_client_player(name):
         if name in RunServer.clients and name != "":
-            if name in RunServer.inactiveClients:
-                del RunServer.inactiveClients[name]
+            if name in RunServer.inactive_clients:
+                del RunServer.inactive_clients[name]
             return RunServer.clients[name]
         else:
-            pl = ClientPlayer(RunServer.getInstance())
+            pl = GUIController(RunServer.get_instance())
             if name is not "":
                 RunServer.clients[name] = pl
             return pl
 
     @staticmethod
-    def setClientPlayer(player, name):
+    def set_client_player(player, name):
         RunServer.clients[name] = player
 
     @staticmethod
@@ -87,7 +98,7 @@ class RunServer(threading.Thread):
         tornado.ioloop.IOLoop.current().start()
 
     @staticmethod
-    def sendToClient(data):
+    def send_to_client(data):
         """ This method allows you to send messages to all subscribers """
         if(len(RunServer.connection) > 0) :
             for singleServer in RunServer.connection:

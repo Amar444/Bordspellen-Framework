@@ -1,8 +1,8 @@
 from gui.server import RunServer
-from gac.players import ClientPlayer
+from gui.controller import GUIController
 
 rs = RunServer()
-RunServer.setInstance(rs)
-cs = ClientPlayer(rs)
+RunServer.set_instance(rs)
+cs = GUIController(rs)
 
 rs.start()
