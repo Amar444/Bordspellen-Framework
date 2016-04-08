@@ -25,7 +25,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         if self.board.last_turn is None:
             return self.board.set(1, 1, self, False)
 
-        i, row, column = best_move = self.calc_best_move(self)
+        i, row, column = self.calc_best_move(self)
         self.board.set(row, column, self, False)
 
     def calc_best_move(self, player):
