@@ -1,5 +1,5 @@
 from boards import TwoDimensionalBoard
-from games import BoardGame, TurnBasedGame
+from games import BoardGame, TurnBasedGameController, GameController
 
 STATUS_UNCLEAR = 0
 STATUS_WINNER = 1
@@ -49,9 +49,17 @@ class TicTacToeBoard(TwoDimensionalBoard):
         return None
 
 
-class TicTacToeGame(TurnBasedGame, BoardGame):
+class TicTacToeGameController(TurnBasedGameController):
+    def next_turn(self):
+        super().next_turn()
+        self.game.next_turn()
+
+
+class TicTacToeGame(BoardGame):
     """ Represents TicTacToe game """
-    board = TicTacToeBoard()
+    name = "TicTacToe"
+    board_class = TicTacToeBoard
+    controller_class = TicTacToeGameController
 
     @property
     def state(self):
@@ -67,7 +75,6 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
 
     def next_turn(self):
         """ Check, for each turn, whether someone has won already """
-        super().next_turn()
         status = self.status
         if status != STATUS_UNCLEAR:
             print(self.board)

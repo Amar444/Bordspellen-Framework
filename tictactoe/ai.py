@@ -1,15 +1,9 @@
-from game import STATUS_WINNER, STATUS_DRAW, TicTacToeGame
+from game import STATUS_WINNER, STATUS_DRAW
 from players import BoardPlayerMixin, NamedPlayerMixin
-from utils import Best
 
 
 class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     opponent = None
-
-    def __init__(self, game: TicTacToeGame, *args, **kwargs):
-        """ Initializes the AIPlayer instance """
-        super().__init__(*args, **kwargs)
-        self.game = game
 
     def play(self):
         """ Picks the best move, updates the board and prints the move to the the console """

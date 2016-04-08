@@ -5,8 +5,8 @@ import time
 start = time.time()
 
 game = TicTacToeGame()
-game.set_players((AIPlayer(name="X", board=game.board, game=game),
-                  AIPlayer(name="O", board=game.board, game=game),))
+game.set_players((AIPlayer(name="X", game=game),
+                  AIPlayer(name="O", game=game),))
 game.play()
 
 end = time.time()
