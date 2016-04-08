@@ -8,36 +8,27 @@ from exceptions import *
 class Game(object):
     """ Provides you with the tools to set up a game """
 
+    players = ()
+    name = None
     is_playing = False
 
-    def play(self):
-        """ Starts playing the game until `is_playing` is set to False """
-        self.is_playing = True
-        while self.is_playing:
-            self.next_turn()
+    controller = None
+    controller_class = None
 
-    def next_turn(self):
-        """ Plays the next turn in the game """
-        pass
-
-
-class TurnBasedGame(Game):
-    """
-    Mixin for games that allows for handling turn-based games. You will be allowed to add
-    players to the game, which will be able to play the game on a turn-by-turn basis.
-    """
-
-    current_turn = 0
-    players = ()
+    def __init__(self, controller=None):
+        if controller is None:
+            self.controller = self.controller_class(self)
+        else:
+            self.controller = controller
 
     def set_players(self, players: tuple):
         """ Adds the given players to the game """
         self.players = players
 
-    def next_turn(self):
-        """ Plays the next turn in the game """
-        self.players[self.current_turn].play()
-        self.current_turn = 0 if self.current_turn == len(self.players) - 1 else self.current_turn + 1
+    def play(self):
+        """ Starts playing the game until `is_playing` is set to False """
+        self.is_playing = True
+        self.controller.play()
 
 
 class BoardGame(Game):
@@ -55,5 +46,25 @@ class BoardGame(Game):
     def play(self):
         if self.board is None:
             raise InvalidBoardException()
-
         super().play()
+
+
+class GameController(object):
+    pass
+
+
+class TurnBasedGameController(GameController):
+    current_turn = 0
+    game = None
+
+    def __init__(self, game):
+        self.game = game
+
+    def play(self):
+        while self.game.is_playing:
+            self.next_turn()
+
+    def next_turn(self):
+        """ Plays the next turn in the game """
+        self.game.players[self.current_turn].play()
+        self.current_turn = 0 if self.current_turn == len(self.game.players) - 1 else self.current_turn + 1
