@@ -70,9 +70,15 @@ class IncomingCommand(BaseCommand):
 class OkCommand(BaseCommand):
     type = 'OK'
 
+    def __str__(self):
+        return 'OK'
+
 
 class ErrCommand(BaseCommand):
     type = 'ERR'
 
     def __init__(self, details):
         self.arguments = [details]
+
+    def __str__(self):
+        return 'ERR {}'.format(self.arguments[0])
