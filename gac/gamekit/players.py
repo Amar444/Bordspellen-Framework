@@ -48,3 +48,13 @@ class NamedPlayerMixin(Player):
     def __str__(self):
         """ Returns the current player name """
         return self.name
+
+
+class ClientPlayerMixin(Player):
+    """ Player mixin that supports having a client associated with it """
+
+    client = None
+
+    def __init__(self, client, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.client = client
