@@ -18,7 +18,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     def play(self):
         """ Picks the best move, updates the board and prints the move to the the console """
         super().play()
-        if self.game.get_legal_moves(self) == 0:
+        if len(self.game.get_legal_moves(self)) == 0:
             return
         self.setup()
         self.do_move()
@@ -60,7 +60,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
                 reply = self.calc_best_move(self if player == self.opponent else self.opponent, depth-1)
                 self.game.board.state = board_state
                 # set as best reply if lowest or highest value
-                if (best_reply is None or player == self and reply.val > best_reply.val) or \
+                if (best_reply is None or (player == self and reply.val > best_reply.val)) or \
                         (player == self.opponent and reply.val < best_reply.val):
                     best_reply = Best(reply.val, move[0], move[1])
             return best_reply
