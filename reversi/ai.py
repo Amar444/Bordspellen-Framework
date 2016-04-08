@@ -4,16 +4,16 @@ from players import BoardPlayerMixin, NamedPlayerMixin
 from utils import Best
 
 
-
 class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     opponent = None
     board_value_method = "greedy"
-    _DEFAULT_DEPTH = 6
+    _DEFAULT_DEPTH = 4
 
     def __init__(self, game: ReversiGame, depth=_DEFAULT_DEPTH, *args, **kwargs):
         """ Initializes the AIPlayer instance """
         super().__init__(*args, **kwargs)
         self.game = game
+        self.depth = depth
 
     def play(self):
         """ Picks the best move, updates the board and prints the move to the the console """
