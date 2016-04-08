@@ -19,6 +19,8 @@ GUI <- :
             'status': <status>
             'message': <mesage>
             'playerName': <nickname>
+            'IP': <IP>
+            'port': <port>
         },
         'listener': 'playerList',
     }
