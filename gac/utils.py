@@ -1,6 +1,5 @@
 """ All kinds of utilities """
 from threading import Thread, Lock
-
 from pyparsing import *
 
 

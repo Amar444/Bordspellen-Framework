@@ -6,7 +6,7 @@ Might contain the connections between the local application and the GUI later
 import json
 import socket
 
-from threading import Thread
+from threading import Thread, Lock
 from exceptions import InvalidCommandException
 from utils import parse_fakeson, EventEmitter
 
@@ -84,6 +84,7 @@ class Client(EventEmitter):
         self.thread = None
         self.running = False
         self.connection = None
+        self.send_lock = Lock()
 
     def connect(self, endpoint=None):
         """ Initializes a new connection to a server at the specified endpoint """
@@ -122,7 +123,7 @@ class Client(EventEmitter):
         for raw in self._readcmd():
             print("S:", raw)
 
-            if ignore <= 0:  # ignore the welcome message
+            if ignore < 0:  # ignore the welcome message
                 ignore += 1
                 if ignore == 0:
                     self.emit_event(EVENT_CONNECTED)
@@ -141,13 +142,29 @@ class Client(EventEmitter):
         for line in self.connection.makefile('r'):
             yield line[:-1]
 
-    def send(self, command):
+    def send(self, command: OutgoingCommand, success: callable=None, fail: callable=None):
         """ Sends an OutgoingCommand instance into the server """
-        print("C:", command)
-        message = "{}\n".format(command)
-        self.connection.send(message.encode())
+        with self.send_lock:
+            print("C:", command)
+
+            message = "{}\n".format(command)
+            self.connection.send(message.encode())
+
+            def callback(method):
+                def hook(cmd):
+                    self.off('OK')
+                    self.off('ERR')
+                    method(cmd)
+                return hook
+
+            if success:
+                self.on('OK', callback(success))
+
+            if fail:
+                self.on('ERR', callback(fail))
 
     def disconnect(self):
         """ Disconnect from the remote server """
+        print("Disconnecting from {} on port {}".format(self.endpoint[0], self.endpoint[1]))
         self.connection.close()
         self.running = False
