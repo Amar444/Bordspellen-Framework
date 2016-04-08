@@ -3,100 +3,26 @@ Provides connection classes for use in communicating between the server and the 
 Might contain the connections between the local application and the GUI later
 """
 
-import json
 import socket
 
 from threading import Thread, Lock
-from exceptions import InvalidCommandException
-from utils import parse_fakeson, EventEmitter
+from client.commands import OkCommand, ErrCommand, IncomingCommand, OutgoingCommand
+from utils import EventEmitter
 
 EVENT_CONNECTED = '_CONNECTED'
 EVENT_CONNECT_ERR = '_CONNECT_ERR'
 EVENT_GAME = 'GAME'
 
-
-class BaseCommand(object):
-    """ Represents the base class for an incoming or outgoing command """
-
-    type = None
-    command = None
-    arguments = None
-
-    def __str__(self):
-        """ Serializes the command into a string """
-        if self.arguments is not None:
-            arguments = []
-            for arg in self.arguments:
-                if isinstance(arg, str):
-                    arguments.append(arg)
-                elif isinstance(arg, (tuple, list)):
-                    arguments.append(json.dumps(arg))
-                elif isinstance(arg, dict):
-                    buffer = '{'
-                    for k, v in arg.items():
-                        buffer += k + ': "' + v + "'"
-                    buffer += '}'
-                    arguments.append(buffer)
-            return "{} {}".format(self.command, " ".join(arguments))
-        return self.command
-
-    @property
-    def has_arguments(self):
-        """ Returns whether any arguments have been set """
-        return self.arguments is not None
-
-
-class OutgoingCommand(BaseCommand):
-    """ Represents a outgoing command """
-
-    def __init__(self, command: str, *args):
-        """ Initializes a new command """
-        self.command = command
-        if len(args) > 0:
-            self.arguments = args
-
-
-class IncomingCommand(BaseCommand):
-    """ Represents an incoming command """
-
-    raw = None
-
-    def __init__(self, raw: str):
-        """ Initializes a new command by parsing the incoming string """
-        self.raw = raw
-        try:
-            parsed = parse_fakeson(raw)
-            self.type = parsed[0]
-            if len(parsed) > 1:
-                self.command = parsed[1]
-                if len(parsed) > 2:
-                    self.arguments = parsed[2:]
-        except Exception as e:
-            raise InvalidCommandException(e)
-
-    def __str__(self):
-        """ Returns the original, raw command """
-        return self.raw
-
-
-class OkCommand(BaseCommand):
-    type = 'OK'
-
-
-class ErrCommand(BaseCommand):
-    type = 'ERR'
-
-    def __init__(self, details):
-        self.arguments = [details]
+DEFAULT_ENDPOINT = ('localhost', 7789)
 
 
 class Client(EventEmitter):
     """ Used for communicating between the server and the local application """
 
-
     def __init__(self):
         super().__init__()
-        self.endpoint = ('localhost', 7789)
+
+        self.endpoint = DEFAULT_ENDPOINT
         self.thread = None
         self.running = False
         self.connection = None
@@ -104,7 +30,7 @@ class Client(EventEmitter):
         self._sync_event = None
         self._send_lock = Lock()
 
-    def connect(self, endpoint=None):
+    def connect(self, endpoint: tuple=None):
         """ Initializes a new connection to a server at the specified endpoint """
         if endpoint is not None and len(endpoint) == 2:
             self.endpoint = endpoint
@@ -166,6 +92,7 @@ class Client(EventEmitter):
             yield line[:-1]
 
     def send_sync(self, command: OutgoingCommand):
+        """ Sends a command to the remote server and blocks the current thread waiting for an answer """
         lock = Lock()
         lock.acquire()
 
