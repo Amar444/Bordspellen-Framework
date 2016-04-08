@@ -12,11 +12,13 @@ from utils import parse_fakeson, EventEmitter
 
 EVENT_CONNECTED = '_CONNECTED'
 EVENT_CONNECT_ERR = '_CONNECT_ERR'
+EVENT_GAME = 'GAME'
 
 
 class BaseCommand(object):
     """ Represents the base class for an incoming or outgoing command """
 
+    type = None
     command = None
     arguments = None
 
@@ -64,9 +66,11 @@ class IncomingCommand(BaseCommand):
         self.raw = raw
         try:
             parsed = parse_fakeson(raw)
-            self.command = parsed[0]
+            self.type = parsed[0]
             if len(parsed) > 1:
-                self.arguments = parsed[1:]
+                self.command = parsed[1]
+                if len(parsed) > 2:
+                    self.arguments = parsed[2:]
         except Exception as e:
             raise InvalidCommandException(e)
 
@@ -75,8 +79,20 @@ class IncomingCommand(BaseCommand):
         return self.raw
 
 
+class OkCommand(BaseCommand):
+    type = 'OK'
+
+
+class ErrCommand(BaseCommand):
+    type = 'ERR'
+
+    def __init__(self, details):
+        self.arguments = [details]
+
+
 class Client(EventEmitter):
     """ Used for communicating between the server and the local application """
+
 
     def __init__(self):
         super().__init__()
@@ -84,7 +100,9 @@ class Client(EventEmitter):
         self.thread = None
         self.running = False
         self.connection = None
-        self.send_lock = Lock()
+
+        self._sync_event = None
+        self._send_lock = Lock()
 
     def connect(self, endpoint=None):
         """ Initializes a new connection to a server at the specified endpoint """
@@ -97,7 +115,6 @@ class Client(EventEmitter):
 
     def _run(self):
         """ This thread checks for incoming messages from the server """
-
         try:
             self._setup()
             self._listen()
@@ -109,12 +126,13 @@ class Client(EventEmitter):
 
     def _setup(self):
         """ Sets up the initial connection the the remote server """
-        # Connect to the remote server
-        self.connection = socket.socket()
-        self.connection.connect(self.endpoint)
+        with self._send_lock:
+            # Connect to the remote server
+            self.connection = socket.socket()
+            self.connection.connect(self.endpoint)
 
-        # Notify the console
-        print("Connected to {} on port {}\n".format(self.endpoint[0], self.endpoint[1]))
+            # Notify the console
+            print("Connected to {} on port {}\n".format(self.endpoint[0], self.endpoint[1]))
 
     def _listen(self):
         """ Listen for incoming commands and emit them through the EventEmitter """
@@ -132,8 +150,13 @@ class Client(EventEmitter):
             # Try to parse the incoming commands and then emit them to all
             # listeners through the emit method
             try:
-                cmd = IncomingCommand(raw)
-                self.emit_event(cmd.command, cmd)
+                if raw == 'OK':
+                    self.emit_event('OK', OkCommand())
+                elif len(raw) >= 3 and raw[:3] == 'ERR':
+                    self.emit_event('ERR', ErrCommand(raw[:3]))
+                else:
+                    cmd = IncomingCommand(raw)
+                    self.emit_event(cmd.command, cmd)
             except Exception as e:
                 print("Could not process incoming command due to: {}", e)
 
@@ -142,16 +165,35 @@ class Client(EventEmitter):
         for line in self.connection.makefile('r'):
             yield line[:-1]
 
+    def send_sync(self, command: OutgoingCommand):
+        lock = Lock()
+        lock.acquire()
+
+        def callback(e):
+            self._sync_event = e
+            lock.release()
+
+        self.send(command, success=callback, fail=callback)
+
+        lock.acquire()
+        lock.release()
+
+        return self._sync_event
+
     def send(self, command: OutgoingCommand, success: callable=None, fail: callable=None):
         """ Sends an OutgoingCommand instance into the server """
-        with self.send_lock:
-            print("C:", command)
+        self._send_lock.acquire()
+        print("C:", command)
 
-            message = "{}\n".format(command)
-            self.connection.send(message.encode())
+        message = "{}\n".format(command)
+        self.connection.send(message.encode())
 
+        if not success and not fail:
+            self._send_lock.release()
+        else:
             def callback(method):
                 def hook(cmd):
+                    self._send_lock.release()
                     self.off('OK')
                     self.off('ERR')
                     method(cmd)
