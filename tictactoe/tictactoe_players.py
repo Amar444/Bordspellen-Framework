@@ -1,5 +1,6 @@
-from players import BoardPlayerMixin, NamedPlayerMixin, ClientPlayerMixin
 from threading import Condition
+
+from gamekit.players import BoardPlayerMixin, NamedPlayerMixin, ClientPlayerMixin
 
 """
 Assembles and implements player classes for the TicTacToe game

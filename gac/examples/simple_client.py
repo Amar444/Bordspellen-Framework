@@ -1,5 +1,6 @@
 import time
-from client import Client, EVENT_CONNECTED, OutgoingCommand
+from client import Client, EVENT_CONNECTED
+from client.commands import OutgoingCommand
 
 print("Warning: this will loop forever waiting for incoming messages")
 print("from the server. You may want to stop this script using Ctrl-C")

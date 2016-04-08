@@ -1,6 +1,7 @@
+from gamekit.players import Player, BoardPlayerMixin, NamedPlayerMixin
+
 from game import TicTacToeGame
 from ai import AIPlayer
-from players import Player, BoardPlayerMixin, NamedPlayerMixin
 
 
 class DemoCliPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):

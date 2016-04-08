@@ -4,10 +4,10 @@ Unit Tests for the GAC framework
 
 import unittest
 
-from boards import TwoDimensionalBoard
-from client import OutgoingCommand, IncomingCommand
+from gamekit.boards import TwoDimensionalBoard
+from gamekit.games import TurnBasedGame
+from client.commands import OutgoingCommand, IncomingCommand
 from exceptions import InvalidCoordinatesException
-from games import Game
 
 
 class TestBoards(unittest.TestCase):
@@ -41,7 +41,7 @@ class TestGames(unittest.TestCase):
         """ Tests functionality of the base game class """
 
         # This is a mock class - we'll use it to test the Game class
-        class TestGameMock(Game):
+        class TestGameMock(TurnBasedGame):
             turn_ok = False
 
             def next_turn(self):
@@ -76,14 +76,14 @@ class TestClient(unittest.TestCase):
         self.assertTrue(cmd.has_arguments)
 
         # Test parsing commands from the server
-        cmd = IncomingCommand('UT')
-        self.assertEqual(str(cmd), 'UT')
+        cmd = IncomingCommand('SRV UT')
+        self.assertEqual(str(cmd), 'SRV UT')
         self.assertEqual(cmd.command, 'UT')
         self.assertIsNone(cmd.arguments)
         self.assertFalse(cmd.has_arguments)
 
-        cmd = IncomingCommand('UT GAME ["example1", "example2"]')
-        self.assertEqual(str(cmd), 'UT GAME ["example1", "example2"]')
+        cmd = IncomingCommand('SRV UT GAME ["example1", "example2"]')
+        self.assertEqual(str(cmd), 'SRV UT GAME ["example1", "example2"]')
         self.assertEqual(cmd.command, 'UT')
         self.assertEqual(cmd.arguments[0], 'GAME')
         self.assertEqual(cmd.arguments[1], ['example1', 'example2'])

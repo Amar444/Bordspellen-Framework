@@ -1,4 +1,5 @@
-from client import Client, EVENT_CONNECTED, OutgoingCommand
+from client import Client, EVENT_CONNECTED
+from client.commands import OutgoingCommand
 import time
 
 

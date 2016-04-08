@@ -4,10 +4,8 @@ on how to use the basic Player and Board classes to create a basic game with jus
 a few lines of code.
 """
 
-
-from games import *
-from boards import TwoDimensionalBoard
-from players import BoardPlayerMixin, NamedPlayerMixin
+from gamekit.boards import TwoDimensionalBoard
+from gamekit.players import BoardPlayerMixin, NamedPlayerMixin
 
 
 class DemoBoard(TwoDimensionalBoard):

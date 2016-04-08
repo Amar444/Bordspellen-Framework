@@ -3,8 +3,9 @@ Unit Tests for the TicTacToe implementation
 """
 
 import unittest
+
 from game import TicTacToeGame, STATUS_WINNER, STATUS_UNCLEAR, STATUS_DRAW
-from players import Player, BoardPlayerMixin, NamedPlayerMixin
+from gamekit.players import BoardPlayerMixin, NamedPlayerMixin
 
 
 class TestPlayer(NamedPlayerMixin, BoardPlayerMixin):
@@ -24,8 +25,8 @@ class TestTicTacToe(unittest.TestCase):
 
         self.game = TicTacToeGame()
 
-        self.p1 = TestPlayer(name="X", board=self.game.board)
-        self.p2 = TestPlayer(name="O", board=self.game.board)
+        self.p1 = TestPlayer(name="X", game=self.game)
+        self.p2 = TestPlayer(name="O", game=self.game)
 
         self.game.set_players((self.p1, self.p2))
 
