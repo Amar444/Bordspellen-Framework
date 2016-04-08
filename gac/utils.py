@@ -24,7 +24,7 @@ class EventEmitter(object):
         if event_name in self.listeners:
             for handler in self.listeners[event_name]:
                 try:
-                    Thread(target=handler, args=(data,)).run()
+                    Thread(target=handler, args=(data,)).start()
                 except Exception as e:
                     print("Could not emit event {} to one of the listeners due to: {}".format(event_name, e))
 
