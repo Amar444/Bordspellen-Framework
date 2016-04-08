@@ -37,7 +37,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         best_move = self.calc_best_move(self, self.depth)
         print(self.game.board.__str__())
         print(self.game.get_legal_moves(self))
-        self.game.execute_move(self, best_move.row, best_move.column)
+        self.game.execute_move(self, best_move.row, best_move.column, False)
         print("AI placed {} on coords {},{}\n\n".format(self.name, best_move.row, best_move.column))
 
     def calc_best_move(self, player, depth: int):
@@ -56,7 +56,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
                 for row in range(len(board_state)):
                     for element in self.game.board.state[row]:
                         board_state[row].append(element)
-                self.game.execute_move(player, move[0], move[1])
+                self.game.execute_move(player, move[0], move[1], False)
                 reply = self.calc_best_move(self if player == self.opponent else self.opponent, depth-1)
                 self.game.board.state = board_state
                 # set as best reply if lowest or highest value

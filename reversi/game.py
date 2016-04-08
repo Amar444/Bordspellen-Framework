@@ -117,12 +117,12 @@ class ReversiGame(TurnBasedGame, BoardGame):
         for move in self.iterate_legal_moves(player):
             return True
 
-    def execute_move(self, player, row, col):
+    def execute_move(self, player, row, col, check: bool=True):
         """ Places a stone on the board and flips the opponents stones"""
         directions = self.is_legal_move(player, row, col)
         if len(directions) == 0:
             raise ValueError("{} is not allowed to play at {},{} at this time.".format(player, row, col))
-        self.board.set(row, col, player)
+        self.board.set(row, col, player, check)
         for direction in directions:
             for distance in range(max(self.board.size)):
                 col_to_change = col + (distance + 1) * _DIRECTIONS[direction][1]
@@ -132,7 +132,7 @@ class ReversiGame(TurnBasedGame, BoardGame):
                 elif self.board.get(row_to_change, col_to_change) is None:
                     print("How the hell did you get here?")
                 else:
-                    self.board.set(row_to_change, col_to_change, player)
+                    self.board.set(row_to_change, col_to_change, player, check)
 
     def next_turn(self):
         """ Check, for each turn, whether someone has won already """
