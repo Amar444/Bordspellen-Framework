@@ -1,4 +1,5 @@
 """ Provides tools to enforce game rules and keep track of the game """
+import time
 
 from boards import TwoDimensionalBoard
 from games import BoardGame, TurnBasedGame
@@ -165,6 +166,8 @@ class ReversiGame(TurnBasedGame, BoardGame):
 
     def next_turn(self):
         """ Check, for each turn, whether someone has won already """
+        current_milli_time = lambda: int(round(time.time() * 1000))
+        start = current_milli_time()
         status = self.status
         if status != _UNCLEAR:
             if status == _PLAYER_TWO_WIN or status == _PLAYER_ONE_WIN:
@@ -177,3 +180,5 @@ class ReversiGame(TurnBasedGame, BoardGame):
                 self.is_playing = False
                 print("Game over! It's a tie!")
         super().next_turn()
+        end = current_milli_time()
+        print("Turn took {} seconds".format(float(end-start)/1000.0))
