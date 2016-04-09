@@ -7,10 +7,8 @@ from game import TicTacToeGame, STATUS_WINNER, STATUS_UNCLEAR, STATUS_DRAW
 from players import Player, BoardPlayerMixin, NamedPlayerMixin
 
 
-class TestPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):
-    """ Create player to test with """
-    def play(self):
-        super().play()
+class TestPlayer(NamedPlayerMixin, BoardPlayerMixin):
+    pass
 
 
 class TestTicTacToe(unittest.TestCase):
@@ -26,8 +24,8 @@ class TestTicTacToe(unittest.TestCase):
 
         self.game = TicTacToeGame()
 
-        self.p1 = TestPlayer(name="X", board=self.game.board)
-        self.p2 = TestPlayer(name="O", board=self.game.board)
+        self.p1 = TestPlayer(name="X", game=self.game)
+        self.p2 = TestPlayer(name="O", game=self.game)
 
         self.game.set_players((self.p1, self.p2))
 
@@ -43,7 +41,7 @@ class TestTicTacToe(unittest.TestCase):
         self.game.board.set(2, 0, self.p2)
         self.game.board.set(0, 1, self.p1)
 
-        self.assertEqual(self.game.has_won_horizontal(self.p1), True)
+        self.assertEqual(self.game.board.winner_horizontal, self.p1)
 
     def test_win_vertical(self):
         """ Test winning vertical """
@@ -53,7 +51,7 @@ class TestTicTacToe(unittest.TestCase):
         self.game.board.set(2, 0, self.p2)
         self.game.board.set(1, 1, self.p1)
 
-        self.assertEqual(self.game.has_won_vertical(self.p1), True)
+        self.assertEqual(self.game.board.winner_vertical, self.p1)
 
     def test_win_diagonal1(self):
         """ Test winning diagonal / """
@@ -63,7 +61,7 @@ class TestTicTacToe(unittest.TestCase):
         self.game.board.set(2, 2, self.p2)
         self.game.board.set(1, 1, self.p1)
 
-        self.assertEqual(self.game.has_won_diagonal(self.p1), True)
+        self.assertEqual(self.game.board.winner_diagonal, self.p1)
 
     def test_win_diagonal2(self):
         """ Test winning diagonal \ """
@@ -73,7 +71,7 @@ class TestTicTacToe(unittest.TestCase):
         self.game.board.set(2, 0, self.p2)
         self.game.board.set(1, 1, self.p1)
 
-        self.assertEqual(self.game.has_won_diagonal(self.p1), True)
+        self.assertEqual(self.game.board.winner_diagonal, self.p1)
 
     def test_draw(self):
         """ Test draw """

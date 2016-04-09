@@ -1,4 +1,5 @@
-from gui.commands import *
+from client import Client
+from commands import *
 import json
 
 
