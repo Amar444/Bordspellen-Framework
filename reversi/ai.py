@@ -37,7 +37,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         _, best_row, best_column = self.calc_best_move(self, self.depth)
         print(self.game.board.__str__())
         print(self.game.get_legal_moves(self))
-        self.game.execute_move(self, best_row, best_column, False)
+        self.game.execute_move(self, best_row, best_column)
         print("AI placed {} on coords {},{}\n\n".format(self.name, best_row, best_column))
 
     def calc_best_move(self, player, depth: int):
@@ -52,7 +52,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
 
             for x, y in self.game.iterate_legal_moves(player):
                 has_legal_moves = True
-                moves = self.game.execute_move(player, x, y, False)
+                moves = self.game.execute_move(player, x, y)
                 val, _, _ = self.calc_best_move(self if player == self.opponent else self.opponent, depth-1)
 
                 for mx, my, previous in moves:

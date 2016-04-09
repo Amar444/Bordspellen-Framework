@@ -46,9 +46,10 @@ class TwoDimensionalBoard(Board):
         """ Clears the board"""
         self.state = [[None for r in range(0, self.size[0])] for r in range(0, self.size[1])]
 
-    def is_available(self, x: int, y: int):
+    def is_available(self, x: int, y: int, check: bool=True):
         """ Returns whether a given spot on the board is available """
-        self.check_coordinates(x, y)
+        if check:
+            self.check_coordinates(x, y)
         return self.state[x][y] is None
 
     def set(self, x: int, y: int, value: any, check: bool=True):

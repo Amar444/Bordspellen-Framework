@@ -86,34 +86,36 @@ class ReversiGame(TurnBasedGame, BoardGame):
 
     def is_legal_move(self, player: Player, row: int, col: int, just_check: bool=False):
         """Determine if the play on a square is an legal move"""
-        if not self.board.is_available(row, col):
+        rows, cols = self.board.size
+
+        if row < 0 or col < 0 or row >= rows or col >= cols or \
+                not self.board.is_available(row, col, False):
             return False if just_check else []
 
         state = self.board.state
         capture_directions = []
         max_board_size = self.max_board_size
 
-        for direction in range(len(_DIRECTIONS)):
+        for multiplier_row, multiplier_col in _DIRECTIONS:
             spotted_opponent = False
-            multiplier_row, multiplier_col = _DIRECTIONS[direction]
             for distance in range(1, max_board_size):
                 row_to_check = row + distance * multiplier_row
                 col_to_check = col + distance * multiplier_col
-                try:
-                    self.board.check_coordinates(row_to_check, col_to_check)
-                    stone = state[row_to_check][col_to_check]
-                    if not stone:
-                        break
-                    elif stone == player:
-                        if spotted_opponent:
-                            if just_check:
-                                return True
-                            capture_directions.append(direction)
-                        break
-                    else:
-                        spotted_opponent = True
-                except InvalidCoordinatesException:
+
+                if row_to_check < 0 or col_to_check < 0 or row_to_check >= rows or col_to_check >= cols:
                     break
+
+                stone = state[row_to_check][col_to_check]
+                if not stone:
+                    break
+                elif stone == player:
+                    if spotted_opponent:
+                        if just_check:
+                            return True
+                        capture_directions.append((multiplier_row, multiplier_col))
+                    break
+                else:
+                    spotted_opponent = True
 
         return False if just_check else capture_directions
 
@@ -135,7 +137,7 @@ class ReversiGame(TurnBasedGame, BoardGame):
         for move in self.iterate_legal_moves(player):
             return True
 
-    def execute_move(self, player, row, col, check: bool=True):
+    def execute_move(self, player, row, col):
         """ Places a stone on the board and flips the opponents stones"""
         directions = self.is_legal_move(player, row, col)
         state = self.board.state
@@ -145,14 +147,12 @@ class ReversiGame(TurnBasedGame, BoardGame):
 
         resets = [(row, col, state[row][col])]
         state[row][col] = player
+        max_distance = range(1, self.max_board_size)
 
-        for direction in directions:
-            for distance in range(max(self.board.size)):
-                col_to_change = col + (distance + 1) * _DIRECTIONS[direction][1]
-                row_to_change = row + (distance + 1) * _DIRECTIONS[direction][0]
-
-                if check:
-                    self.board.check_coordinates(row_to_change, col_to_change)
+        for dir_row, dir_col in directions:
+            for distance in max_distance:
+                row_to_change = row + distance * dir_row
+                col_to_change = col + distance * dir_col
 
                 current = state[row_to_change][col_to_change]
 
