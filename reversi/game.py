@@ -25,6 +25,14 @@ class ReversiBoard(TwoDimensionalBoard):
 class ReversiGame(TurnBasedGame, BoardGame):
     """ Represents Reversi game"""
     board_class = ReversiBoard
+    legal_move_cache = {}
+    _max_board_size = None
+
+    @property
+    def max_board_size(self):
+        if not self._max_board_size:
+            self._max_board_size = max(self.board.size) + 1
+        return self._max_board_size
 
     @property
     def status(self):
@@ -52,9 +60,11 @@ class ReversiGame(TurnBasedGame, BoardGame):
         player_one = self.players[0]
         player_two = self.players[1]
 
+        state = self.board.state
+
         for row in range(self.board.size[0]):
             for col in range(self.board.size[1]):
-                player = self.board.get(row, col)
+                player = state[row][col]
                 if player == player_one:
                     score_one += 1
                 elif player == player_two:
@@ -73,38 +83,45 @@ class ReversiGame(TurnBasedGame, BoardGame):
         self.board.set(3, 4, players[1])
         self.board.set(4, 3, players[1])
 
-    def is_legal_move(self, player: Player, row: int, col: int):
+    def is_legal_move(self, player: Player, row: int, col: int, just_check: bool=False):
         """Determine if the play on a square is an legal move"""
-        if self.board.is_available(row, col) is False:
-            return []
+        if not self.board.is_available(row, col):
+            return False if just_check else []
+
+        state = self.board.state
         capture_directions = []
+        max_board_size = self.max_board_size
+
         for direction in range(len(_DIRECTIONS)):
             spotted_opponent = False
-            for distance in range(max(self.board.size)):
-                row_to_check = row + (distance + 1) * _DIRECTIONS[direction][0]
-                col_to_check = col + (distance + 1) * _DIRECTIONS[direction][1]
+            multiplier_row, multiplier_col = _DIRECTIONS[direction]
+            for distance in range(1, max_board_size):
+                row_to_check = row + distance * multiplier_row
+                col_to_check = col + distance * multiplier_col
                 try:
                     self.board.check_coordinates(row_to_check, col_to_check)
-                    stone = self.board.get(row_to_check, col_to_check)
-                    if stone is None:
+                    stone = state[row_to_check][col_to_check]
+                    if not stone:
                         break
-                    elif stone == player and not spotted_opponent:
-                        break
-                    elif stone == player and spotted_opponent:
-                        capture_directions.append(direction)
+                    elif stone == player:
+                        if spotted_opponent:
+                            if just_check:
+                                return True
+                            capture_directions.append(direction)
                         break
                     else:
                         spotted_opponent = True
                 except InvalidCoordinatesException:
                     break
-        return capture_directions
+
+        return False if just_check else capture_directions
 
     def iterate_legal_moves(self, player: Player):
         """ Iterates on all moves for the given player and yields all legal moves """
         rows, cols = self.board.size
         for row in range(rows):
             for col in range(cols):
-                if len(self.is_legal_move(player, row, col)) > 0:
+                if self.is_legal_move(player, row, col, True):
                     yield (row, col)
 
     def get_legal_moves(self, player: Player):
@@ -120,28 +137,42 @@ class ReversiGame(TurnBasedGame, BoardGame):
     def execute_move(self, player, row, col, check: bool=True):
         """ Places a stone on the board and flips the opponents stones"""
         directions = self.is_legal_move(player, row, col)
+        state = self.board.state
+
         if len(directions) == 0:
             raise ValueError("{} is not allowed to play at {},{} at this time.".format(player, row, col))
-        self.board.set(row, col, player, check)
+
+        resets = [(row, col, state[row][col])]
+        state[row][col] = player
+
         for direction in directions:
             for distance in range(max(self.board.size)):
                 col_to_change = col + (distance + 1) * _DIRECTIONS[direction][1]
                 row_to_change = row + (distance + 1) * _DIRECTIONS[direction][0]
-                if self.board.get(row_to_change, col_to_change) == player:
+
+                if check:
+                    self.board.check_coordinates(row_to_change, col_to_change)
+
+                current = state[row_to_change][col_to_change]
+
+                if current == player:
                     break
-                elif self.board.get(row_to_change, col_to_change) is None:
-                    print("How the hell did you get here?")
-                else:
-                    self.board.set(row_to_change, col_to_change, player, check)
+                elif current is not None:
+                    resets.append((row_to_change, col_to_change, current))
+                    state[row_to_change][col_to_change] = player
+
+        return resets
 
     def next_turn(self):
         """ Check, for each turn, whether someone has won already """
-        if self.status != _UNCLEAR:
-            if self.status == _PLAYER_TWO_WIN or self.status == _PLAYER_ONE_WIN:
+        status = self.status
+        if status != _UNCLEAR:
+            if status == _PLAYER_TWO_WIN or status == _PLAYER_ONE_WIN:
                 self.is_playing = False
+                scores = self.scores
                 print("Game over! Player {} has won this round! with a score of {} to {}"
-                      .format(self.players[0] if self.status == _PLAYER_ONE_WIN else
-                              self.players[1], self.scores[0], self.scores[1]))
+                      .format(self.players[0] if status == _PLAYER_ONE_WIN else
+                              self.players[1], scores[0], scores[1]))
             elif self.status == _DRAW:
                 self.is_playing = False
                 print("Game over! It's a tie!")
