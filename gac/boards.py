@@ -7,13 +7,17 @@ base Board class.
 from exceptions import *
 
 class Board(object):
-    """ Represents an empty board """
+    """
+    Represents an empty board
+    """
 
     last_turn = None
     state = []
 
 class TwoDimensionalBoard(Board):
-    """ Represents a 2-dimensional board """
+    """
+    Represents a 2-dimensional board
+    """
 
     size = (0, 0)
 

@@ -2,7 +2,7 @@
 Games
 """
 
-from .boards import Board
+from boards import Board
 from exceptions import *
 
 class Game(object):

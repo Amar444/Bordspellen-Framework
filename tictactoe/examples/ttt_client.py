@@ -1,9 +1,8 @@
-from client import Client, EVENT_GAME, EVENT_CONNECTED
-from client.commands import OutgoingCommand
-from gamekit.players import Player, NamedPlayerMixin, BoardPlayerMixin
-
 from ai import AIPlayer
+
+from client import *
 from game import TicTacToeGame
+from players import Player, NamedPlayerMixin, BoardPlayerMixin
 
 
 class ClientPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):

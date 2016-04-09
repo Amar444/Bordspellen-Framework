@@ -1,5 +1,5 @@
-from gamekit.boards import TwoDimensionalBoard
-from gamekit.games import BoardGame, TurnBasedGame
+from boards import TwoDimensionalBoard
+from games import BoardGame, TurnBasedGame
 
 STATUS_UNCLEAR = 0
 STATUS_WINNER = 1
