@@ -51,7 +51,7 @@ class TicTacToeBoard(TwoDimensionalBoard):
 
 class TicTacToeGame(TurnBasedGame, BoardGame):
     """ Represents TicTacToe game """
-    name = "TicTacToe"
+    name = "Tic-tac-toe"
     board_class = TicTacToeBoard
 
     @property

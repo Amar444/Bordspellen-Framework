@@ -56,11 +56,11 @@ class TicTacToeClient(Client):
             if result.type == 'OK':
                 self.nickname = nickname
 
-        # e = self.send_sync(OutgoingCommand('SUBSCRIBE', self.game.name))
-        # if e.type == 'OK':
-        #     print("Waiting for a challenge...")
-        # else:
-        #     self.disconnect()
+        e = self.send_sync(OutgoingCommand('SUBSCRIBE', self.game.name))
+        if e.type == 'OK':
+            print("Waiting for a challenge...")
+        else:
+            self.disconnect()
 
     def on_game(self, e):
         if e.arguments[0] == 'MATCH' and e.arguments[1]['GAMETYPE'] == 'TicTacToe':
