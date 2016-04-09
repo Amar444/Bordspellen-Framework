@@ -1,19 +1,27 @@
 from client import Client, EVENT_GAME, EVENT_CONNECTED
 from client.commands import OutgoingCommand
-from gamekit.players import ClientPlayerMixin, NamedPlayerMixin, BoardPlayerMixin
+from gamekit.players import Player, NamedPlayerMixin, BoardPlayerMixin
 
 from ai import AIPlayer
 from game import TicTacToeGame
 
 
-class RemotePlayer(NamedPlayerMixin, BoardPlayerMixin, ClientPlayerMixin):
+class ClientPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):
+    client = None
+
+    def __init__(self, client, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.client = client
+
+
+class RemotePlayer(ClientPlayer):
     def on_move(self, move):
         move = int(move.arguments[1]['MOVE'])
         x, y = int(move / self.board.size[0]), move % self.board.size[1]
         self.board.set(x, y, self)
 
 
-class ClientAIPlayer(ClientPlayerMixin, AIPlayer):
+class ClientAIPlayer(ClientPlayer, AIPlayer):
     def play(self):
         super().play()
 
