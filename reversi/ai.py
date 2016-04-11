@@ -2,12 +2,13 @@
 from game import ReversiGame, _UNCLEAR, _PLAYER_ONE_WIN, _PLAYER_TWO_WIN, _DRAW
 from players import BoardPlayerMixin, NamedPlayerMixin
 from utils import Best
+import sys
 
 
 class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     opponent = None
     board_value_method = "greedy"
-    _DEFAULT_DEPTH = 4
+    _DEFAULT_DEPTH = 6
 
     def __init__(self, game: ReversiGame, depth=_DEFAULT_DEPTH, *args, **kwargs):
         """ Initializes the AIPlayer instance """
@@ -34,11 +35,52 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     def do_move(self):
         """ Attempts to calculate the best move and update the board accordingly """
         print(self.game.get_legal_moves(self))
-        _, best_row, best_column = self.calc_best_move(self, self.depth)
+        _, best_row, best_column = self.calc_best_move_alpha_beta(self, self.depth, -sys.maxsize, sys.maxsize)
         print(self.game.board.__str__())
         print(self.game.get_legal_moves(self))
         self.game.execute_move(self, best_row, best_column)
         print("AI placed {} on coords {},{}\n\n".format(self.name, best_row, best_column))
+
+    def calc_best_move_alpha_beta(self, player, depth, alpha, beta):
+        if depth == 0:
+            return self.calc_value(player, self.board_value_method), 0, 0
+
+        if self.game.status == _UNCLEAR:
+            val = self.calc_value(player, self.board_value_method)
+            best_reply = val, -1, -1
+            # iterate over all possible moves
+            has_legal_moves = False
+
+            for x, y in self.game.iterate_legal_moves(player):
+                has_legal_moves = True
+                moves = self.game.execute_move(player, x, y)
+                if player == self:
+                    val, _, _ = self.calc_best_move_alpha_beta(self.opponent, depth - 1, alpha, beta)
+                    if val > alpha:
+                        alpha = val
+                        best_reply = (alpha, x, y)
+                else:
+                    val, _, _ = self.calc_best_move_alpha_beta(self, depth - 1, alpha, beta)
+                    if val < beta:
+                        beta = val
+                        best_reply = (beta, x, y)
+
+                for mx, my, previous in moves:
+                    self.board.state[mx][my] = previous
+
+                if alpha >= beta:
+                    break
+
+            if not has_legal_moves:
+                # skip if no possible moves
+                return self.calc_best_move_alpha_beta(self if player == self.opponent else self.opponent, depth - 1,
+                                                      alpha, beta)
+
+            return best_reply
+
+        else:
+            # return game value if game has ended, when losing try to lose the least :P
+            return self.calc_value(player, self.board_value_method), 0, 0
 
     def calc_best_move(self, player, depth: int):
         """ Find best move for winning the game """
