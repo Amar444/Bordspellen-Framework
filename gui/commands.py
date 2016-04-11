@@ -28,7 +28,8 @@ class Command:
         'subscribes' to the OK and ERR reaction from the server. Every command send to the server will reply
         one of these
         """
-        self.client.on('OK', self.handle_ok)
+        self.client.on('OK', success=lambda data: self.status['status'] = 'success')
+        #  self.client.on('OK', self.handle_ok)
         self.client.on('ERR', self.handle_err)
 
     def handle_ok(self, data):
@@ -119,7 +120,7 @@ class CommandPlayerlist(Command):
         """ sends a command to the server to retreive the playerlist, 'subscribes' to SVR to catch the response """
         super().send_to_server()
         self.client.on('PLAYERLIST', self.handle_svr)
-        self.client.send(OutgoingCommand('get', 'playerlist'))
+        self.client.send(OutgoingCommand('get', 'playerlist'), success=lambda )
 
     def handle_err(self, data):
         """ if an error occurred send a response to the GUI """
