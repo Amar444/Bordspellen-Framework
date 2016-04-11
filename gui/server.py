@@ -1,7 +1,3 @@
-#########   ###    ###    ########
-##     ##   ##  ##  ##    ##         Mijn PEP8 dinges bugged. Als je dit netjes kan maken, graag!
-##     ##   ##      ##    ##    ##
-#########   ##      ##    ########
 
 import json
 import tornado.ioloop
@@ -52,7 +48,7 @@ class LoginChecker(threading.Thread):
     def run(self):
         time.sleep(10)
         if self.name in RunServer.inactive_clients:
-            RunServer.clients[self.name].handle_message('{"command": "logout"}')
+            RunServer.clients[self.name].handle_message('{"command":"logout"}')
             print("Logging out user: " + self.name)
             del RunServer.clients[self.name]
             del RunServer.inactive_clients[self.name]
@@ -101,6 +97,6 @@ class RunServer(threading.Thread):
     @staticmethod
     def send_to_client(data):
         """ This method allows you to send messages to all subscribers """
-        if(len(RunServer.connection) > 0) :
+        if(len(RunServer.connection) > 0):
             for singleServer in RunServer.connection:
                 singleServer.write_message(data)
