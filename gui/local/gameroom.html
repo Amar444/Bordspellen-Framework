@@ -1,80 +1,81 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Reversion & TicTacToe - The Game</title>
     <meta charset="utf-8"/>
     <link rel="stylesheet" href="fonts/stylesheet.css"/>
     <link rel="stylesheet" href="css/style.css"/>
-  </head>
-  <body>
-    <div class="global">
-      <div class="background fadeIn">
+</head>
+<body>
+<div class="global">
+    <div class="background fadeIn">
         <div class="scroll-background">
 
         </div>
-      </div>
-      <div class="content fadeIn">
+    </div>
+    <div class="content fadeIn">
         <div class="top-bar">
-          <div class="title-bar">
-            <div id="lobbyMessage">
-                Welcome in the lobby
+            <div class="title-bar">
+                <div id="lobbyMessage">
+                    Welcome in the lobby
+                </div>
             </div>
-          </div>
-          <div class="title-bar-button" data-destination="index.html">
-            <
-          </div>
-          <div class="title-bar-volume">
-            <div class="volume">
-              <img id="mute-button" data-action="mute-unmute" src="img/sound.png">
+            <div class="title-bar-button" data-destination="index.html">
+                <
             </div>
-          </div>
+            <div class="title-bar-volume">
+                <div class="volume">
+                    <img id="mute-button" data-action="mute-unmute" src="img/sound.png">
+                </div>
+            </div>
         </div>
         <div id="game-main-content">
-          <div class="participants" id="participants">
+            <div class="participants" id="participants">
 
-          </div>
+            </div>
         </div>
-      </div>
     </div>
-    <div class="challenge-overlay hidden">
-      <div class="challenge">
+</div>
+<div class="challenge-overlay hidden">
+    <div class="challenge">
         <div class="screen-1">
-          <div class="overflow-hidden">
-            <div class="half font big" id="localPlayer">
+            <div class="overflow-hidden">
+                <div class="half font big" id="localPlayer">
+                </div>
+                <div class="half font big" id="remotePlayer">
+                </div>
             </div>
-            <div class="half font big" id="remotePlayer">
+            <div class="center font">
+                VS.
             </div>
-          </div>
-          <div class="center font">
-            VS.
-          </div>
-          <h3 class="center font super" id="gameName"></h3>
-          <div class="challenge-settings">
-            <div class="turntime">
-                <label class="challenge-label">The minimal turn time of this challenge</label>
-                <input type="number" class="input terminal-blink" id="turntimechallenge" name="turntime-input" min="1" step="1" value="10">
+            <h3 class="center font super" id="gameName"></h3>
+            <div class="challenge-settings">
+                <div class="turntime">
+                    <label class="challenge-label">The minimal turn time of this challenge</label>
+                    <input type="number" class="input terminal-blink" id="turntimechallenge" name="turntime-input"
+                           min="1" step="1" value="10">
+                </div>
             </div>
-          </div>
-          <div class="challenge-buttons">
-            <a class="button cancel-button">Cancel</a>
-            <a class="button" id="challenge">Challenge</a>
-          </div>
+            <div class="challenge-buttons">
+                <a class="button cancel-button">Cancel</a>
+                <a class="button" id="challenge">Challenge</a>
+            </div>
         </div>
         <div class="screen-2" style="display:none;">
-          <div class="waiting-animation">
-            <h2 class="font">Waiting for opponent...</h2>
-          </div>
+            <div class="waiting-animation">
+                <h2 class="font">Waiting for opponent...</h2>
+            </div>
 
-          <div class="challenge-buttons">
-            <a class="button cancel-button">Cancel</a>
-          </div>
+            <div class="challenge-buttons">
+                <a class="button cancel-button">Cancel</a>
+            </div>
         </div>
-      </div>
     </div>
-  </body>
-  <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
-  <script src="js/main.js"></script>
-  <script>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="js/main.js"></script>
+<script>
     $(function() {
       /* FUNCTIONS */
 
@@ -194,5 +195,6 @@
         $('#participants').html(html);
       });
     });
-  </script>
+
+</script>
 </html>
