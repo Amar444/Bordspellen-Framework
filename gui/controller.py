@@ -2,7 +2,7 @@ from gac.client import Client
 import json
 
 from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, CommandGamelist, CommandCreateChallange, \
-    CommandAcceptChallange
+    CommandAcceptChallange, CommandSubscribe, CommandUnsubscribe
 
 
 class GUIController:
@@ -25,7 +25,9 @@ class GUIController:
             CommandPlayerlist,
             CommandGamelist,
             CommandCreateChallange,
-            CommandAcceptChallange
+            CommandAcceptChallange,
+            CommandSubscribe,
+            CommandUnsubscribe,
         )
 
     def handle_message(self, message):
@@ -54,10 +56,12 @@ class GUIController:
             print("Could not convert JSON, exception: {}", e)
         return json_str
 
-    def send_to_gui(self, listener, details, status, status_message):
+    def send_to_gui(self, listener, details, status=None, status_message=None):
         """ sends information to the GUI of the controller """
-        details['status'] = status
-        details['statusMessage'] = status_message
+        if status is not None:
+            details['status'] = status
+        if status_message is not None:
+            details['statusMessage'] = status_message
 
         self.gui.send_to_client(json.dumps(
             {
@@ -65,3 +69,45 @@ class GUIController:
                 'detail': details
             }
         ))
+
+#--------------------------------------------
+#NOTE  listeners have yet to be made abstract
+#--------------------------------------------
+    def start_listeners(self):
+        self.client.on('GAME', self.handle_game)
+
+    def handle_game(self, data):
+        type = data.arguments[0]
+
+        if type == 'MATCH':
+            self.handle_match(data.arguments[1:])
+        elif type == 'YOURTURN':
+            self.handle_yourturn(data.arguments[1:])
+        elif type == 'CHALLENGE':
+            self.handle_challenge(data.arguments[1:])
+        elif type == 'HELP':
+            print("We ain't accepting no help!")
+        else:
+            self.game_ended(data.arguments[0:])
+
+    def handle_match(self, args):
+        print(str(args))
+
+    def handle_yourturn(self, args):
+        print(str(args))
+
+    def handle_challenge(self, args):
+        data = args[0]
+
+        if data == 'CANCELLED':
+            challenge_number = args[1]['CHALLENGENUMBER']
+            self.send_to_gui('challengeCancelled', {'challengeNumber': challenge_number})
+        else:
+            challenger = data['CHALLENGER']
+            game_name = data['GAMETYPE']
+            challenge_number = data['CHALLENGENUMBER']
+            turntime = 10  # default for now
+            self.send_to_gui('challenged', {'challenger': challenger, 'gameName': game_name, 'challengeNumber': challenge_number, 'turnTime': turntime})
+
+    def game_ended(self, args):
+        print(str(args))

@@ -97,6 +97,9 @@ class RunServer(threading.Thread):
     @staticmethod
     def send_to_client(data):
         """ This method allows you to send messages to all subscribers """
+        print(data)
+        print("\n")
+
         if(len(RunServer.connection) > 0):
             for singleServer in RunServer.connection:
                 singleServer.write_message(data)

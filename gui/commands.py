@@ -23,30 +23,22 @@ class Command:
         self.controller = controller
         self.client = client
 
-    def send_to_server(self):
+    def send_to_server(self, *args):
         """
         'subscribes' to the OK and ERR reaction from the server. Every command send to the server will reply
         one of these
         """
-        self.client.on('OK', success=lambda data: self.status['status'] = 'success')
-        #  self.client.on('OK', self.handle_ok)
-        self.client.on('ERR', self.handle_err)
+        self.client.send(OutgoingCommand(*args), success=self.handle_ok, fail=self.handle_err)
 
     def handle_ok(self, data):
         """ sets the status if the server reaction was OK """
         self.status['status'] = 'success'
+        self.status['message'] = ''
 
     def handle_err(self, data):
         """ sets the status if the server reaction was ERR """
         self.status['status'] = 'error'
-        self.status['message'] = data[0]
-
-    def destroy(self):
-        """
-        should be called after a response is send to the GUI, 'unsubscribes' from the OK and ERR reaction of the server
-        """
-        self.client.off('OK', self.handle_ok)
-        self.client.off('ERR', self.handle_err)
+        self.status['message'] = 'can\'t retrieve error message because of a bug in the fakeson parser.'
 
 
 class CommandLogin(Command):
@@ -69,26 +61,23 @@ class CommandLogin(Command):
 
     def send_to_server(self, data):
         """ sends the login command to the server and calls the method that handles the OK 'subscription' """
-        super().send_to_server()
-        self.client.send(OutgoingCommand('LOGIN', self.nickname))
-        self.handle_ok('your data') # when 'subscribing' on OK and ERR after login works, this should be removed
+        super().send_to_server('login', self.nickname)
 
     def handle_ok(self, data):
         """ if the login was successful, tell the GUI """
         super().handle_ok(data)
         self.controller.gui.set_client_player(self.controller, self.nickname)
         self.send_to_gui(self.nickname)
-        self.destroy()
 
     def handle_err(self, data):
         """ if the connection to the server cannot be made or the login was not successful, tell the GUI """
         super().handle_err(data)
         self.send_to_gui('')
-        self.destroy()
 
     def send_to_gui(self, nickname):
         """ send a message to the GUI """
         self.controller.nickname = nickname
+        self.controller.start_listeners()
         self.controller.send_to_gui('loginStatus', {'playerName': nickname}, self.status['status'], self.status['message'])
 
 
@@ -99,12 +88,7 @@ class CommandLogout(Command):
     def __init__(self, controller, client, message):
         """ initializes a command to logout """
         super().__init__(controller, client)
-        self.send_to_server()
-
-    def send_to_server(self):
-        """ Logs out of the server """
-        super().send_to_server()
-        self.client.send(OutgoingCommand('logout'))
+        super().send_to_server('logout')
 
 
 class CommandPlayerlist(Command):
@@ -118,29 +102,22 @@ class CommandPlayerlist(Command):
 
     def send_to_server(self):
         """ sends a command to the server to retreive the playerlist, 'subscribes' to SVR to catch the response """
-        super().send_to_server()
         self.client.on('PLAYERLIST', self.handle_svr)
-        self.client.send(OutgoingCommand('get', 'playerlist'), success=lambda )
+        super().send_to_server('get', 'playerlist')
 
     def handle_err(self, data):
         """ if an error occurred send a response to the GUI """
         super().handle_err(data)
         self.send_to_gui('')
-        self.destroy()
 
     def handle_svr(self, data):
         """ handle the reaction from the server """
         self.send_to_gui(data.arguments[0])
-        self.destroy()
 
     def send_to_gui(self, players):
         """ send the playerlist to the GUI """
         self.controller.send_to_gui('playerList', {'players': players}, self.status['status'], self.status['message'])
-
-    def destroy(self):
-        """ 'unsubscibe' from the server command because we handled it, no need to stay informed about it """
-        super().destroy()
-        self.client.off('SVR', self.handle_svr)
+        self.client.off('PLAYERLIST', self.handle_svr)
 
 
 class CommandGamelist(Command):
@@ -154,29 +131,22 @@ class CommandGamelist(Command):
 
     def send_to_server(self):
         """ sends a command to the server to retreive the gamelist, 'subscribes' to SVR to catch the response """
-        super().send_to_server()
         self.client.on('GAMELIST', self.handle_svr)
-        self.client.send(OutgoingCommand('get', 'gamelist'))
+        super().send_to_server('get', 'gamelist')
 
     def handle_err(self, data):
         """ if an error occurred send a response to the GUI """
         super().handle_err(data)
         self.send_to_gui('')
-        self.destroy()
 
     def handle_svr(self, data):
         """ handle the reaction from the server """
-        self.send_to_gui(data.arguments[1])
-        self.destroy()
+        self.send_to_gui(data.arguments[0])
 
     def send_to_gui(self, games):
         """ send the gamelist to the GUI """
         self.controller.send_to_gui('gameList', {'games': games}, self.status['status'], self.status['message'])
-
-    def destroy(self):
-        """ 'unsubscibe' from the server command because we handled it, no need to stay informed about it """
-        super().destroy()
-        self.client.off('SVR', self.handle_svr)
+        self.client.off('GAMELIST', self.handle_svr)
 
 
 class CommandCreateChallange(Command):
@@ -197,10 +167,7 @@ class CommandCreateChallange(Command):
 
     def send_to_server(self):
         """ send the challenge to the server """
-        super().send_to_server()
-        self.client.send(OutgoingCommand('challenge',
-                                         '"' + self.player + '"', '"' + self.game + '"', '"' + self.turntime + '"',
-                                         {'status': 'OK', 'message': ''}))
+        super().send_to_server('challenge', '"' + self.player + '"', '"' + self.game + '"', '"' + self.turntime + '"')
 
     def handle_ok(self, data):
         """ if calling out the challenge succeeded, tell it to the GUI """
@@ -209,9 +176,8 @@ class CommandCreateChallange(Command):
 
     def handle_err(self, data):
         """ if an error occurred with creating a challenge send a response to the GUI """
-        super().handle_ok(data)
+        super().handle_err(data)
         self.send_to_gui()
-        self.destroy()
 
     def send_to_gui(self):
         """ let the GUI know that the challenge has been send or not """
@@ -232,8 +198,7 @@ class CommandAcceptChallange(Command):
 
     def send_to_server(self):
         """ sends a command to the server to accept a challenge """
-        super().send_to_server()
-        self.client.send(OutgoingCommand('challenge', 'accept', self.challenge))
+        super().send_to_server('challenge', 'accept', self.challenge)
 
     def handle_ok(self, data):
         """ if accepting the challenge succeeded, tell it to the GUI """
@@ -242,10 +207,67 @@ class CommandAcceptChallange(Command):
 
     def handle_err(self, data):
         """ if an error occurred when accepting the challenge """
-        super().handle_ok(data)
+        super().handle_err(data)
         self.send_to_gui()
-        self.destroy()
 
     def send_to_gui(self):
         """ let the GUI know that accepting the challenge succeeded or not """
-        self.controller.send_to_gui('challenge', {}, self.status['status'], self.status['message'])
+        self.controller.send_to_gui('accept', {}, self.status['status'], self.status['message'])
+
+
+class CommandSubscribe(Command):
+    """ Command to subscribe on a game """
+    command = 'subscribe'
+
+    game = None
+
+    def __init__(self, controller, client, message):
+        """ Initializes a command to subscribe to a game """
+        super().__init__(controller, client)
+        self.game = message['game']
+        self.send_to_server()
+
+    def send_to_server(self):
+        """ sends a command to the server to subscribe to a game """
+        super().send_to_server('subscribe', self.game)
+
+    def handle_ok(self, data):
+        """ if subscribing to the game succeeded, tell it to the GUI """
+        super().handle_ok(data)
+        self.send_to_gui()
+
+    def handle_err(self, data):
+        """ if an error occurred when subscribing to the game """
+        super().handle_err(data)
+        self.send_to_gui()
+
+    def send_to_gui(self):
+        """ let the GUI know that subscribing to the game succeeded or not """
+        self.controller.send_to_gui('subscribe', {}, self.status['status'], self.status['message'])
+
+class CommandUnsubscribe(Command):
+    """ Command to unsubscribe """
+    command = 'unsubscribe'
+
+    def __init__(self, controller, client, message):
+        """ Initializes a command to unsubscribe """
+        super().__init__(controller, client)
+        self.send_to_server()
+
+    def send_to_server(self):
+        """ sends a command to the server to unsubscribe """
+        super().send_to_server('unsubscribe')
+
+    def handle_ok(self, data):
+        """ if unsubscribing succeeded, tell it to the GUI """
+        super().handle_ok(data)
+        self.send_to_gui()
+
+    def handle_err(self, data):
+        """ if an error occurred when unsubscribing """
+        super().handle_err(data)
+        self.send_to_gui()
+
+    def send_to_gui(self):
+        """ let the GUI know that unsubscribing succeeded or not """
+        self.controller.send_to_gui('unsubscribe', {}, self.status['status'], self.status['message'])

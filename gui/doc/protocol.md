@@ -22,7 +22,7 @@ GUI <- :
             'IP': <IP>
             'port': <port>
         },
-        'listener': 'playerList',
+        'listener': 'loginStatus',
     }
 ```
 
@@ -77,7 +77,7 @@ GUI <- :
             'message': <mesage>
             'games': ['Game one', 'GameTwo', 'GameThree']
         },
-        'listener': 'playerList',
+        'listener': 'gameList',
     }
 ```
 - The 'listener' entry in the return JSON String is the listener that needs to be invoked when
@@ -105,13 +105,9 @@ GUI <- :
             'status': <status>,
             'message': <message>
         },
-        'listener': 'challengeListener'
+        'listener': 'challenge'
     }
 ```
-- In this protocol the turn time does'nt need to be set, but the key will always be included.
-When n is not included, than n will always be null.
-- N will be always filled in without quotation's marks, since it will be handled by the external
-server as an Integer.
 - The server returns the details of this request. With this returned request,
 the server will also send a listener that needs to be invoked after the request was completed or
 when an error occurred.
@@ -139,7 +135,7 @@ GUI <- :
             'status': <status>,
             'message': <message>
         },
-        'listener': 'acceptListener'
+        'listener': 'accept'
     }
 ```
 
@@ -149,6 +145,56 @@ listener will be invoked when the accept-request was accepted by the main-server
 - The message contains the reason why this request could'nt be accepted. Message does'nt needs
 to be set, so can also be null.
 
+<br>
+<br>
+<br>
+
+
+
+#### When the GUI wants to subscribe to a game:
+
+---
+```
+GUI -> : {
+            "command" : "subscribe",
+            "game" : <game>
+          }
+
+GUI <- :
+    {
+        'detail': {
+            'status': <status>
+            'message': <mesage>
+        },
+        'listener': 'subscribe',
+    }
+```
+- The 'listener' entry in the return JSON String is the listener that needs to be invoked when
+the GUI received the response of the server.
+<br>
+<br>
+<br>
+
+
+
+#### When the GUI wants to unsubscribe from the current subscription:
+
+---
+```
+GUI -> : { "command" : "unsubscribe" }
+GUI <- :
+    {
+        'detail': {
+            'status': <status>
+            'message': <mesage>
+        },
+        'listener': 'unsubscribe',
+    }
+```
+- The 'listener' entry in the return JSON String is the listener that needs to be invoked when
+the GUI received the response of the server.
+<br>
+<br>
 <br>
 
 GUI UPDATES:
@@ -164,13 +210,34 @@ following protocols needs to used when communication with the GUI.
 ```
 GUI <- :
     {
-        'challenged': {
+        'detail': {
             'challenger': <playerName>,
             'gameName': <gameName>,
             'challengeNumber': <challengeNumber>,
             'turnTime': <turnTime>
         },
-        'listener': 'challengedListener'
+        'listener': 'challenged'
+    }
+
+```
+
+- The 'listener' entry in the return JSON String is the listener that needs to be invoked when
+the GUI received the response of the server.
+
+
+<br>
+
+#### Challenge cancelled:
+
+---
+
+```
+GUI <- :
+    {
+        'detail': {
+            'challengeNumber': <challengeNumber>,
+        },
+        'listener': 'challengeCancelled'
     }
 
 ```
@@ -181,76 +248,3 @@ the GUI received the response of the server.
 
 <br>
 <br>
-
-#### Game update
-
-- [ROW/ COLUMN  -> 0/2]
----
-```json
-{
-  "game":
-  {
-    "players": [
-      {
-        "playerName": "playerOne"
-      },
-      {
-        "playerName": "playerTwo"
-      }
-    ],
-    "gameState": {
-      "win": true,
-      "board": {
-        "rows": [
-          {
-            "columns": [
-              {
-                "playerName": "playerOne"
-              },
-              {
-                "playerName": "playerTwo"
-              },
-              {
-                "playerName": "playerTwo"
-              }
-            ]
-          },
-          {
-            "columns": [
-              {
-                "playerName": "playerTwo"
-              },
-              {
-                "playerName": "playerOne"
-              },
-              {
-                "playerName": "playerOne"
-              }
-            ]
-          },
-          {
-            "columns": [
-              {
-                "playerName": "playerTwo"
-              },
-              {
-                "playerName": "playerOne"
-              },
-              {
-                "playerName": "playerOne"
-              }
-            ]
-          }
-        ]
-      }
-    }
-  }
-}
-```
-
-- This protocol is based on the following tic-tac-toe situation:
-<br>
-![alt text](http://i.imgur.com/MBcncKw.png "Logo Title Text 1")
-
-- When no move was set on a certain place on the board, a simple null will satisfy
- the protocol's need.
