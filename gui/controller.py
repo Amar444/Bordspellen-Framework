@@ -1,6 +1,8 @@
-from client import Client
-from commands import *
+from gac.client import Client
 import json
+
+from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, CommandGamelist, CommandCreateChallange, \
+    CommandAcceptChallange
 
 
 class GUIController:

@@ -6,8 +6,8 @@ Might contain the connections between the local application and the GUI later
 import socket
 
 from threading import Thread, Lock
-from client.commands import OkCommand, ErrCommand, IncomingCommand, OutgoingCommand
-from utils import EventEmitter
+from gac.client.commands import OkCommand, ErrCommand, IncomingCommand, OutgoingCommand
+from gac.utils import EventEmitter
 
 EVENT_CONNECTED = '_CONNECTED'
 EVENT_CONNECT_ERR = '_CONNECT_ERR'

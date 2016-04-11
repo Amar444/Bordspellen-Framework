@@ -1,6 +1,6 @@
 import json
-from exceptions import InvalidCommandException
-from utils import parse_fakeson
+from gac.exceptions import InvalidCommandException
+from gac.utils import parse_fakeson
 
 
 class BaseCommand(object):

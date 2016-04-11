@@ -2,7 +2,7 @@
 Provides classes for every implemented command that the GUI wants to do.
 """
 
-from client import *
+from gac.client.client import *
 
 
 class Command:
