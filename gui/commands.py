@@ -118,7 +118,7 @@ class CommandPlayerlist(Command):
     def send_to_server(self):
         """ sends a command to the server to retreive the playerlist, 'subscribes' to SVR to catch the response """
         super().send_to_server()
-        self.client.on('SVR', self.handle_svr)
+        self.client.on('PLAYERLIST', self.handle_svr)
         self.client.send(OutgoingCommand('get', 'playerlist'))
 
     def handle_err(self, data):
@@ -129,9 +129,8 @@ class CommandPlayerlist(Command):
 
     def handle_svr(self, data):
         """ handle the reaction from the server """
-        if data.arguments[0] == 'PLAYERLIST':
-            self.send_to_gui(data.arguments[1])
-            self.destroy()
+        self.send_to_gui(data.arguments[0])
+        self.destroy()
 
     def send_to_gui(self, players):
         """ send the playerlist to the GUI """
@@ -155,7 +154,7 @@ class CommandGamelist(Command):
     def send_to_server(self):
         """ sends a command to the server to retreive the gamelist, 'subscribes' to SVR to catch the response """
         super().send_to_server()
-        self.client.on('SVR', self.handle_svr)
+        self.client.on('GAMELIST', self.handle_svr)
         self.client.send(OutgoingCommand('get', 'gamelist'))
 
     def handle_err(self, data):
@@ -166,9 +165,8 @@ class CommandGamelist(Command):
 
     def handle_svr(self, data):
         """ handle the reaction from the server """
-        if data.arguments[0] == 'PLAYERLIST':
-            self.send_to_gui(data.arguments[1])
-            self.destroy()
+        self.send_to_gui(data.arguments[1])
+        self.destroy()
 
     def send_to_gui(self, games):
         """ send the gamelist to the GUI """
