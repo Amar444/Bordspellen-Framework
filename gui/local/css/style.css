@@ -190,10 +190,9 @@ body {
   -webkit-transition:1s;
 }
 .game-logo {
-  margin-top: 150px;
-  margin-right: 200px;
-  margin-bottom: 150px;
-  margin-left: 200px;
+  width:600px;
+  margin:0 auto;
+  margin-top:100px;
 }
 .game-logo img {
   width:600px;
@@ -406,6 +405,7 @@ padding: 10px;
 
 .message {
   position: fixed;
+  z-index:10;
   background: white;
   right: -300px;
   top: 50px;
@@ -432,4 +432,13 @@ padding: 10px;
   height: 60px;
   width: 200px;
   line-height: 60px;
+}
+.match-overlay {
+  background: rgba(255,255,255,0.6);
+  position:fixed;
+  z-index:9;
+  left:0px;
+  right:0px;
+  top:0px;
+  bottom:0px;
 }
