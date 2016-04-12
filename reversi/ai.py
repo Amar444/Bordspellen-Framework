@@ -78,7 +78,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
 
                 # Remove stone
                 for mx, my, previous in moves:
-                    board.state[mx][my] = previous
+                    board[mx][my] = previous
 
                 if alpha >= beta:
                     break
