@@ -96,7 +96,7 @@ class GUIController:
         gametype = data['GAMETYPE']
         opponent = data['OPPONENT']
         player_to_move = data['PLAYERTOMOVE']
-        self.create_game(gametype)
+        self.create_game(gametype, opponent)
         self.send_to_gui('match', {'gametype': gametype, 'opponent': opponent, 'playerToMove': player_to_move})
 
     def handle_yourturn(self, args):
@@ -114,13 +114,14 @@ class GUIController:
             game_name = data['GAMETYPE']
             challenge_number = data['CHALLENGENUMBER']
             turntime = 10  # default for now
-            self.send_to_gui('challenged', {'challenger': challenger, 'gameName': game_name, 'challengeNumber': challenge_number, 'turnTime': turntime})
+            self.send_to_gui('challenged', {'challenger': challenger, 'gameName': game_name,
+                                            'challengeNumber': challenge_number, 'turnTime': turntime})
 
     def game_ended(self, args):
         print(str(args))
 
-    def create_game(self):
-        pass
+    def create_game(self, gametype, opponent):
+        print(str(self.challenges))
 
 
 class Match:

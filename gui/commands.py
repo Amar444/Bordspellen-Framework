@@ -193,12 +193,14 @@ class CommandAcceptChallenge(Command):
 
     challenge = None
     play_as = None
+    opponent = None
 
     def __init__(self, controller, client, message):
         """ Initializes a command to accept a challenge """
         super().__init__(controller, client)
         self.challenge = message['challenge']
         self.play_as = message['playAs']
+        self.opponent = message['opponent']
         self.send_to_server()
 
     def send_to_server(self):
@@ -208,6 +210,7 @@ class CommandAcceptChallenge(Command):
     def handle_ok(self, data):
         """ if accepting the challenge succeeded, tell it to the GUI """
         super().handle_ok(data)
+        self.controller.challenges[self.opponent] = self.play_as
         self.send_to_gui()
 
     def handle_err(self, data):
