@@ -12,4 +12,4 @@ RunServer.set_instance(rs)
 cs = GUIController(rs)
 
 rs.start()
-webbrowser.open_new('http://localhost:63342/bordspellen-framework/gui/local/index.html')\
+webbrowser.open_new('http://localhost:63342/Bordspellen-Framework/gui/local/index.html')\
