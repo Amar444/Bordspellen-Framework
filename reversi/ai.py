@@ -1,5 +1,5 @@
 """ Provides artificial intelligence for the Reversi game"""
-from .game import ReversiGame, _UNCLEAR, _PLAYER_ONE_WIN, _PLAYER_TWO_WIN, _DRAW
+from game import ReversiGame, _UNCLEAR, _PLAYER_ONE_WIN, _PLAYER_TWO_WIN, _DRAW
 from players import BoardPlayerMixin, NamedPlayerMixin
 from utils import Best
 import sys
@@ -11,10 +11,9 @@ class ReversiAIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     _DEFAULT_DEPTH = 8
     _TIME_LIMIT = 3.7
 
-    def __init__(self, game: ReversiGame, depth=_DEFAULT_DEPTH, *args, **kwargs):
+    def __init__(self, depth=_DEFAULT_DEPTH, *args, **kwargs):
         """ Initializes the AIPlayer instance """
         super().__init__(*args, **kwargs)
-        self.game = game
         self.depth = depth
 
     def play(self):

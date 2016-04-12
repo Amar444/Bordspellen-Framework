@@ -1,12 +1,12 @@
 import time
 from game import ReversiGame
-from ai import AIPlayer
+from ai import ReversiAIPlayer
 
 start = time.time()
 
 game = ReversiGame()
-game.set_players((AIPlayer(name="W", board=game.board, game=game),
-                  AIPlayer(name="B", board=game.board, game=game),))
+game.set_players((ReversiAIPlayer(name="W", game=game),
+                  ReversiAIPlayer(name="B", game=game),))
 game.play()
 
 end = time.time()
