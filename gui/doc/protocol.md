@@ -226,6 +226,7 @@ the GUI received the response of the server.
 
 
 <br>
+<br>
 
 #### Challenge cancelled:
 
@@ -238,6 +239,30 @@ GUI <- :
             'challengeNumber': <challengeNumber>,
         },
         'listener': 'challengeCancelled'
+    }
+
+```
+
+- The 'listener' entry in the return JSON String is the listener that needs to be invoked when
+the GUI received the response of the server.
+
+
+<br>
+<br>
+
+#### Challenge cancelled:
+
+---
+
+```
+GUI <- :
+    {
+        'detail': {
+            'gametype': <gametype>,
+            'opponent': <opponent>,
+            'playerToMove': <playerToMove>
+        },
+        'listener': 'match'
     }
 
 ```
