@@ -112,7 +112,8 @@ class GUIController:
 
     def handle_yourturn(self, args):
         if self.first_turn is not True:
-            self.own_player.play(args[0]['TURNMESSAGE'])
+            # self.own_player.play(args[0]['TURNMESSAGE'])
+            self.own_player.play()
 
     def handle_move(self, args):
         data = args[0]
@@ -173,9 +174,9 @@ class GUIController:
         game.set_players((self.own_player, self.opponent_player))
 
         if self.own_player.name == player_to_move:
-            self.own_player.play('')
+            self.own_player.play()
         elif self.opponent_player.name == player_to_move:
-            self.opponent_player.play('')
+            self.opponent_player.play()
         self.first_turn = False
 
 
@@ -196,9 +197,9 @@ class UIPlayer(ClientPlayer):
         super().__init__(*args, **kwargs)
         self.controller = controller
 
-    def play(self, turnmessage):
+    def play(self):
         super().play()
-        self.controller.send_to_gui('doMove', {'turnmessage': turnmessage})
+        self.controller.send_to_gui('doMove', {'turnmessage': ''})
 
 
 class GUITicTacToeAIPlayer(TicTacToeAIPlayer):
@@ -208,7 +209,7 @@ class GUITicTacToeAIPlayer(TicTacToeAIPlayer):
         super().__init__(*args, **kwargs)
         self.controller = controller
 
-    def play(self, turnmessage):
+    def play(self):
         super().play()
 
         x, y, p = self.board.last_turn
@@ -226,7 +227,7 @@ class GUIReversiAIPlayer(ReversiAIPlayer):
         super().__init__(*args, **kwargs)
         self.controller = controller
 
-    def play(self, turnmessage):
+    def play(self):
         super().play()
 
         x, y, p = self.board.last_turn
