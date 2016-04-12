@@ -149,7 +149,7 @@ class CommandGamelist(Command):
         self.client.off('GAMELIST', self.handle_svr)
 
 
-class CommandCreateChallange(Command):
+class CommandCreateChallenge(Command):
     """ Command to create a challenge """
     command = 'challenge'
 
@@ -184,7 +184,7 @@ class CommandCreateChallange(Command):
         self.controller.send_to_gui('challenge', {}, self.status['status'], self.status['message'])
 
 
-class CommandAcceptChallange(Command):
+class CommandAcceptChallenge(Command):
     """ Command to accept an incoming challenge """
     command = 'accept'
 
@@ -244,6 +244,7 @@ class CommandSubscribe(Command):
     def send_to_gui(self):
         """ let the GUI know that subscribing to the game succeeded or not """
         self.controller.send_to_gui('subscribe', {}, self.status['status'], self.status['message'])
+
 
 class CommandUnsubscribe(Command):
     """ Command to unsubscribe """
