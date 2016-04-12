@@ -70,6 +70,31 @@
                 <a class="button cancel-button">Cancel</a>
             </div>
         </div>
+        <div class="screen-3">
+          <div class="font big center">
+            Challenge received
+          </div>
+            <div class="overflow-hidden">
+                <div class="half font big" id="localPlayer1">
+                </div>
+                <div class="half font big" id="remotePlayer1">
+                </div>
+            </div>
+            <div class="center font">
+                VS.
+            </div>
+            <h3 class="center font super" id="gameName1"></h3>
+            <div class="challenge-settings">
+                <div class="turntime center">
+                    <label class="challenge-label">The turn time of this challenge</label>
+                    <span class="turntimeValue"></span>
+                </div>
+            </div>
+            <div class="challenge-buttons">
+                <a class="button cancel-button">Cancel</a>
+                <a class="button" id="play">Play</a>
+            </div>
+        </div>
     </div>
 </div>
 </body>
@@ -136,6 +161,7 @@
         app._utilities.storage.set("selectedGame", game);
 
         $(".screen-1").show();
+        $(".screen-3").hide();
         $(".screen-2").hide();
 
         $("#remotePlayer").html(remoteName);
@@ -162,6 +188,7 @@
 
 
         $(".screen-1").hide();
+        $(".screen-3").hide();
         $(".screen-2").show();
       });
 
@@ -181,6 +208,19 @@
       $(document).on("challengeAccepted", function(e) {
         app._utilities.storage.set("opponentPlayer", window.selectedPlayer);
         app.main.unloadPage(window.selectedGame + ".html", null);
+      });
+
+
+      $(document).on("challenged", function(e) {
+        console.log(e.detail);
+        $(".challenge-overlay").removeClass("hidden");
+        $(".screen-3").show();
+        $(".screen-1").hide();
+        $(".screen-2").hide();
+        $(".turntimeValue").text(e.detail.turnTime);
+        $("#remotePlayer1").text(e.detail.challenger);
+        $("#localPlayer1").text(app._utilities.storage.get("localName"));
+        $("#gameName1").text(e.detail.gameName);
       });
 
 
