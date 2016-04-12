@@ -1,9 +1,11 @@
-from gac.client import Client
 import json
+from threading import Thread, Condition
 
 from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, CommandGamelist, CommandCreateChallenge, \
-    CommandAcceptChallenge, CommandSubscribe, CommandUnsubscribe
-
+    CommandAcceptChallenge, CommandSubscribe, CommandUnsubscribe, CommandMove
+from tictactoe.game import TicTacToeGame
+from players import Player, NamedPlayerMixin, BoardPlayerMixin
+from gac.client import Client
 
 class GUIController:
     """ Provides a controller to link the GUI and a Client (so essentially the server) together """
@@ -12,6 +14,8 @@ class GUIController:
     nickname = None
     commands = None
     challenges = {}
+    own_player = None
+    opponent_player = None
 
     def __init__(self, gui):
         """ Initializes a new controller to be used by the GUI """
@@ -29,6 +33,7 @@ class GUIController:
             CommandAcceptChallenge,
             CommandSubscribe,
             CommandUnsubscribe,
+            CommandMove,
         )
 
     def handle_message(self, message):
@@ -72,7 +77,7 @@ class GUIController:
         ))
 
 #--------------------------------------------
-#NOTE  listeners have yet to be made abstract
+#NOTE  listeners have yet to be made abstract (and everything else below this point)
 #--------------------------------------------
     def start_listeners(self):
         self.client.on('GAME', self.handle_game)
@@ -86,6 +91,8 @@ class GUIController:
             self.handle_yourturn(data.arguments[1:])
         elif type == 'CHALLENGE':
             self.handle_challenge(data.arguments[1:])
+        elif type == 'MOVE':
+            self.handle_move(data.arguments[1:])
         elif type == 'HELP':
             print("We ain't accepting no help!")
         else:
@@ -96,11 +103,20 @@ class GUIController:
         gametype = data['GAMETYPE']
         opponent = data['OPPONENT']
         player_to_move = data['PLAYERTOMOVE']
-        self.create_game(gametype, opponent)
+        self.create_game(gametype, opponent, player_to_move)
         self.send_to_gui('match', {'gametype': gametype, 'opponent': opponent, 'playerToMove': player_to_move})
 
     def handle_yourturn(self, args):
-        print(str(args))
+        self.own_player.play(args[0]['TURNMESSAGE'])
+
+    def handle_move(self, args):
+        data = args[0]
+        if data['PLAYER'] == self.opponent_player.name:
+            x = data['MOVE'] / self.opponent_player.board.size[0]
+            y = data['MOVE'] % self.opponent_player.board.size[1]
+            self.opponent_player.board.set(int(x), int(y), self.opponent_player.name)
+        board = self.own_player.board.state
+        self.send_to_gui('boardListener', {'board': board})
 
     def handle_challenge(self, args):
         data = args[0]
@@ -120,18 +136,45 @@ class GUIController:
     def game_ended(self, args):
         print(str(args))
 
-    def create_game(self, gametype, opponent):
+    def create_game(self, gametype, opponent, player_to_move):
         print(str(self.challenges))
 
+        if gametype == 'Reversi':
+            pass
+        elif gametype == 'Tic-tac-toe':
+            game = TicTacToeGame()
 
-class Match:
-    game = None
-    own_player = None
-    opponent = None
+        player_type = self.challenges[opponent]
+        if player_type == 'AI':
+            self.own_player = None
+        elif player_type == 'HUMAN':
+            self.own_player = UIPlayer(controller=self, name=self.nickname, game=game)
 
-    def __init__(self, game, own_player, opponent):
-        self.game = game
-        self.own_player = own_player,
-        self.opponent = opponent
+        self.opponent_player = ServerPlayer(name=opponent, game=game)
+
+        game.set_players((self.own_player, self.opponent_player))
 
 
+class ClientPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class ServerPlayer(ClientPlayer):
+    condition = Condition()
+
+    def play(self):
+        super().play()
+
+
+class UIPlayer(ClientPlayer):
+    controller = None
+    condition = Condition()
+
+    def __init__(self, controller, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.controller = controller
+
+    def play(self, turnmessage):
+        super().play()
+        self.controller.send_to_gui('doMove', {'turnmessage': turnmessage})
