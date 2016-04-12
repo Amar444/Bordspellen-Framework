@@ -298,3 +298,28 @@ the GUI received the response of the server.
 
 <br>
 <br>
+<br>
+
+#### Update the gui's view:
+
+---
+
+```
+GUI <-:
+    {
+        'detail': {
+            'board': [
+                [<name>, <name>, <name>],
+                [<name>, <name>, <name>],
+                [<name>, <name>, <name>]
+            ]
+        },
+        'listener': 'boardListener'
+    }
+```
+
+- As mentioned above, the view needs a 2 dimensional array for the field. In this example this
+array could be the field for TicTacToe as it is 3x3. The thing is, that this field can be any size,
+like 8x8 for reversion or any other size for any other game.
+- The name values are the player it's name that is located in the found location inside the grid.
+- Empty fields can simply be added as "empty" instead of a player name.
