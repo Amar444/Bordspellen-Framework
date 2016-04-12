@@ -308,7 +308,7 @@ class CommandMove(Command):
 
     def handle_ok(self, data):
         super().handle_ok(data)
-        self.controller.own_player.board.set(int(self.x), int(self.y), self.controller.nickname)
+        self.controller.own_player.board.set(int(self.x), int(self.y), self.controller.own_player)
         self.send_to_gui()
 
     def handle_err(self, data):

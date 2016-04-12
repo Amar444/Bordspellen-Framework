@@ -1,4 +1,5 @@
 import json
+import copy
 
 from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, CommandGamelist, CommandCreateChallenge, \
     CommandAcceptChallenge, CommandSubscribe, CommandUnsubscribe, CommandMove
@@ -19,7 +20,7 @@ class GUIController:
     challenges = {}
     own_player = None
     opponent_player = None
-    first_turn = True
+    first_yourturn = True
 
     def __init__(self, gui):
         """ Initializes a new controller to be used by the GUI """
@@ -107,22 +108,41 @@ class GUIController:
         gametype = data['GAMETYPE']
         opponent = data['OPPONENT']
         player_to_move = data['PLAYERTOMOVE']
-        self.create_game(gametype, opponent, player_to_move)
         self.send_to_gui('match', {'gametype': gametype, 'opponent': opponent, 'playerToMove': player_to_move})
+        self.create_game(gametype, opponent, player_to_move)
 
     def handle_yourturn(self, args):
-        if self.first_turn is not True:
+        if self.first_yourturn is not True:
             # self.own_player.play(args[0]['TURNMESSAGE'])
             self.own_player.play()
+        else:
+            self.first_yourturn = False
 
     def handle_move(self, args):
         data = args[0]
         if data['PLAYER'] == self.opponent_player.name:
             x = data['MOVE'] / self.opponent_player.board.size[0]
             y = data['MOVE'] % self.opponent_player.board.size[1]
-            self.own_player.board.set(int(x), int(y), self.opponent_player.name)
-        board = self.own_player.board.state
-        self.send_to_gui('boardListener', {'board': board})
+            self.own_player.board.set(int(x), int(y), self.opponent_player)
+
+
+        board = self.own_player.board
+        print(board)
+
+        board_to_send = [[None for r in range(0, board.size[0])] for r in range(0, board.size[1])]
+
+        print(board_to_send)
+        for row in range(board.size[0]):
+            for col in range(board.size[1]):
+                if board.state[row][col] is self.own_player:
+                    board_to_send[row][col] = self.own_player.name
+                elif board.state[row][col] is self.opponent_player:
+                    board_to_send[row][col] = self.opponent_player.name
+                else:
+                    board_to_send[row][col] = None
+        # [[knarf, jur, null][x, x, x][x, x, x]]
+        print(board_to_send)
+        self.send_to_gui('boardListener', {'board': board_to_send})
 
     def handle_challenge(self, args):
         data = args[0]
@@ -153,8 +173,6 @@ class GUIController:
         self.own_player = None
 
     def create_game(self, gametype, opponent, player_to_move):
-        self.first_turn = True
-
         if gametype == 'Reversi':
             game = ReversiGame()
         elif gametype == 'Tic-tac-toe':
@@ -176,8 +194,8 @@ class GUIController:
         if self.own_player.name == player_to_move:
             self.own_player.play()
         elif self.opponent_player.name == player_to_move:
+            self.first_yourturn = False
             self.opponent_player.play()
-        self.first_turn = False
 
 
 class ClientPlayer(NamedPlayerMixin, BoardPlayerMixin):
