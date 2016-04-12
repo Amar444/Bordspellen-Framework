@@ -189,7 +189,7 @@
         var html = "";
 
         for (var i = 0; i < e.detail.players.length; i++) {
-          var str = '<div class="participant"> <div class="participant-buttons"> <a class="button" data-listener="challenge" data-game="Tic-tac-toe" data-player="'+e.detail.players[i]+'">Challenge TicTacToe</a> <a class="button" data-listener="challenge" data-game="reversion" data-player="'+e.detail.players[i]+'">Challenge Reversion</a> </div> <div class="participant-info"> <label class="label">NAME</label> <div class="participant-name">'+e.detail.players[i]+'</div> </div> </div>'
+          var str = '<div class="participant"> <div class="participant-buttons"> <a class="button" data-listener="challenge" data-game="Tic-tac-toe" data-player="'+e.detail.players[i]+'">Challenge TicTacToe</a> <a class="button" data-listener="challenge" data-game="Reversi" data-player="'+e.detail.players[i]+'">Challenge Reversion</a> </div> <div class="participant-info"> <label class="label">NAME</label> <div class="participant-name">'+e.detail.players[i]+'</div> </div> </div>'
           html += str;
         }
         $('#participants').html(html);
