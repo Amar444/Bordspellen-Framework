@@ -115,8 +115,9 @@
     // Init the mute image
     setMuteImage(app._utilities.statusAudio());
     if(app._utilities.storage.get("playerToMove") == app._utilities.storage.get("localName")) {
+      $(".match-overlay").hide();
       app.main.setGameTimer("It's your turn", 10, function() {
-        console.log("Too late!");
+        $(".match-overlay").show();
       });
     }
 
@@ -138,22 +139,22 @@
     });
 
     // Place item on click in empty field position
-$(document).on("click", "[data-position]", function() {
-  var placed = $(this).attr("data-placed");
-  if(placed == "") {
-    var xy = app._utilities.getXY(parseInt($(this).attr("data-position")), 3);
+    $(document).on("click", "[data-position]", function() {
+      var placed = $(this).attr("data-placed");
+      if(placed == "") {
+        var xy = app._utilities.getXY(parseInt($(this).attr("data-position")), 3);
+        window.activeWebSocket.send(JSON.stringify({
+          "command" : "move",
+          "moveX" : xy[1],
+          "moveY" : xy[0]
+        }));
+      }
 
-    window.activeWebSocket.send(JSON.stringify({
-      "command" : "move",
-      "moveX" : xy[1],
-      "moveY" : xy[0]
-    }));
-  }
-});
+    });
 
 
     /* API EVENTS */
-    $(document).on("updateBoard", function(e) {
+    $(document).on("boardListener", function(e) {
       var board = e.detail.board;
       for(var i = 0; i < board.length; i++) {
         for(var j = 0; j < board[i].length; j++) {
@@ -161,7 +162,7 @@ $(document).on("click", "[data-position]", function() {
               item;
           if(board[i][j] == app._utilities.storage.get('localName')) {
             item = "cross";
-          } else if(board[i][j] == "empty") {
+          } else if(board[i][j] == null) {
             item = "";
           } else {
             item = "circle";
