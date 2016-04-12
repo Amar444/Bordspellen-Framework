@@ -1,0 +1,44 @@
+!DOCTYPE html>
+<html>
+<head>
+    <title>Reversion & TicTacToe - The Game</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="fonts/stylesheet.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<div class="global">
+    <div class="background fadeIn">
+        <div class="scroll-background">
+
+        </div>
+    </div>
+    <div class="content fadeIn">
+        <div class="top-bar">
+            <div class="title-bar">
+                The Lobby
+            </div>
+            <div class="title-bar-button" data-destination="index.html">
+                <
+            </div>
+        </div>
+        <p align="center">
+            Zet hier uw naam maar neer!
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="js/main.js"></script>
+<script>
+  $(function() {
+    /* EVENTS */
+
+    // On click go back to index
+    $(".title-bar-button").click(function() {
+      var dest = $(this).attr("data-destination");
+      app.main.unloadPage(dest, this);
+    });
+  });
+</script>
+</html>
