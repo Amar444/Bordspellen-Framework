@@ -250,7 +250,7 @@ the GUI received the response of the server.
 <br>
 <br>
 
-#### Challenge cancelled:
+#### Match started:
 
 ---
 
