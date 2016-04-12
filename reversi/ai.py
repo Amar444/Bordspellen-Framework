@@ -8,7 +8,6 @@ import time
 
 class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     opponent = None
-    board_value_method = "greedy"
     _DEFAULT_DEPTH = 8
     _TIME_LIMIT = 3.7
 
@@ -51,10 +50,10 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         """ Find best move for winning the game with alpha beta pruning """
         # Check if max depth is reached or out of time
         if depth == 0 or time.time() > stop_time:
-            return self.calc_value(player, self.board_value_method), 0, 0
+            return self.calc_value(player), 0, 0
 
         if self.game.status == _UNCLEAR:
-            val = self.calc_value(player, self.board_value_method)
+            val = self.calc_value(player)
             best_reply = val, -1, -1
             board = self.board.state
             # iterate over all possible moves
@@ -92,13 +91,13 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
 
         else:
             # return game value if game has ended, when losing try to lose the least :P
-            return self.calc_value(player, self.board_value_method), 0, 0
+            return self.calc_value(player), 0, 0
 
     def calc_best_move(self, player, depth: int):
         """ Find best move for winning the game """
         if depth == 0:
             # return board value if max depth is reached
-            return self.calc_value(player, self.board_value_method), 0, 0
+            return self.calc_value(player), 0, 0
 
         if self.game.status == _UNCLEAR:
             best_reply = None
@@ -126,9 +125,8 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
 
         else:
             # return game value if game has ended, when losing try to lose the least :P
-            return self.calc_value(player, self.board_value_method), 0, 0
+            return self.calc_value(player), 0, 0
 
-    def calc_value(self, player, method: str):
-        # greedy board value for minimax, You want max stones, opponent wants you to have min stones
-        if method == "greedy":
-            return self.game.scores[0 if self == self.game.players[0] else 1]
+    def calc_value(self, player):
+        # Weighted scores for current player based on Disk Square table
+        return self.game.weighted_scores(player)

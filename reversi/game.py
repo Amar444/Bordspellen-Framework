@@ -16,6 +16,18 @@ _PLAYER_ONE_WIN = 3
 _UNCLEAR = 2
 _DRAW = 1
 _PLAYER_TWO_WIN = 0
+_SQUARE_WEIGHTS = [
+    [0,   0,   0,   0,   0,   0,   0,   0,   0,   0],
+    [0, 120, -20,  20,   5,   5,  20, -20, 120,   0],
+    [0, -20, -40,  -5,  -5,  -5,  -5, -40, -20,   0],
+    [0,  20,  -5,  15,   3,   3,  15,  -5,  20,   0],
+    [0,   5,  -5,   3,   3,   3,   3,  -5,   5,   0],
+    [0,   5,  -5,   3,   3,   3,   3,  -5,   5,   0],
+    [0,  20,  -5,  15,   3,   3,  15,  -5,  20,   0],
+    [0, -20, -40,  -5,  -5,  -5,  -5, -40, -20,   0],
+    [0, 120, -20,  20,   5,   5,  20, -20, 120,   0],
+    [0,   0,   0,   0,   0,   0,   0,   0,   0,   0]
+]
 
 
 class ReversiBoard(TwoDimensionalBoard):
@@ -72,6 +84,24 @@ class ReversiGame(TurnBasedGame, BoardGame):
                     score_two += 1
 
         return score_one, score_two
+
+    def weighted_scores(self, player):
+        """
+        Compute the difference between the sum of the weights of player's
+        squares and the sum of the weights of opponent's squares.
+        """
+        opp = player.opponent
+        total = 0
+        state = self.board.state
+
+        for row in range(self.board.size[0]):
+            for col in range(self.board.size[1]):
+                current_player = state[row][col]
+                if current_player == player:
+                    total += _SQUARE_WEIGHTS[row][col]
+                elif current_player == opp:
+                    total -= _SQUARE_WEIGHTS[row][col]
+        return total
 
     def set_players(self, players: tuple):
         if len(players) != 2:
