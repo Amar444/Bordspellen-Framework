@@ -145,8 +145,8 @@
         var xy = app._utilities.getXY(parseInt($(this).attr("data-position")), 3);
         window.activeWebSocket.send(JSON.stringify({
           "command" : "move",
-          "moveX" : xy[1],
-          "moveY" : xy[0]
+          "moveX" : xy[0],
+          "moveY" : xy[1]
         }));
       }
 
