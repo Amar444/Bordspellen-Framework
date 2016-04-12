@@ -59,7 +59,7 @@
             <div class="challenge-buttons">
                 <a class="button cancel-button">Cancel</a>
                 <a class="button" id="challenge">Challenge</a>
-                <input id="ai" type="checkbox" datatype="AI">Play as an AI
+                <input class="ai" type="checkbox" datatype="AI">Play as an AI
             </div>
         </div>
         <div class="screen-2" style="display:none;">
@@ -72,9 +72,9 @@
             </div>
         </div>
         <div class="screen-3">
-          <div class="font big center">
-            Challenge received
-          </div>
+            <div class="font big center">
+                Challenge received
+            </div>
             <div class="overflow-hidden">
                 <div class="half font big" id="localPlayer1">
                 </div>
@@ -94,6 +94,7 @@
             <div class="challenge-buttons">
                 <a class="button cancel-button">Cancel</a>
                 <a class="button" id="play">Play</a>
+                <input class="ai" type="checkbox" datatype="AI">Play as an AI
             </div>
         </div>
     </div>
@@ -178,7 +179,7 @@
             game = app._utilities.storage.get("selectedGame"),
             turntime = $("#turntimechallenge").val();
 
-            var playState = $('#ai:checked').val();
+            var playState = $('.ai:checked').val();
 
             if(playState == "on") {
                 playState = "AI"
@@ -212,11 +213,20 @@
 
 
       $("#play").click(function() {
+           var playState = $('.ai:checked').val();
+
+            if(playState == "on") {
+                playState = "AI"
+            } else {
+                playState = "HUMAN"
+            }
+
+            alert(playState);
         window.activeWebSocket.send(JSON.stringify({
           "command" : "accept",
           "challenge" : $(this).attr("data-challengeNumber"),
-          "playAs" : "human",
-          "opponent" : $(this).attr("data-player")
+          "opponent" : $(this).attr("data-player"),
+          "playAs" : playState
         }));
       });
 
@@ -269,6 +279,7 @@
         $('#participants').html(html);
       });
     });
+
 
 </script>
 </html>
