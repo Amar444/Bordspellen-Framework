@@ -201,6 +201,27 @@ the GUI received the response of the server.
 <br>
 <br>
 
+
+#### When the GUI wants to make a move:
+
+---
+
+```
+GUI -> : {
+            "command" : "move",
+            "moveX" : <X>,
+            "moveY": <Y>
+          }
+GUI <- :
+    {
+        'detail': {
+            'status': <status>
+            'message': <mesage>
+        },
+        'listener': 'moveListener',
+    }
+```
+
 GUI UPDATES:
 -----
 
