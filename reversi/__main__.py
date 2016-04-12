@@ -8,7 +8,7 @@ from players import BoardPlayerMixin, NamedPlayerMixin, Player
 class DemoCliPlayer(NamedPlayerMixin, BoardPlayerMixin):
     def play(self):
         super().play()
-        if len(self.game.get_legal_moves == 0):
+        if len(self.game.get_legal_moves(self)) == 0:
             return
         try:
             x, y = str(input("Please enter coords to update the board? [x,y] ")).split(',')
