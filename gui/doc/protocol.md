@@ -300,6 +300,29 @@ the GUI received the response of the server.
 <br>
 <br>
 
+#### GUI needs to place a move:
+
+---
+
+```
+GUI <- :
+    {
+        'detail': {
+            'turnmessage': <turnmessage>,
+        },
+        'listener': 'doMove'
+    }
+
+```
+
+- The 'listener' entry in the return JSON String is the listener that needs to be invoked when
+the GUI received the response of the server.
+
+
+<br>
+<br>
+<br>
+
 #### Update the gui's view:
 
 ---
