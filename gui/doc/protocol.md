@@ -128,6 +128,7 @@ to be set, so can also be null.
 GUI -> : {
             "command" : "accept",
             "challenge" : <challengeNumber>,
+            "opponent" : <opponent>,
             "playAs": <"AI" | "HUMAN">
           }
 
@@ -159,7 +160,8 @@ to be set, so can also be null.
 ```
 GUI -> : {
             "command" : "subscribe",
-            "game" : <game>
+            "game" : <game>,
+            "playAs": <"AI" | "HUMAN">
           }
 
 GUI <- :

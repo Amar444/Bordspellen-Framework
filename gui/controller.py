@@ -11,6 +11,7 @@ class GUIController:
     client = Client()
     nickname = None
     commands = None
+    challenges = {}
 
     def __init__(self, gui):
         """ Initializes a new controller to be used by the GUI """
@@ -95,6 +96,7 @@ class GUIController:
         gametype = data['GAMETYPE']
         opponent = data['OPPONENT']
         player_to_move = data['PLAYERTOMOVE']
+        self.create_game(gametype, opponent)
         self.send_to_gui('match', {'gametype': gametype, 'opponent': opponent, 'playerToMove': player_to_move})
 
     def handle_yourturn(self, args):
@@ -105,16 +107,21 @@ class GUIController:
 
         if data == 'CANCELLED':
             challenge_number = args[1]['CHALLENGENUMBER']
+            del self.challenges[challenge_number]
             self.send_to_gui('challengeCancelled', {'challengeNumber': challenge_number})
         else:
             challenger = data['CHALLENGER']
             game_name = data['GAMETYPE']
             challenge_number = data['CHALLENGENUMBER']
             turntime = 10  # default for now
-            self.send_to_gui('challenged', {'challenger': challenger, 'gameName': game_name, 'challengeNumber': challenge_number, 'turnTime': turntime})
+            self.send_to_gui('challenged', {'challenger': challenger, 'gameName': game_name,
+                                            'challengeNumber': challenge_number, 'turnTime': turntime})
 
     def game_ended(self, args):
         print(str(args))
+
+    def create_game(self, gametype, opponent):
+        print(str(self.challenges))
 
 
 class Match:
@@ -122,5 +129,9 @@ class Match:
     own_player = None
     opponent = None
 
-    def __init__(self, gui):
-        pass
+    def __init__(self, game, own_player, opponent):
+        self.game = game
+        self.own_player = own_player,
+        self.opponent = opponent
+
+
