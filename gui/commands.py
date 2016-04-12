@@ -280,3 +280,17 @@ class CommandUnsubscribe(Command):
     def send_to_gui(self):
         """ let the GUI know that unsubscribing succeeded or not """
         self.controller.send_to_gui('unsubscribe', {}, self.status['status'], self.status['message'])
+
+
+class CommandMove(Command):
+    command = 'move'
+
+    x = None
+    y = None
+
+    def __init__(self, controller, client, message):
+        """ Initializes a command to challenge someone """
+        super().__init__(controller, client)
+        self.x = message['x']
+        self.y = message['y']
+        client.own_player.handle_move(self.x, self.y)
