@@ -156,6 +156,7 @@ class CommandCreateChallenge(Command):
     player = None
     game = None
     turntime = None
+    play_as = None
 
     def __init__(self, controller, client, message):
         """ Initializes a command to challenge someone """
@@ -163,6 +164,7 @@ class CommandCreateChallenge(Command):
         self.player = message['playername']
         self.game = message['gamename']
         self.turntime = message['turntime']
+        self.play_as = message['playAs']
         self.send_to_server()
 
     def send_to_server(self):
@@ -172,6 +174,7 @@ class CommandCreateChallenge(Command):
     def handle_ok(self, data):
         """ if calling out the challenge succeeded, tell it to the GUI """
         super().handle_ok(data)
+        self.controller.challenges[self.player] = self.play_as
         self.send_to_gui()
 
     def handle_err(self, data):
@@ -189,11 +192,13 @@ class CommandAcceptChallenge(Command):
     command = 'accept'
 
     challenge = None
+    play_as = None
 
     def __init__(self, controller, client, message):
         """ Initializes a command to accept a challenge """
         super().__init__(controller, client)
         self.challenge = message['challenge']
+        self.play_as = message['playAs']
         self.send_to_server()
 
     def send_to_server(self):

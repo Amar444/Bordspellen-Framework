@@ -159,7 +159,8 @@ to be set, so can also be null.
 ```
 GUI -> : {
             "command" : "subscribe",
-            "game" : <game>
+            "game" : <game>,
+            "playAs": <"AI" | "HUMAN">
           }
 
 GUI <- :
