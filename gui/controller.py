@@ -91,7 +91,11 @@ class GUIController:
             self.game_ended(data.arguments[0:])
 
     def handle_match(self, args):
-        print(str(args))
+        data = args[0]
+        gametype = data['GAMETYPE']
+        opponent = data['OPPONENT']
+        player_to_move = data['PLAYERTOMOVE']
+        self.send_to_gui('match', {'gametype': gametype, 'opponent': opponent, 'playerToMove': player_to_move})
 
     def handle_yourturn(self, args):
         print(str(args))
