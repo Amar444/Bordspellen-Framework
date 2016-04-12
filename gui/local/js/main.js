@@ -98,6 +98,7 @@ var app = {
           if(timer < 0) {
             $(".message").removeClass("visible");
             clearInterval(i);
+            callback();
           } else {
             $(".message-timer").html(timer);
           }
