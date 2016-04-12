@@ -145,9 +145,10 @@
         var xy = app._utilities.getXY(parseInt($(this).attr("data-position")), 3);
         window.activeWebSocket.send(JSON.stringify({
           "command" : "move",
-          "moveX" : xy[1],
-          "moveY" : xy[0]
+          "moveX" : xy[0],
+          "moveY" : xy[1]
         }));
+        window.placed = true;
       }
 
     });
@@ -170,6 +171,13 @@
           $('[data-position="'+pos+'"]').attr("data-placed", item);
         }
       }
+    });
+
+    $(document).on("doMove", function(e) {
+      $(".match-overlay").hide();
+      app.main.setGameTimer("It's your turn", 10, function() {
+        $(".match-overlay").show();
+      });
     });
 
     $(document).on("moveListener", function(e) {

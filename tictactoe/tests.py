@@ -3,8 +3,8 @@ Unit Tests for the TicTacToe implementation
 """
 
 import unittest
-from game import TicTacToeGame, STATUS_WINNER, STATUS_UNCLEAR, STATUS_DRAW
-from players import Player, BoardPlayerMixin, NamedPlayerMixin
+from tictactoe.game import TicTacToeGame, STATUS_WINNER, STATUS_UNCLEAR, STATUS_DRAW
+from gac.players import Player, BoardPlayerMixin, NamedPlayerMixin
 
 
 class TestPlayer(NamedPlayerMixin, BoardPlayerMixin):
