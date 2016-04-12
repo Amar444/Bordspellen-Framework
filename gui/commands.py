@@ -293,4 +293,28 @@ class CommandMove(Command):
         super().__init__(controller, client)
         self.x = message['x']
         self.y = message['y']
-        client.own_player.handle_move(self.x, self.y)
+
+    def handle_move(self, x, y):
+        try:
+            self.controller.own_player.board.is_available(self.x, self.y)
+            self.send_to_server()
+        except Exception as e:
+            self.handle_err('')
+
+    def send_to_server(self):
+        move = ((self.x * self.controller.own_player.board.size[0]) + (self.y))
+        super().send_to_server('move', move)
+
+    def handle_ok(self, data):
+        super().handle_ok(data)
+        self.controller.own_player.board.set(self.x, self.y, self.name[0:1])
+        self.controller.own_player.condition.notify()
+        self.send_to_gui()
+
+    def handle_err(self, data):
+        super().handle_err(data)
+        self.status['message'] = 'move not valid'
+        self.send_to_gui()
+
+    def send_to_gui(self):
+        self.controller.send_to_gui('moveListener', {}, self.status['status'], self.status['message'])

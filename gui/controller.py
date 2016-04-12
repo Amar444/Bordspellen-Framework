@@ -15,6 +15,7 @@ class GUIController:
     commands = None
     challenges = {}
     own_player = None
+    opponent_player = None
 
     def __init__(self, gui):
         """ Initializes a new controller to be used by the GUI """
@@ -32,6 +33,7 @@ class GUIController:
             CommandAcceptChallenge,
             CommandSubscribe,
             CommandUnsubscribe,
+            CommandMove,
         )
 
     def handle_message(self, message):
@@ -89,6 +91,8 @@ class GUIController:
             self.handle_yourturn(data.arguments[1:])
         elif type == 'CHALLENGE':
             self.handle_challenge(data.arguments[1:])
+        elif type == 'MOVE':
+            self.handle_move(data.arguments[1:])
         elif type == 'HELP':
             print("We ain't accepting no help!")
         else:
@@ -104,6 +108,14 @@ class GUIController:
 
     def handle_yourturn(self, args):
         self.own_player.play(args[0]['TURNMESSAGE'])
+
+    def handle_move(self, args):
+        print('stuur update naar server')
+
+        data = args[0]
+        if data['PLAYER'] == self.opponent_player.name:
+            self.opponent_player.board.set(self.x, self.y, self.name[0:1])
+            self.opponent_player.condition.notify()
 
     def handle_challenge(self, args):
         data = args[0]
@@ -132,28 +144,29 @@ class GUIController:
             game = TicTacToeGame()
 
         player_type = self.challenges[opponent]
-        players = {}
         if player_type == 'AI':
             self.own_player = None
         elif player_type == 'HUMAN':
             self.own_player = UIPlayer(self, self.nickname, game)
+            self.own_player.start()
 
-        opponent_player = ServerPlayer(opponent, game)
+        self.opponent_player = ServerPlayer(opponent, game)
+        self.opponent_player.start()
 
-        game.set_players((self.own_player, opponent_player))
-
-
+        game.set_players((self.own_player, self.opponent_player))
 
 
 class ClientPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
 
-class ServerPlayer(ClientPlayer):
+class ServerPlayer(Thread, ClientPlayer):
+    condition = Condition()
+
     def play(self):
-        pass
+        super().play()
+        self.condition.wait()
 
 
 class UIPlayer(Thread, ClientPlayer):
@@ -167,15 +180,5 @@ class UIPlayer(Thread, ClientPlayer):
     def play(self, turnmessage):
         super().play()
 
-        self.send_to_gui('doMove', {'turnmessage': turnmessage})
-        self.controller.commands.append(CommandMove)
+        self.controller.send_to_gui('doMove', {'turnmessage': turnmessage})
         self.condition.wait()
-        self.controller.commands.remove(CommandMove)
-
-    def handle_move(self, x, y):
-        try:
-            self.board.set(int(x), int(y), self.name[0:1])
-            
-        except Exception as e:
-            self.send_to_gui('doMove', {'turnmessage': turnmessage})
-            self.condition.wait()
