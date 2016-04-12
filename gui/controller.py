@@ -5,6 +5,8 @@ from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, Command
 from tictactoe.game import TicTacToeGame
 from gac.players import Player, NamedPlayerMixin, BoardPlayerMixin
 from gac.client import Client
+from ai import AIPlayer
+
 
 class GUIController:
     """ Provides a controller to link the GUI and a Client (so essentially the server) together """
@@ -145,7 +147,7 @@ class GUIController:
 
         player_type = self.challenges[opponent]
         if player_type == 'AI':
-            self.own_player = None
+            self.own_player = OwnAIPlayer(controller=self, name=self.nickname, game=game)
         elif player_type == 'HUMAN':
             self.own_player = UIPlayer(controller=self, name=self.nickname, game=game)
 
@@ -174,3 +176,24 @@ class UIPlayer(ClientPlayer):
     def play(self, turnmessage):
         super().play()
         self.controller.send_to_gui('doMove', {'turnmessage': turnmessage})
+
+
+class OwnAIPlayer(ClientPlayer, AIPlayer):
+    controller = None
+
+    def __init__(self, controller, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.controller = controller
+
+    def play(self):
+        super().play()
+
+        x, y = self.board.last_turn
+        move = str(x * self.board.size[0] + y % self.board.size[1])
+        self.controller.handle_message('{ \
+            "command": "move", \
+            "moveX": x, \
+            "moveY": y \
+          }')
+
+        # self.client.send(OutgoingCommand('MOVE', move))
