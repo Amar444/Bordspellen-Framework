@@ -98,6 +98,12 @@
       var placed = $(this).attr("data-placed");
       if(placed == "") {
         $(this).attr("data-placed", "cross");
+
+        // Get the place position:
+       var position = $(this).attr("data-position"); // Position as number of total
+
+       var rowColumn = app._utilities.getXY(position, 8);
+
       }
     });
 
