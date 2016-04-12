@@ -280,3 +280,43 @@ class CommandUnsubscribe(Command):
     def send_to_gui(self):
         """ let the GUI know that unsubscribing succeeded or not """
         self.controller.send_to_gui('unsubscribe', {}, self.status['status'], self.status['message'])
+
+
+class CommandMove(Command):
+    command = 'move'
+
+    x = None
+    y = None
+
+    def __init__(self, controller, client, message):
+        """ Initializes a command to challenge someone """
+        super().__init__(controller, client)
+        self.x = message['moveX']
+        self.y = message['moveY']
+        self.handle_move(self.x, self.y)
+
+    def handle_move(self, x, y):
+        try:
+            self.controller.own_player.board.is_available(int(self.x), int(self.y))
+            self.send_to_server()
+        except Exception as e:
+            self.handle_err('')
+
+    def send_to_server(self):
+        move = int(self.y) * int(self.controller.own_player.board.size[0])
+        move += int(self.x)
+        print(move)
+        super().send_to_server('move', str(move))
+
+    def handle_ok(self, data):
+        super().handle_ok(data)
+        self.controller.own_player.board.set(int(self.x), int(self.y), self.controller.nickname)
+        self.send_to_gui()
+
+    def handle_err(self, data):
+        super().handle_err(data)
+        self.status['message'] = 'move not valid'
+        self.send_to_gui()
+
+    def send_to_gui(self):
+        self.controller.send_to_gui('moveListener', {}, self.status['status'], self.status['message'])
