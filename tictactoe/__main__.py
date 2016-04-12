@@ -1,6 +1,6 @@
-from game import TicTacToeGame
-from ai import AIPlayer
-from players import Player, BoardPlayerMixin, NamedPlayerMixin
+from tictactoe.game import TicTacToeGame
+from tictactoe.ai import AIPlayer
+from gac.players import Player, BoardPlayerMixin, NamedPlayerMixin
 
 
 class DemoCliPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):

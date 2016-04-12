@@ -5,7 +5,7 @@ from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, Command
 from tictactoe.game import TicTacToeGame
 from gac.players import Player, NamedPlayerMixin, BoardPlayerMixin
 from gac.client import Client
-from ai import AIPlayer
+from tictactoe.ai import AIPlayer
 
 
 class GUIController:

@@ -1,5 +1,5 @@
-from game import STATUS_WINNER, STATUS_DRAW
-from players import BoardPlayerMixin, NamedPlayerMixin
+from tictactoe.game import STATUS_WINNER, STATUS_DRAW
+from gac.players import BoardPlayerMixin, NamedPlayerMixin
 
 
 class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):

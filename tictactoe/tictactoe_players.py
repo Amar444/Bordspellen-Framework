@@ -1,4 +1,4 @@
-from players import BoardPlayerMixin, NamedPlayerMixin, ClientPlayerMixin
+from gac.players import BoardPlayerMixin, NamedPlayerMixin, ClientPlayerMixin
 from threading import Condition
 
 """
