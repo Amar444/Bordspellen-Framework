@@ -215,7 +215,8 @@
         window.activeWebSocket.send(JSON.stringify({
           "command" : "accept",
           "challenge" : $(this).attr("data-challengeNumber"),
-          "playAs" : "human"
+          "playAs" : "human",
+          "opponent" : $(this).attr("data-player")
         }));
       });
 
@@ -253,6 +254,7 @@
         $("#localPlayer1").text(app._utilities.storage.get("localName"));
         $("#gameName1").text(e.detail.gameName);
         $("#play").attr("data-challengeNumber", e.detail.challengeNumber);
+        $("#play").attr("data-player", e.detail.challenger)
       });
 
 
