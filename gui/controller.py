@@ -110,12 +110,13 @@ class GUIController:
         self.own_player.play(args[0]['TURNMESSAGE'])
 
     def handle_move(self, args):
-        print('stuur update naar server')
-
         data = args[0]
         if data['PLAYER'] == self.opponent_player.name:
-            self.opponent_player.board.set(self.x, self.y, self.name[0:1])
-            self.opponent_player.condition.notify()
+            x = data['MOVE'] / self.opponent_player.board.size[0]
+            y = data['MOVE'] % self.opponent_player.board.size[1]
+            self.opponent_player.board.set(int(x), int(y), self.opponent_player.name)
+        board = self.own_player.board.state
+        self.send_to_gui('boardListener', {'board': board})
 
     def handle_challenge(self, args):
         data = args[0]
@@ -147,11 +148,9 @@ class GUIController:
         if player_type == 'AI':
             self.own_player = None
         elif player_type == 'HUMAN':
-            self.own_player = UIPlayer(self, self.nickname, game)
-            self.own_player.start()
+            self.own_player = UIPlayer(controller=self, name=self.nickname, game=game)
 
-        self.opponent_player = ServerPlayer(opponent, game)
-        self.opponent_player.start()
+        self.opponent_player = ServerPlayer(name=opponent, game=game)
 
         game.set_players((self.own_player, self.opponent_player))
 
@@ -161,15 +160,14 @@ class ClientPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):
         super().__init__(*args, **kwargs)
 
 
-class ServerPlayer(Thread, ClientPlayer):
+class ServerPlayer(ClientPlayer):
     condition = Condition()
 
     def play(self):
         super().play()
-        self.condition.wait()
 
 
-class UIPlayer(Thread, ClientPlayer):
+class UIPlayer(ClientPlayer):
     controller = None
     condition = Condition()
 
@@ -179,6 +177,4 @@ class UIPlayer(Thread, ClientPlayer):
 
     def play(self, turnmessage):
         super().play()
-
         self.controller.send_to_gui('doMove', {'turnmessage': turnmessage})
-        self.condition.wait()

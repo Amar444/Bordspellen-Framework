@@ -291,24 +291,26 @@ class CommandMove(Command):
     def __init__(self, controller, client, message):
         """ Initializes a command to challenge someone """
         super().__init__(controller, client)
-        self.x = message['x']
-        self.y = message['y']
+        self.x = message['moveX']
+        self.y = message['moveY']
+        self.handle_move(self.x, self.y)
 
     def handle_move(self, x, y):
         try:
-            self.controller.own_player.board.is_available(self.x, self.y)
+            self.controller.own_player.board.is_available(int(self.x), int(self.y))
             self.send_to_server()
         except Exception as e:
             self.handle_err('')
 
     def send_to_server(self):
-        move = ((self.x * self.controller.own_player.board.size[0]) + (self.y))
-        super().send_to_server('move', move)
+        move = int(self.y) * int(self.controller.own_player.board.size[0])
+        move += int(self.x)
+        print(move)
+        super().send_to_server('move', str(move))
 
     def handle_ok(self, data):
         super().handle_ok(data)
-        self.controller.own_player.board.set(self.x, self.y, self.name[0:1])
-        self.controller.own_player.condition.notify()
+        self.controller.own_player.board.set(int(self.x), int(self.y), self.controller.nickname)
         self.send_to_gui()
 
     def handle_err(self, data):
