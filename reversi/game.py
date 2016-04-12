@@ -108,6 +108,8 @@ class ReversiGame(TurnBasedGame, BoardGame):
             raise Exception("You must play reversi with exactly two players.")
 
         super().set_players(players)
+        players[0].token = 1
+        players[1].token = 2
 
         self.board.set(3, 3, players[0])
         self.board.set(4, 4, players[0])

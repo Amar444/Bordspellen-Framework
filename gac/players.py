@@ -16,6 +16,7 @@ class BoardPlayerMixin(Player):
 
     board = None
     print_board = True
+    token = None
 
     def __init__(self, board, *args, **kwargs):
         super().__init__(*args, **kwargs)

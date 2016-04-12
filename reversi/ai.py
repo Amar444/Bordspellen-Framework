@@ -1,7 +1,7 @@
 """ Provides artificial intelligence for the Reversi game"""
 from game import ReversiGame, _UNCLEAR, _PLAYER_ONE_WIN, _PLAYER_TWO_WIN, _DRAW
 from players import BoardPlayerMixin, NamedPlayerMixin
-from utils import Best
+import c_ai_module
 import sys
 import time
 
@@ -130,3 +130,25 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     def calc_value(self, player):
         # Weighted scores for current player based on Disk Square table
         return self.game.weighted_scores(player)
+
+
+class AIPlayerC(NamedPlayerMixin, BoardPlayerMixin):
+    _DEFAULT_DEPTH = 8
+
+    def __init__(self, game: ReversiGame, depth=_DEFAULT_DEPTH, *args, **kwargs):
+        """ Initializes the AIPlayer instance """
+        super().__init__(*args, **kwargs)
+        self.game = game
+        self.depth = depth
+
+    def play(self):
+        """ Picks the best move, updates the board and prints the move to the the console """
+        super().play()
+        self.do_move()
+
+    def do_move(self):
+        """ Attempts to calculate the best move and update the board accordingly """
+        best_row, best_column = c_ai_module.best_move(self.board.tokenized(), self.token, self.depth)
+        self.game.execute_move(self, best_row, best_column)
+        print("AI placed {} on coords {},{}\n\n".format(self.name, best_row, best_column))
+

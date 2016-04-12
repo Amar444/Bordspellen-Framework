@@ -6,27 +6,45 @@
 static PyObject* best_move(PyObject *self, PyObject *args)
 {
     int player; /* define an int containing the value of player (1 or 2) */
+    int depth; /*define an int containing the depth of minimax search */
     int **board; /* define an int pointer to the location of board ( an 8x8 2d int array) */
     PyObject *temp_board; /*define a pointer to store the board tuple in*/
 
     /* Parse the tuple that gets passed by python into the module*/
-    if (!PyArg_ParseTuple(args,"Oi", &temp_board, &player ))
+    if (!PyArg_ParseTuple(args,"Oii", &temp_board, &player, &depth ))
     {
         return NULL;
     }
     /*parse the numpy array */
     /*temp_board = PyArray_FROM_OTF(temp_board, NPY_INT, NPY_ARRAY_IN_ARRAY);*/
-    int typenum = NPY_DOUBLE;
+    int typenum = NPY_INT;
     PyArray_Descr *descr;
     descr = PyArray_DescrFromType(typenum);
-    npy_intp dims[7]; /*8 possible values counted from 0*/
-    if (PyArray_AsCArray(&temp_board, (void**)&board, dims, 2, descr) < 0){
+    npy_intp dims[2]; /*shape of the array*/
+    if (PyArray_AsCArray(&temp_board, (void*)&board, dims, 2, descr) < 0){
         PyErr_SetString(PyExc_TypeError, "error converting to c array");
         return NULL;
     }
 
-    int row = 0, col = 0;
+    int i,j;
+    int board_array[SIZE][SIZE];
+    for(i = 0; i< SIZE; i++){
+        for(j = 0; j<SIZE; j++){
+            board_array[i][j] = board[i][j];
+        }
+    }
 
+    move best = start(board_array, player, depth);
+    int row = best.row, col = best.col;
+/*
+    printf("The board array.\n");
+    for(i = 0; i < 8; i++) {
+        for(j = 0; j < 8; j++) {
+            printf("%i ", board_array[i][j]);
+        }
+        printf("\n");
+    }
+*/
     return Py_BuildValue("ii", row, col);
 }
 

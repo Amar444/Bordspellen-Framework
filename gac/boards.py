@@ -5,6 +5,7 @@ base Board class.
 """
 
 from exceptions import *
+import numpy
 
 class Board(object):
     """
@@ -71,6 +72,15 @@ class TwoDimensionalBoard(Board):
         the board and will directly return it's result when it finds out if there is still place for another move
         """
         return not any(None in b for b in self.state)
+
+    def tokenized(self):
+        """Return the state of the board as an INT8 Numpy Array"""
+        tokenized_state = [[None for r in range(0, self.size[0])] for r in range(0, self.size[1])]
+        for row in range(self.size[0]):
+            for col in range(self.size[1]):
+                tokenized_state[row][col] = 0 if self.state[row][col] is None else self.state[row][col].token
+
+        return numpy.array(tokenized_state, dtype="short")
 
     def __str__(self):
         """ Returns the current board as a string """
