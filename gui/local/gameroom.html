@@ -59,6 +59,7 @@
             <div class="challenge-buttons">
                 <a class="button cancel-button">Cancel</a>
                 <a class="button" id="challenge">Challenge</a>
+                <input id="ai" type="checkbox" datatype="AI">Play as an AI
             </div>
         </div>
         <div class="screen-2" style="display:none;">
@@ -177,11 +178,20 @@
             game = app._utilities.storage.get("selectedGame"),
             turntime = $("#turntimechallenge").val();
 
+            var playState = $('#ai:checked').val();
+
+            if(playState == "on") {
+                playState = "AI"
+            } else {
+                playState = "HUMAN"
+            }
+
           window.activeWebSocket.send(JSON.stringify({
             "command" : "challenge",
             "playername": player,
             "gamename" : game,
-            "turntime" : turntime
+            "turntime" : turntime,
+            "playAs": playState
           }));
           window.selectedPlayer = player;
           window.selectedGame = game;
