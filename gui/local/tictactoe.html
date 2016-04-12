@@ -109,6 +109,11 @@
 
     // Init the mute image
     setMuteImage(app._utilities.statusAudio());
+    if(app._utilities.storage.get("playerToMove") == app._utilities.storage.get("localName")) {
+      app.main.setGameTimer("It's your turn", 10, function() {
+        console.log("Too late!");
+      });
+    }
 
 
     /* EVENTS */
