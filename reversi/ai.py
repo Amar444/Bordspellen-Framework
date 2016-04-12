@@ -93,9 +93,10 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         if depth == 0:
             # return board value if max depth is reached
             return self.calc_value(player, self.board_value_method), 0, 0
+
         if self.game.status == _UNCLEAR:
             best_reply = None
-            # iterate over all possible moves
+            board = self.board.state
             has_legal_moves = False
 
             for x, y in self.game.iterate_legal_moves(player):
@@ -104,7 +105,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
                 val, _, _ = self.calc_best_move(self if player == self.opponent else self.opponent, depth-1)
 
                 for mx, my, previous in moves:
-                    self.board.state[mx][my] = previous
+                    board[mx][my] = previous
 
                 # set as best reply if lowest or highest value
                 if (best_reply is None or (player == self and val > best_reply[0])) or \
