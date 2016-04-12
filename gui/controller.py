@@ -1,10 +1,9 @@
 import json
-from threading import Thread, Condition
 
 from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, CommandGamelist, CommandCreateChallenge, \
     CommandAcceptChallenge, CommandSubscribe, CommandUnsubscribe, CommandMove
 from tictactoe.game import TicTacToeGame
-from players import Player, NamedPlayerMixin, BoardPlayerMixin
+from gac.players import Player, NamedPlayerMixin, BoardPlayerMixin
 from gac.client import Client
 
 class GUIController:
@@ -129,7 +128,7 @@ class GUIController:
             challenger = data['CHALLENGER']
             game_name = data['GAMETYPE']
             challenge_number = data['CHALLENGENUMBER']
-            turntime = 10  # default for now
+            turntime = data['TURNTIME']
             self.send_to_gui('challenged', {'challenger': challenger, 'gameName': game_name,
                                             'challengeNumber': challenge_number, 'turnTime': turntime})
 
@@ -161,15 +160,12 @@ class ClientPlayer(NamedPlayerMixin, BoardPlayerMixin, Player):
 
 
 class ServerPlayer(ClientPlayer):
-    condition = Condition()
-
     def play(self):
         super().play()
 
 
 class UIPlayer(ClientPlayer):
     controller = None
-    condition = Condition()
 
     def __init__(self, controller, *args, **kwargs):
         super().__init__(*args, **kwargs)

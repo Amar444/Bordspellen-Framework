@@ -169,7 +169,7 @@ class CommandCreateChallenge(Command):
 
     def send_to_server(self):
         """ send the challenge to the server """
-        super().send_to_server('challenge', '"' + self.player + '"', '"' + self.game + '"', '"' + self.turntime + '"')
+        super().send_to_server('challenge', '"' + self.player + '"', '"' + self.game + '"', self.turntime)
 
     def handle_ok(self, data):
         """ if calling out the challenge succeeded, tell it to the GUI """

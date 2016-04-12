@@ -2,8 +2,8 @@
 Games
 """
 
-from boards import Board
-from exceptions import *
+from gac.boards import Board
+from gac.exceptions import *
 
 class Game(object):
     """ Provides you with the tools to set up a game """
