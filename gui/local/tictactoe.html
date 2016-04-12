@@ -148,6 +148,7 @@
           "moveX" : xy[0],
           "moveY" : xy[1]
         }));
+        window.placed = true;
       }
 
     });
@@ -170,6 +171,13 @@
           $('[data-position="'+pos+'"]').attr("data-placed", item);
         }
       }
+    });
+
+    $(document).on("doMove", function(e) {
+      $(".match-overlay").hide();
+      app.main.setGameTimer("It's your turn", 10, function() {
+        $(".match-overlay").show();
+      });
     });
 
     $(document).on("moveListener", function(e) {
