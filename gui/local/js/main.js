@@ -70,7 +70,7 @@ var app = {
            return [row, col];
         },
         getPos : function(xy, squareWidth) {
-           return ((xy[0] * squareWidth) + 1) + (xy[1]);
+           return (xy[0] * squareWidth + xy[1] % squareWidth) + 1;
         }
     },
   "main" : {
@@ -87,6 +87,7 @@ var app = {
     },
     "setGameTimer" : function(message, timer, callback) {
       $(function() {
+        window.placed = false;
         $(".message-text").html(message);
         $(".message-timer").html(timer);
         $(".message").addClass('visible');
@@ -95,7 +96,7 @@ var app = {
             timer = -1;
           }
           timer = timer - 1;
-          if(timer < 0) {
+          if(timer < 0 || window.placed == false) {
             $(".message").removeClass("visible");
             clearInterval(i);
             callback();
