@@ -2,8 +2,8 @@ import time
 import threading
 
 
-class AshleySpammer(threading.Thread):
-    ashley = ["We're no strangers to love, you know the rules and so do I",
+class AstleySpammer(threading.Thread):
+    astley = ["We're no strangers to love, you know the rules and so do I",
                 "A full commitments what I'm thinking of",
                 "You wouldn't get this from any other guy.",
                 "I just wanna tell you how I'm feeling, gotta make you understand.",
@@ -46,15 +46,15 @@ class AshleySpammer(threading.Thread):
                 "Never gonna tell a lie and hurt you."]
 
     def run(self):
-        length = len(self.ashley)
+        length = len(self.astley)
         counter = 0
 
         while True:
-            print(self.ashley[counter])
+            print(self.astley[counter])
             counter = counter + 1
             if counter >= length:
                 counter = 0
 
             time.sleep(3)
 
-AshleySpammer().start()
+AstleySpammer().start()

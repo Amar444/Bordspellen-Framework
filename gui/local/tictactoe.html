@@ -114,8 +114,11 @@
     // Init the mute image
     setMuteImage(app._utilities.statusAudio());
     if(app._utilities.storage.get("playerToMove") == app._utilities.storage.get("localName")) {
+      $(".match-overlay").hide();
       app.main.setGameTimer("It's your turn", 10, function() {
-        console.log("Too late!");
+        $(".match-overlay").show();
+        app.main.setGameTimer("It's the opponent's turn", 10, function() {
+        });
       });
     }
 
