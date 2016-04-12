@@ -3,12 +3,14 @@ from game import ReversiGame, _UNCLEAR, _PLAYER_ONE_WIN, _PLAYER_TWO_WIN, _DRAW
 from players import BoardPlayerMixin, NamedPlayerMixin
 from utils import Best
 import sys
+import time
 
 
 class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     opponent = None
     board_value_method = "greedy"
-    _DEFAULT_DEPTH = 6
+    _DEFAULT_DEPTH = 8
+    _TIME_LIMIT = 3.7
 
     def __init__(self, game: ReversiGame, depth=_DEFAULT_DEPTH, *args, **kwargs):
         """ Initializes the AIPlayer instance """
@@ -35,14 +37,18 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     def do_move(self):
         """ Attempts to calculate the best move and update the board accordingly """
         print(self.game.get_legal_moves(self))
-        _, best_row, best_column = self.calc_best_move_alpha_beta(self, self.depth, -sys.maxsize, sys.maxsize)
+        time_limit = float(self._TIME_LIMIT)
+        stop_time = time.time() + time_limit
+
+        _, best_row, best_column = self.calc_best_move_alpha_beta(self, self.depth, -sys.maxsize, sys.maxsize,
+                                                                  stop_time)
         print(self.game.board.__str__())
         print(self.game.get_legal_moves(self))
         self.game.execute_move(self, best_row, best_column)
         print("AI placed {} on coords {},{}\n\n".format(self.name, best_row, best_column))
 
-    def calc_best_move_alpha_beta(self, player, depth, alpha, beta):
-        if depth == 0:
+    def calc_best_move_alpha_beta(self, player, depth, alpha, beta, stop_time):
+        if depth == 0 or time.time() > stop_time:
             return self.calc_value(player, self.board_value_method), 0, 0
 
         if self.game.status == _UNCLEAR:
@@ -55,12 +61,12 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
                 has_legal_moves = True
                 moves = self.game.execute_move(player, x, y)
                 if player == self:
-                    val, _, _ = self.calc_best_move_alpha_beta(self.opponent, depth - 1, alpha, beta)
+                    val, _, _ = self.calc_best_move_alpha_beta(self.opponent, depth - 1, alpha, beta, stop_time)
                     if val > alpha:
                         alpha = val
                         best_reply = (alpha, x, y)
                 else:
-                    val, _, _ = self.calc_best_move_alpha_beta(self, depth - 1, alpha, beta)
+                    val, _, _ = self.calc_best_move_alpha_beta(self, depth - 1, alpha, beta, stop_time)
                     if val < beta:
                         beta = val
                         best_reply = (beta, x, y)
@@ -74,7 +80,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
             if not has_legal_moves:
                 # skip if no possible moves
                 return self.calc_best_move_alpha_beta(self if player == self.opponent else self.opponent, depth - 1,
-                                                      alpha, beta)
+                                                      alpha, beta, stop_time)
 
             return best_reply
 
