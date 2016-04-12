@@ -2,7 +2,7 @@ from tictactoe.game import STATUS_WINNER, STATUS_DRAW
 from gac.players import BoardPlayerMixin, NamedPlayerMixin
 
 
-class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
+class TicTacToeAIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     opponent = None
 
     def play(self):

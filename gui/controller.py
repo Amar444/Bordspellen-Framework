@@ -3,9 +3,11 @@ import json
 from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, CommandGamelist, CommandCreateChallenge, \
     CommandAcceptChallenge, CommandSubscribe, CommandUnsubscribe, CommandMove
 from tictactoe.game import TicTacToeGame
-from gac.players import Player, NamedPlayerMixin, BoardPlayerMixin
+from reversi.game import ReversiGame
+from gac.players import NamedPlayerMixin, BoardPlayerMixin
 from gac.client import Client
-from tictactoe.ai import AIPlayer
+from tictactoe.ai import TicTacToeAIPlayer
+from reversi.ai import ReversiAIPlayer
 
 
 class GUIController:
@@ -17,6 +19,7 @@ class GUIController:
     challenges = {}
     own_player = None
     opponent_player = None
+    first_turn = True
 
     def __init__(self, gui):
         """ Initializes a new controller to be used by the GUI """
@@ -108,7 +111,8 @@ class GUIController:
         self.send_to_gui('match', {'gametype': gametype, 'opponent': opponent, 'playerToMove': player_to_move})
 
     def handle_yourturn(self, args):
-        self.own_player.play(args[0]['TURNMESSAGE'])
+        if self.first_turn is not True:
+            self.own_player.play(args[0]['TURNMESSAGE'])
 
     def handle_move(self, args):
         data = args[0]
@@ -136,22 +140,43 @@ class GUIController:
 
     def game_ended(self, args):
         print(str(args))
+        game_status = args[0].lower()
+        data = args[1]
+        player_one_score = data['PLAYERONESCORE']
+        player_two_score = data['PLAYERTWOSCORE']
+        comment = data['COMMENT']
+        self.send_to_gui('gameStatus', {'status': game_status, 'playerOneScore': player_one_score,
+                                        'playerTwoScore': player_two_score, 'comment': comment})
+
+        self.opponent_player = None
+        self.own_player = None
 
     def create_game(self, gametype, opponent, player_to_move):
+        self.first_turn = True
+
         if gametype == 'Reversi':
-            pass
+            game = ReversiGame()
         elif gametype == 'Tic-tac-toe':
             game = TicTacToeGame()
 
         player_type = self.challenges[str(opponent)]
         if player_type == 'AI':
-            self.own_player = OwnAIPlayer(controller=self, name=self.nickname, game=game)
+            if gametype == 'Reversi':
+                self.own_player = GUIReversiAIPlayer(controller=self, name=self.nickname, game=game)
+            elif gametype == 'Tic-tac-toe':
+                self.own_player = GUITicTacToeAIPlayer(controller=self, name=self.nickname, game=game)
         elif player_type == 'HUMAN':
             self.own_player = UIPlayer(controller=self, name=self.nickname, game=game)
 
         self.opponent_player = ServerPlayer(name=opponent, game=game)
 
         game.set_players((self.own_player, self.opponent_player))
+
+        if self.own_player.name == player_to_move:
+            self.own_player.play('')
+        elif self.opponent_player.name == player_to_move:
+            self.opponent_player.play('')
+        self.first_turn = False
 
 
 class ClientPlayer(NamedPlayerMixin, BoardPlayerMixin):
@@ -176,7 +201,7 @@ class UIPlayer(ClientPlayer):
         self.controller.send_to_gui('doMove', {'turnmessage': turnmessage})
 
 
-class OwnAIPlayer(AIPlayer):
+class GUITicTacToeAIPlayer(TicTacToeAIPlayer):
     controller = None
 
     def __init__(self, controller, *args, **kwargs):
@@ -187,9 +212,26 @@ class OwnAIPlayer(AIPlayer):
         super().play()
 
         x, y, p = self.board.last_turn
-        move = str(x * self.board.size[0] + y % self.board.size[1])
         self.controller.handle_message('{ \
             "command": "move", \
             "moveX": ' + str(x) + ', \
             "moveY": ' + str(y) + ' \
           }')
+
+
+class GUIReversiAIPlayer(ReversiAIPlayer):
+    controller = None
+
+    def __init__(self, controller, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.controller = controller
+
+    def play(self, turnmessage):
+        super().play()
+
+        x, y, p = self.board.last_turn
+        self.controller.handle_message('{ \
+                "command": "move", \
+                "moveX": ' + str(x) + ', \
+                "moveY": ' + str(y) + ' \
+              }')
