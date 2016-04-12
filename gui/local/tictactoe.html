@@ -138,12 +138,9 @@
     /* API EVENTS */
     $(document).on("fullBoard", function() {
       var board = [["cross", "circle", ""],["cross", "", "cross"], ["circle", "circle", "cross"]];
-
-
       for(var i = 0; i < board.length; i++) {
         for(var j = 0; j < board[i].length; j++) {
           var pos = app._utilities.getPos([i, j], 3);
-
           $('[data-position="'+pos+'"]').attr("data-placed", board[i][j]);
         }
       }
