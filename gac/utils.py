@@ -1,5 +1,5 @@
 """ All kinds of utilities """
-
+from threading import Thread, Lock
 from pyparsing import *
 
 
@@ -12,6 +12,37 @@ class Best(object):
         self.row = r
         # column of move
         self.column = c
+
+
+class EventEmitter(object):
+    def __init__(self):
+        self.listeners_lock = Lock()
+        self.listeners = {}
+
+    def emit_event(self, event_name, data=None):
+        """ Emits an event to all listening handlers """
+        if event_name in self.listeners:
+            for handler in self.listeners[event_name]:
+                try:
+                    Thread(target=handler, args=(data,)).start()
+                except Exception as e:
+                    print("Could not emit event {} to one of the listeners due to: {}".format(event_name, e))
+
+    def on(self, event_name, handler):
+        """ Subscribe for a specific event """
+        with self.listeners_lock:
+            if event_name not in self.listeners:
+                self.listeners[event_name] = []
+            self.listeners[event_name].append(handler)
+
+    def off(self, event_name, handler=None):
+        """ Unsubscribe for a specific event """
+        with self.listeners_lock:
+            if event_name in self.listeners:
+                if handler is None:
+                    self.listeners[event_name] = []
+                elif handler in self.listeners[event_name]:
+                    self.listeners[event_name].remove(handler)
 
 
 def convert_values(s, l, tokens):

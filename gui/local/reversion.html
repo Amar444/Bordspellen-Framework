@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reversion & TicTacToe - The Game - Reversion</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="fonts/stylesheet.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+  </head>
+  <body>
+    <div class="global">
+      <div class="background fadeIn">
+        <div class="scroll-background">
+
+        </div>
+      </div>
+      <div class="content fadeIn">
+       <div class="top-bar">
+          <div class="title-bar">
+            <div id="lobbyMessage">
+                Reversion
+            </div>
+          </div>
+          <div class="title-bar-button" data-destination="gameroom.html">
+            <
+          </div>
+          <div class="title-bar-volume">
+            <div class="volume">
+              <img id="mute-button" data-action="mute-unmute" src="img/sound.png">
+            </div>
+          </div>
+        </div>
+        <div id="game-main-content">
+          <div class="field">
+            <div class="reversion" id="reversion">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+  $(function () {
+
+    /* FUNCTIONS */
+
+    // Change mute image based on the status
+    var setMuteImage = function(status) {
+        if(status) {
+            $("#mute-button").attr("src", "img/sound.png");
+        } else {
+            $("#mute-button").attr("src", "img/mute.png");
+        }
+    }
+
+
+
+    /* INITIALISATION */
+
+    // Init the mute image
+    setMuteImage(app._utilities.statusAudio());
+
+
+    /* EVENTS */
+
+    // On click go back to index
+    $(".title-bar-button").click(function() {
+      var dest = $(this).attr("data-destination");
+      app.main.unloadPage(dest, this);
+    });
+
+
+    //onderstaande functie plaats een </div>  direct na data-placed=
+
+    $(window).load(function() {
+      var wrapper = $("<div class='reversion'></div>");
+
+      for (i = 1; i <= 64; i++) {
+          wrapper.append('<div class= "reversion-position " data-position=' + i +  ' data-placed= >'
+                  + '<img src= "img/reversion-white.svg"  class= "circle" >'
+                  + '<img src= "img/reversion-black.svg"  class= "cross" >');
+      }
+      $("#reversion").append(wrapper);
+    });
+
+
+
+    // Toggle mute - unmute
+    $('[data-action="mute-unmute"]').click(function() {
+      var status = app._utilities.toggleAudio();
+
+      setMuteImage(status);
+    });
+
+    // Place item on click in empty field position
+    $(document).on("click", "[data-position]", function() {
+      var placed = $(this).attr("data-placed");
+      if(placed == "") {
+        $(this).attr("data-placed", "cross");
+
+        // Get the place position:
+       var position = $(this).attr("data-position"); // Position as number of total
+
+       var rowColumn = app._utilities.getXY(position, 8);
+
+      }
+    });
+
+
+  });
+  </script>
+</html>

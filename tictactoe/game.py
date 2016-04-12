@@ -1,5 +1,5 @@
-from boards import TwoDimensionalBoard
-from games import BoardGame, TurnBasedGame
+from gac.boards import TwoDimensionalBoard
+from gac.games import BoardGame, TurnBasedGame
 
 STATUS_UNCLEAR = 0
 STATUS_WINNER = 1
@@ -51,7 +51,8 @@ class TicTacToeBoard(TwoDimensionalBoard):
 
 class TicTacToeGame(TurnBasedGame, BoardGame):
     """ Represents TicTacToe game """
-    board = TicTacToeBoard()
+    name = "Tic-tac-toe"
+    board_class = TicTacToeBoard
 
     @property
     def state(self):

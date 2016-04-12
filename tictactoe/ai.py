@@ -1,15 +1,9 @@
-from game import STATUS_WINNER, STATUS_DRAW, TicTacToeGame
-from players import BoardPlayerMixin, NamedPlayerMixin
-from utils import Best
+from tictactoe.game import STATUS_WINNER, STATUS_DRAW
+from gac.players import BoardPlayerMixin, NamedPlayerMixin
 
 
-class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
+class TicTacToeAIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     opponent = None
-
-    def __init__(self, game: TicTacToeGame, *args, **kwargs):
-        """ Initializes the AIPlayer instance """
-        super().__init__(*args, **kwargs)
-        self.game = game
 
     def play(self):
         """ Picks the best move, updates the board and prints the move to the the console """
@@ -31,7 +25,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         if self.board.last_turn is None:
             return self.board.set(1, 1, self, False)
 
-        i, row, column = best_move = self.calc_best_move(self)
+        i, row, column = self.calc_best_move(self)
         self.board.set(row, column, self, False)
 
     def calc_best_move(self, player):

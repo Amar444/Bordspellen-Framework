@@ -1,3 +1,4 @@
+import time
 from client import Client, EVENT_CONNECTED, OutgoingCommand
 
 print("Warning: this will loop forever waiting for incoming messages")
@@ -11,9 +12,12 @@ class PlayerClient(Client):
         self.on(EVENT_CONNECTED, self.on_connected)
         self.nickname = nickname
 
-    def on_connected(self, data):
-        self.send(OutgoingCommand('LOGIN', self.nickname))
+    def on_connected(self, event):
+        self.send(OutgoingCommand('LOGIN', self.nickname),
+                  success=lambda cmd: print("Login was successful!\n"),
+                  fail=lambda cmd: self.disconnect)
 
 
-PlayerClient("Kwieb").connect()
-PlayerClient("Robert").connect()
+PlayerClient("H. Gaar").connect(('vps07.robbytu.net', 7789))
+time.sleep(5)
+PlayerClient("Willem").connect(('vps07.robbytu.net', 7789))

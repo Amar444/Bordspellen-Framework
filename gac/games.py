@@ -2,23 +2,22 @@
 Games
 """
 
-from boards import Board
-from exceptions import *
+from gac.boards import Board
+from gac.exceptions import *
 
 class Game(object):
     """ Provides you with the tools to set up a game """
 
     is_playing = False
+    players = ()
 
     def play(self):
         """ Starts playing the game until `is_playing` is set to False """
         self.is_playing = True
-        while self.is_playing:
-            self.next_turn()
 
-    def next_turn(self):
-        """ Plays the next turn in the game """
-        pass
+    def set_players(self, players: tuple):
+        """ Adds the given players to the game """
+        self.players = players
 
 
 class TurnBasedGame(Game):
@@ -28,11 +27,11 @@ class TurnBasedGame(Game):
     """
 
     current_turn = 0
-    players = ()
 
-    def set_players(self, players: tuple):
-        """ Adds the given players to the game """
-        self.players = players
+    def play(self):
+        super().play()
+        while self.is_playing:
+            self.next_turn()
 
     def next_turn(self):
         """ Plays the next turn in the game """
