@@ -2,7 +2,7 @@ import json
 
 from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, CommandGamelist, CommandCreateChallenge, \
     CommandAcceptChallenge, CommandSubscribe, CommandUnsubscribe, CommandMove
-from tictactoe.game import TicTacToeGame
+from game import TicTacToeGame
 from gac.players import Player, NamedPlayerMixin, BoardPlayerMixin
 from gac.client import Client
 from tictactoe.ai import AIPlayer
