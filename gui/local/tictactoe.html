@@ -137,18 +137,18 @@
     });
 
     // Place item on click in empty field position
-    $(document).on("click", "[data-position]", function() {
-      var placed = $(this).attr("data-placed");
-      if(placed == "") {
-        var xy = app._utilities.getXY(parseInt($(this).attr("data-position")), 3);
+$(document).on("click", "[data-position]", function() {
+  var placed = $(this).attr("data-placed");
+  if(placed == "") {
+    var xy = app._utilities.getXY(parseInt($(this).attr("data-position")), 3);
 
-        window.activeWebSocket.send(JSON.stringify({
-          "command" : "move",
-          "moveX" : xy[1],
-          "moveY" : xy[0]
-        }));
-
-    });
+    window.activeWebSocket.send(JSON.stringify({
+      "command" : "move",
+      "moveX" : xy[1],
+      "moveY" : xy[0]
+    }));
+  }
+});
 
     /* API EVENTS */
     $(document).on("updateBoard", function(e) {
