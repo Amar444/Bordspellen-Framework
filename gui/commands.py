@@ -289,7 +289,6 @@ class CommandMove(Command):
     y = None
 
     def __init__(self, controller, client, message):
-        """ Initializes a command to challenge someone """
         super().__init__(controller, client)
         self.x = message['moveX']
         self.y = message['moveY']
@@ -305,8 +304,6 @@ class CommandMove(Command):
     def send_to_server(self):
         move = int(self.x) * int(self.controller.own_player.board.size[0])
         move += int(self.y) % int(self.controller.own_player.board.size[1])
-        # move = int(self.y) * int(self.controller.own_player.board.size[0])
-        # move += int(self.x)
         super().send_to_server('move', str(move))
 
     def handle_ok(self, data):
