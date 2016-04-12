@@ -222,6 +222,7 @@
 
       $(document).on("match", function(e) {
         console.log(e.detail);
+        app._utilities.storage.set("playerToMove", e.detail.playerToMove);
         if(e.detail.gametype == "Tic-tac-toe") {
           window.location="tictactoe.html";
         }
