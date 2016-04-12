@@ -96,7 +96,7 @@ var app = {
             timer = -1;
           }
           timer = timer - 1;
-          if(timer < 0 || window.placed == false) {
+          if(timer < 0 || window.placed == true) {
             $(".message").removeClass("visible");
             clearInterval(i);
             callback();
