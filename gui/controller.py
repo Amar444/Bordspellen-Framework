@@ -1,8 +1,8 @@
 from gac.client import Client
 import json
 
-from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, CommandGamelist, CommandCreateChallange, \
-    CommandAcceptChallange, CommandSubscribe, CommandUnsubscribe
+from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, CommandGamelist, CommandCreateChallenge, \
+    CommandAcceptChallenge, CommandSubscribe, CommandUnsubscribe
 
 
 class GUIController:
@@ -24,8 +24,8 @@ class GUIController:
             CommandLogout,
             CommandPlayerlist,
             CommandGamelist,
-            CommandCreateChallange,
-            CommandAcceptChallange,
+            CommandCreateChallenge,
+            CommandAcceptChallenge,
             CommandSubscribe,
             CommandUnsubscribe,
         )
@@ -115,3 +115,12 @@ class GUIController:
 
     def game_ended(self, args):
         print(str(args))
+
+
+class Match:
+    game = None
+    own_player = None
+    opponent = None
+
+    def __init__(self, gui):
+        pass

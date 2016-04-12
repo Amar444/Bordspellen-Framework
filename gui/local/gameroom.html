@@ -211,6 +211,15 @@
       });
 
 
+      $("#play").click(function() {
+        window.activeWebSocket.send(JSON.stringify({
+          "command" : "accept",
+          "challenge" : $(this).attr("data-challengeNumber"),
+          "playAs" : "human"
+        }));
+      });
+
+
 
       /* API EVENTS */
 
@@ -218,6 +227,14 @@
       $(document).on("challengeAccepted", function(e) {
         app._utilities.storage.set("opponentPlayer", window.selectedPlayer);
         app.main.unloadPage(window.selectedGame + ".html", null);
+      });
+
+
+      $(document).on("match", function(e) {
+        console.log(e.detail);
+        if(e.detail.gametype == "Tic-tac-toe") {
+          window.location="tictactoe.html";
+        }
       });
 
 
@@ -231,6 +248,7 @@
         $("#remotePlayer1").text(e.detail.challenger);
         $("#localPlayer1").text(app._utilities.storage.get("localName"));
         $("#gameName1").text(e.detail.gameName);
+        $("#play").attr("data-challengeNumber", e.detail.challengeNumber);
       });
 
 

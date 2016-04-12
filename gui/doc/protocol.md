@@ -96,7 +96,8 @@ GUI -> :
         "command": "challenge",
         "playername": <playerName>,
         "gamename" : <gameName>,
-        "turntime" : <turntime>
+        "turntime" : <turntime>,
+        "playAs": <"AI" | "HUMAN">
     }
 
 GUI <- :
@@ -126,7 +127,8 @@ to be set, so can also be null.
 ```
 GUI -> : {
             "command" : "accept",
-            "challenge" : <challengeNumber>
+            "challenge" : <challengeNumber>,
+            "playAs": <"AI" | "HUMAN">
           }
 
 GUI <- :
