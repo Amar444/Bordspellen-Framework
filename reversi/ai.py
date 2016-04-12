@@ -54,6 +54,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         if self.game.status == _UNCLEAR:
             val = self.calc_value(player, self.board_value_method)
             best_reply = val, -1, -1
+            board = self.board.state
             # iterate over all possible moves
             has_legal_moves = False
 
@@ -72,7 +73,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
                         best_reply = (beta, x, y)
 
                 for mx, my, previous in moves:
-                    self.board.state[mx][my] = previous
+                    board.state[mx][my] = previous
 
                 if alpha >= beta:
                     break
