@@ -116,7 +116,7 @@
     setMuteImage(app._utilities.statusAudio());
     if(app._utilities.storage.get("playerToMove") == app._utilities.storage.get("localName")) {
       $(".match-overlay").hide();
-      app.main.setGameTimer("It's your turn", 10, function() {
+      app.main.setGameTimer("It's your turn", app._utilities.storage.get("turnTime"), function() {
         $(".match-overlay").show();
       });
     }
@@ -175,7 +175,7 @@
 
     $(document).on("doMove", function(e) {
       $(".match-overlay").hide();
-      app.main.setGameTimer("It's your turn", 10, function() {
+      app.main.setGameTimer("It's your turn", app._utilities.storage.get("turnTime"), function() {
         $(".match-overlay").show();
       });
     });
