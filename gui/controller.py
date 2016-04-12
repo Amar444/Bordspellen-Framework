@@ -127,11 +127,7 @@ class GUIController:
 
 
         board = self.own_player.board
-        print(board)
-
         board_to_send = [[None for r in range(0, board.size[0])] for r in range(0, board.size[1])]
-
-        print(board_to_send)
         for row in range(board.size[0]):
             for col in range(board.size[1]):
                 if board.state[row][col] is self.own_player:
@@ -140,8 +136,6 @@ class GUIController:
                     board_to_send[row][col] = self.opponent_player.name
                 else:
                     board_to_send[row][col] = None
-        # [[knarf, jur, null][x, x, x][x, x, x]]
-        print(board_to_send)
         self.send_to_gui('boardListener', {'board': board_to_send})
 
     def handle_challenge(self, args):
