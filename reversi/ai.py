@@ -48,6 +48,8 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         print("AI placed {} on coords {},{}\n\n".format(self.name, best_row, best_column))
 
     def calc_best_move_alpha_beta(self, player, depth, alpha, beta, stop_time):
+        """ Find best move for winning the game with alpha beta pruning """
+        # Check if max depth is reached or out of time
         if depth == 0 or time.time() > stop_time:
             return self.calc_value(player, self.board_value_method), 0, 0
 
@@ -58,8 +60,10 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
             # iterate over all possible moves
             has_legal_moves = False
 
+            # Iterate over legal moves
             for x, y in self.game.iterate_legal_moves(player):
                 has_legal_moves = True
+                # Place stone at current cell
                 moves = self.game.execute_move(player, x, y)
                 if player == self:
                     val, _, _ = self.calc_best_move_alpha_beta(self.opponent, depth - 1, alpha, beta, stop_time)
@@ -72,6 +76,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
                         beta = val
                         best_reply = (beta, x, y)
 
+                # Remove stone
                 for mx, my, previous in moves:
                     board.state[mx][my] = previous
 
