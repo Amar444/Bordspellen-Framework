@@ -5,7 +5,6 @@ base Board class.
 """
 
 from exceptions import *
-import numpy
 
 class Board(object):
     """
@@ -80,7 +79,7 @@ class TwoDimensionalBoard(Board):
             for col in range(self.size[1]):
                 tokenized_state[row][col] = 0 if self.state[row][col] is None else self.state[row][col].token
 
-        return numpy.array(tokenized_state, dtype="short")
+        return tokenized_state
 
     def __str__(self):
         """ Returns the current board as a string """

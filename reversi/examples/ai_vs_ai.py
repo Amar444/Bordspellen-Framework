@@ -1,6 +1,3 @@
-import sys
-"""y u no recognize numpy """
-sys.path.append("/usr/local/lib/python3.4/dist-packages/")
 import time
 from game import ReversiGame
 from ai import AIPlayer

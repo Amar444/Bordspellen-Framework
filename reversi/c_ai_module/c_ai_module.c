@@ -16,7 +16,7 @@ static PyObject* best_move(PyObject *self, PyObject *args)
         return NULL;
     }
     /*parse the numpy array */
-    /*temp_board = PyArray_FROM_OTF(temp_board, NPY_INT, NPY_ARRAY_IN_ARRAY);*/
+    temp_board = PyArray_FROM_OTF(temp_board, NPY_INT, NPY_ARRAY_IN_ARRAY);
     int typenum = NPY_INT;
     PyArray_Descr *descr;
     descr = PyArray_DescrFromType(typenum);
