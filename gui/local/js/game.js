@@ -76,8 +76,10 @@ $(function () {
       $(".match-overlay").show();
     });
   }
-  window.activeWebSocket.send(JSON.stringify({
-    "command" : "getBoard"
-  }));
+  window.activeWebSocket.onopen = function() {
+    window.activeWebSocket.send(JSON.stringify({
+      "command" : "getBoard"
+    }));
+  }
 
 });
