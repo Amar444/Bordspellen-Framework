@@ -78,7 +78,7 @@
 
     // Set action listener for unload buttons
     $('[data-action="unload-page"]').click(function() {
-      var name = $("#name").val().trim();
+      var name = $("<div>").text($("#name").val().trim()).html();
       var ip = $("#ip").val().trim();
       var port = $("#port").val().trim();
 
