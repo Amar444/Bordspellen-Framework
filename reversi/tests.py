@@ -2,7 +2,7 @@
 Unit Tests for the Reversi implementation
 """
 import unittest
-from game import ReversiBoard, ReversiGame
+from reversi.game import ReversiBoard, ReversiGame
 
 _PLAYER_ONE = "w"
 _PLAYER_TWO = "b"

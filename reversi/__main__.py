@@ -1,8 +1,8 @@
 """ This class provides the setup for an ReversiGame"""
 
-from game import ReversiGame
-from ai import AIPlayer
-from players import BoardPlayerMixin, NamedPlayerMixin, Player
+from reversi.game import ReversiGame
+from reversi.ai import AIPlayer
+from gac.players import BoardPlayerMixin, NamedPlayerMixin, Player
 
 
 class DemoCliPlayer(NamedPlayerMixin, BoardPlayerMixin):

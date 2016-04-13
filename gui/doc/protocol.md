@@ -112,7 +112,7 @@ GUI <- :
 - The server returns the details of this request. With this returned request,
 the server will also send a listener that needs to be invoked after the request was completed or
 when an error occurred.
-- The message contains the reason why this request could'nt be accepted. Message does'nt needs
+- The message contains the reason why this request couldn't be accepted. Message doesn't needs
 to be set, so can also be null.
 
 <br>
@@ -145,7 +145,7 @@ GUI <- :
 - Whereas n is the challenge number the GUI likes to accept.
 - The response of the server includes the details of the 'request' and a listener. This
 listener will be invoked when the accept-request was accepted by the main-server.
-- The message contains the reason why this request could'nt be accepted. Message does'nt needs
+- The message contains the reason why this request couldn't be accepted. Message doesn't needs
 to be set, so can also be null.
 
 <br>
