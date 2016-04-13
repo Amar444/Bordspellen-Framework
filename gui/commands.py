@@ -357,3 +357,6 @@ class CommandForfeit(Command):
     def __init__(self, controller, client, message):
         super().__init__(controller, client)
         super().send_to_server('forfeit')
+        self.controller.opponent_player = None
+        self.controller.own_player = None
+        self.controller.first_yourturn = True
