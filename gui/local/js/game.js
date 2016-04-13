@@ -5,7 +5,7 @@ $(function () {
   $(document).on("click", "[data-position]", function() {
     var placed = $(this).attr("data-placed");
     if(placed == "") {
-      var xy = app._utilities.getXY(parseInt($(this).attr("data-position")), 3);
+      var xy = app._utilities.getXY(parseInt($(this).attr("data-position")), window.gameWidth);
       console.log(xy);
       window.activeWebSocket.send(JSON.stringify({
         "command" : "move",
@@ -30,7 +30,7 @@ $(function () {
     var board = e.detail.board;
     for(var i = 0; i < board.length; i++) {
       for(var j = 0; j < board[i].length; j++) {
-        var pos = app._utilities.getPos([i, j], 3),
+        var pos = app._utilities.getPos([i, j], window.gameWidth),
             item;
         if(board[i][j] == app._utilities.storage.get('localName')) {
           item = "cross";
