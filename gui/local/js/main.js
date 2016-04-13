@@ -1,3 +1,6 @@
+String.prototype.capitalizeFirstLetter = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
 
 /* Application */
 var app = {
@@ -121,6 +124,7 @@ window.activeWebSocket.onmessage = function (e) {
     var obj = JSON.parse(e.data);
     var event = new CustomEvent(obj.listener, {"detail" : obj.detail});
     document.dispatchEvent(event);
+    console.log(event);
   } catch(e) {
     console.warn("Invalid JSON: " + e.data)
   }

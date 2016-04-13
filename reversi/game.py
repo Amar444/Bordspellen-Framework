@@ -1,10 +1,10 @@
 """ Provides tools to enforce game rules and keep track of the game """
 import time
 
-from boards import TwoDimensionalBoard
-from games import BoardGame, TurnBasedGame
-from exceptions import InvalidCoordinatesException
-from players import Player
+from gac.boards import TwoDimensionalBoard
+from gac.games import BoardGame, TurnBasedGame
+from gac.exceptions import InvalidCoordinatesException
+from gac.players import Player
 
 _REVERSI_BOARD_SIZE = 8
 
@@ -173,6 +173,7 @@ class ReversiGame(TurnBasedGame, BoardGame):
         state = self.board.state
 
         if len(directions) == 0:
+            print(self.board)
             raise ValueError("{} is not allowed to play at {},{} at this time.".format(player, row, col))
 
         resets = [(row, col, state[row][col])]

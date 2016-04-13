@@ -30,8 +30,8 @@ class WebsocketConnection(tornado.websocket.WebSocketHandler):
         if self.controller.nickname is not None:
             RunServer.inactive_clients[self.controller.nickname] = self
 
-            lc = LoginChecker(self.controller.nickname)
-            lc.start()
+            # lc = LoginChecker(self.controller.nickname)
+            # lc.start()
 
     def check_origin(self, origin):
         """ Method for connection handshake. """

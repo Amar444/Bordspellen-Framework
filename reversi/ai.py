@@ -1,7 +1,10 @@
 """ Provides artificial intelligence for the Reversi game"""
+
 from game import ReversiGame, _UNCLEAR, _PLAYER_ONE_WIN, _PLAYER_TWO_WIN, _DRAW
 from players import BoardPlayerMixin, NamedPlayerMixin
 import c_ai_module
+
+
 import sys
 import time
 
@@ -44,8 +47,10 @@ class ReversiAIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         #  print(self.game.board.__str__())
         #  print(self.game.get_legal_moves(self))
         self.game.execute_move(self, best_row, best_column)
+
         print("AI placed {} on coords {},{} after analyzing {} moves".format(self.name, best_row,
                                                                          best_column, self.moves_analyzed))
+
 
     def calc_best_move_alpha_beta(self, player, depth, alpha, beta, stop_time):
         """ Find best move for winning the game with alpha beta pruning """

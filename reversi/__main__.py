@@ -1,4 +1,9 @@
 """ This class provides the setup for an ReversiGame"""
+""" HEAD
+from reversi.game import ReversiGame
+from reversi.ai import AIPlayer
+from gac.players import BoardPlayerMixin, NamedPlayerMixin, Player
+"""
 
 from game import ReversiGame
 from ai import ReversiAIPlayer

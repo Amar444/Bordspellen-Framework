@@ -1,5 +1,6 @@
 from gac.boards import TwoDimensionalBoard
 from gac.games import BoardGame, TurnBasedGame
+from gac.players import Player
 
 STATUS_UNCLEAR = 0
 STATUS_WINNER = 1
@@ -66,6 +67,9 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
     def status(self):
         return self.state[0]
 
+    def is_legal_move(self, player: Player, row: int, col: int):
+        return self.board.is_available(row, col)
+
     def next_turn(self):
         """ Check, for each turn, whether someone has won already """
         super().next_turn()
@@ -78,3 +82,6 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
             elif status == STATUS_DRAW:
                 self.is_playing = False
                 print("Game over! It's a tie!")
+
+    def execute_move(self, player, row, col):
+        self.board.set(row, col, player)

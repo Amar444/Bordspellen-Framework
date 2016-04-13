@@ -37,9 +37,43 @@
         </div>
       </div>
     </div>
+    <div class="challenge-overlay hidden">
+      <div class="challenge">
+        <br><br>
+        <div class="big font center" id="result">
+          You won!
+        </div>
+        <div class="result-area">
+          <p id="result-message"></p>
+          <br><br>
+          <span id = "player1">You</span> :
+          <span id = "player1-points">34</span> points
+          <br>
+          <span id = "player2">Opponent</span> :
+          <span id = "player2-points">-34.235.523</span> points
+        </div>
+        <div class="challenge-buttons">
+            <a class="button back-button">Go back, I like</a>
+        </div>
+      </div>
+    </div>
+    <div class="match-overlay">
+    </div>
+    <div class="message">
+        <div class="message-timer">
+            10
+        </div>
+        <div class="message-text">
+            It's your turn
+        </div>
+    </div>
   </body>
+  <script>
+    window.gameWidth = 8;
+  </script>
   <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/game.js"></script>
   <script>
   $(function () {
 
@@ -91,20 +125,6 @@
       var status = app._utilities.toggleAudio();
 
       setMuteImage(status);
-    });
-
-    // Place item on click in empty field position
-    $(document).on("click", "[data-position]", function() {
-      var placed = $(this).attr("data-placed");
-      if(placed == "") {
-        $(this).attr("data-placed", "cross");
-
-        // Get the place position:
-       var position = $(this).attr("data-position"); // Position as number of total
-
-       var rowColumn = app._utilities.getXY(position, 8);
-
-      }
     });
 
 

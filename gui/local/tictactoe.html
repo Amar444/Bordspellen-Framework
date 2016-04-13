@@ -75,6 +75,26 @@
     <div class="match-overlay">
 
     </div>
+    <div class="challenge-overlay hidden">
+      <div class="challenge">
+        <br><br>
+        <div class="big font center" id="result">
+          You won!
+        </div>
+        <div class="result-area">
+          <p id="result-message"></p>
+          <br><br>
+          <span id = "player1">You</span> :
+          <span id = "player1-points">34</span> points
+          <br>
+          <span id = "player2">Opponent</span> :
+          <span id = "player2-points">-34.235.523</span> points
+        </div>
+        <div class="challenge-buttons">
+            <a class="button back-button">Go back, I like</a>
+        </div>
+      </div>
+    </div>
     <div class="message">
         <div class="message-timer">
             10
@@ -86,13 +106,13 @@
 </div>
 </body>
 <script>
+    window.gameWidth = 3;
     window.home = true;
     window.song = "tictactoe.mp3";
-
-
 </script>
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script src="js/main.js"></script>
+<script src="js/game.js"></script>
 <script>
   $(function () {
 
@@ -105,7 +125,7 @@
         } else {
             $("#mute-button").attr("src", "img/mute.png");
         }
-    }
+    };
 
 
 
@@ -114,12 +134,6 @@
 
     // Init the mute image
     setMuteImage(app._utilities.statusAudio());
-    if(app._utilities.storage.get("playerToMove") == app._utilities.storage.get("localName")) {
-      $(".match-overlay").hide();
-      app.main.setGameTimer("It's your turn", app._utilities.storage.get("turnTime"), function() {
-        $(".match-overlay").show();
-      });
-    }
 
 
     /* EVENTS */
@@ -137,56 +151,7 @@
 
       setMuteImage(status);
     });
-
-    // Place item on click in empty field position
-    $(document).on("click", "[data-position]", function() {
-      var placed = $(this).attr("data-placed");
-      if(placed == "") {
-        var xy = app._utilities.getXY(parseInt($(this).attr("data-position")), 3);
-        window.activeWebSocket.send(JSON.stringify({
-          "command" : "move",
-          "moveX" : xy[0],
-          "moveY" : xy[1]
-        }));
-        window.placed = true;
-      }
-
-    });
-
-
-    /* API EVENTS */
-    $(document).on("boardListener", function(e) {
-      var board = e.detail.board;
-      for(var i = 0; i < board.length; i++) {
-        for(var j = 0; j < board[i].length; j++) {
-          var pos = app._utilities.getPos([i, j], 3),
-              item;
-          if(board[i][j] == app._utilities.storage.get('localName')) {
-            item = "cross";
-          } else if(board[i][j] == null) {
-            item = "";
-          } else {
-            item = "circle";
-          }
-          $('[data-position="'+pos+'"]').attr("data-placed", item);
-        }
-      }
-    });
-
-    $(document).on("doMove", function(e) {
-      $(".match-overlay").hide();
-      app.main.setGameTimer("It's your turn", app._utilities.storage.get("turnTime"), function() {
-        $(".match-overlay").show();
-      });
-    });
-
-    $(document).on("moveListener", function(e) {
-      if(e.detail.status == "success") {
-
-      }
-    });
-
-  });
+});
 
 
 </script>

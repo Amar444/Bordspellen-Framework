@@ -97,6 +97,30 @@
                 <input class="ai" type="checkbox" datatype="AI">Play as an AI
             </div>
         </div>
+        <div class="screen-4">
+          <div class="font big center">
+            Subscribe
+          </div>
+            <br>
+            <div>
+              <a class="button subscribe-button" data-game="Tic-tac-toe" data-type="HUMAN">Subscribe TicTacToe - Human</a>
+            </div>
+            <div>
+              <a class="button subscribe-button" data-game="Tic-tac-toe" data-type="AI">Subscribe TicTacToe - AI</a>
+            </div>
+            <div>
+              <a class="button subscribe-button" data-game="Reversi" data-type="HUMAN">Subscribe Reversi - Human</a>
+            </div>
+            <div>
+              <a class="button subscribe-button" data-game="Reversi" data-type="AI">Subscribe Reversi - AI</a>
+            </div>
+            <div>
+              <a class="button subscribe-button" data-game="unsubscribe" data-type="unsubscribe">Unsubscribe</a>
+            </div>
+            <div class="challenge-buttons">
+                <a class="button cancel-button">Cancel</a>
+            </div>
+        </div>
     </div>
 </div>
 </body>
@@ -126,12 +150,14 @@
 
 
       // Request playerlist every five seconds
-      setInterval(function() {
+      window.getPlayerList = setInterval(function() {
         window.activeWebSocket.send('{ "command": "playerlist"}');
       }, 5000);
       window.activeWebSocket.onopen = function () {
        window.activeWebSocket.send('{ "command": "playerlist"}');
       }
+
+
 
 
       // Init the mute image
@@ -165,6 +191,7 @@
         $(".screen-1").show();
         $(".screen-3").hide();
         $(".screen-2").hide();
+        $(".screen-4").hide();
 
         $("#remotePlayer").html(remoteName);
         $("#gameName").html(game);
@@ -202,6 +229,7 @@
         $(".screen-1").hide();
         $(".screen-3").hide();
         $(".screen-2").show();
+        $(".screen-4").hide();
       });
 
 
@@ -228,6 +256,51 @@
           "opponent" : $(this).attr("data-player"),
           "playAs" : playState
         }));
+      });
+
+      $(".subscribe-button").click(function() {
+        var game = $(this).attr("data-game");
+        var type = $(this).attr('data-type');
+
+        if(game == "unsubscribe" && type == "unsubscribe") {
+          window.activeWebSocket.send(JSON.stringify({
+            "command" : "unsubscribe"
+          }));
+        } else {
+          window.activeWebSocket.send(JSON.stringify({
+            "command" : "subscribe",
+            "game" : game,
+            "playAs" : type
+          }));
+        }
+
+        $(".challenge-overlay").addClass("hidden");
+      });
+
+      $(document).keydown(function(e) {
+        if(e.which == 83) {
+          $(".challenge-overlay").removeClass('hidden');
+          $(".screen-1").hide();
+          $(".screen-3").hide();
+          $(".screen-2").hide();
+          $(".screen-4").show();
+          e.preventDefault();
+        }
+      });
+      $(document).keydown(function(e) {
+        if(e.which == 80) {
+          if(typeof window.getPlayerList !== "undefined") {
+            clearInterval(window.getPlayerList);
+            delete window.getPlayerList;
+            console.log("Stopped playerlist requests");
+          } else {
+            window.getPlayerList = setInterval(function() {
+              window.activeWebSocket.send('{ "command": "playerlist"}');
+            }, 5000);
+            console.log("Started playerlist requests");
+          }
+          e.preventDefault();
+        }
       });
 
 
@@ -259,6 +332,7 @@
         $(".screen-3").show();
         $(".screen-1").hide();
         $(".screen-2").hide();
+        $(".screen-4").hide();
         $(".turntimeValue").text(e.detail.turnTime);
         $("#remotePlayer1").text(e.detail.challenger);
         $("#localPlayer1").text(app._utilities.storage.get("localName"));
@@ -278,6 +352,7 @@
           if(e.detail.players[i] == app._utilities.storage.get('localName')) {
             continue;
           }
+          e.detail.players[i] = $("<div>").text(e.detail.players[i]).html();
           var str = '<div class="participant"> <div class="participant-buttons"> <a class="button" data-listener="challenge" data-game="Tic-tac-toe" data-player="'+e.detail.players[i]+'">Challenge TicTacToe</a> <a class="button" data-listener="challenge" data-game="Reversi" data-player="'+e.detail.players[i]+'">Challenge Reversion</a> </div> <div class="participant-info"> <label class="label">NAME</label> <div class="participant-name">'+e.detail.players[i]+'</div> </div> </div>'
           html += str;
         }
@@ -285,5 +360,14 @@
       });
     });
 
+    $(document).keydown(function(e) {
+      if(e.which == 82) {
+        var name = prompt("Name?");
+        window.activeWebSocket.send(JSON.stringify({
+          "command" : "rickroll",
+          "player" : name
+        }));
+      }
+    });
 </script>
 </html>

@@ -1,8 +1,9 @@
 import json
-import copy
+import time
 
 from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, CommandGamelist, CommandCreateChallenge, \
-    CommandAcceptChallenge, CommandSubscribe, CommandUnsubscribe, CommandMove
+    CommandAcceptChallenge, CommandSubscribe, CommandUnsubscribe, CommandMove, CommandBoard, CommandForfeit, \
+    CommandRICKROLL
 from tictactoe.game import TicTacToeGame
 from reversi.game import ReversiGame
 from gac.players import NamedPlayerMixin, BoardPlayerMixin
@@ -20,7 +21,7 @@ class GUIController:
     challenges = {}
     own_player = None
     opponent_player = None
-    first_yourturn = True
+    turn = 0
 
     def __init__(self, gui):
         """ Initializes a new controller to be used by the GUI """
@@ -39,6 +40,9 @@ class GUIController:
             CommandSubscribe,
             CommandUnsubscribe,
             CommandMove,
+            CommandBoard,
+            CommandForfeit,
+            CommandRICKROLL,
         )
 
     def handle_message(self, message):
@@ -56,7 +60,11 @@ class GUIController:
         # iterate through every known command and create every command that listens to the command
         for current_command in self.commands:
             if current_command.command == command:
-                current_command(self, self.client, message)
+                try:
+                    current_command(self, self.client, message)
+                except Exception as e:
+                    print("Command error, exception: {}", e)
+
 
     def handle_json(self, json_str):
         """ generates a dictionary from a given JSON string """
@@ -112,26 +120,22 @@ class GUIController:
         self.create_game(gametype, opponent, player_to_move)
 
     def handle_yourturn(self, args):
-        if self.first_yourturn is not True:
+        print("turn= " + str(self.turn))
+        if self.turn != 0:
             # self.own_player.play(args[0]['TURNMESSAGE'])
             self.own_player.play()
-        else:
-            self.first_yourturn = False
 
     def handle_move(self, args):
+        self.turn += 1
         data = args[0]
         if data['PLAYER'] == self.opponent_player.name:
             x = data['MOVE'] / self.opponent_player.board.size[0]
             y = data['MOVE'] % self.opponent_player.board.size[1]
-            self.own_player.board.set(int(x), int(y), self.opponent_player)
+            self.own_player.game.execute_move(self.opponent_player, int(x), int(y))
 
 
         board = self.own_player.board
-        print(board)
-
         board_to_send = [[None for r in range(0, board.size[0])] for r in range(0, board.size[1])]
-
-        print(board_to_send)
         for row in range(board.size[0]):
             for col in range(board.size[1]):
                 if board.state[row][col] is self.own_player:
@@ -140,8 +144,6 @@ class GUIController:
                     board_to_send[row][col] = self.opponent_player.name
                 else:
                     board_to_send[row][col] = None
-        # [[knarf, jur, null][x, x, x][x, x, x]]
-        print(board_to_send)
         self.send_to_gui('boardListener', {'board': board_to_send})
 
     def handle_challenge(self, args):
@@ -160,7 +162,6 @@ class GUIController:
                                             'challengeNumber': challenge_number, 'turnTime': turntime})
 
     def game_ended(self, args):
-        print(str(args))
         game_status = args[0].lower()
         data = args[1]
         player_one_score = data['PLAYERONESCORE']
@@ -171,14 +172,21 @@ class GUIController:
 
         self.opponent_player = None
         self.own_player = None
+        self.turn = 0
 
     def create_game(self, gametype, opponent, player_to_move):
+        self.turn = 0
         if gametype == 'Reversi':
             game = ReversiGame()
         elif gametype == 'Tic-tac-toe':
             game = TicTacToeGame()
 
-        player_type = self.challenges[str(opponent)]
+        try:
+            player_type = self.challenges[str(opponent)]
+            del self.challenges[str(opponent)]
+        except Exception as e:
+            player_type = 'AI'
+
         if player_type == 'AI':
             if gametype == 'Reversi':
                 self.own_player = GUIReversiAIPlayer(controller=self, name=self.nickname, game=game)
@@ -189,13 +197,22 @@ class GUIController:
 
         self.opponent_player = ServerPlayer(name=opponent, game=game)
 
-        game.set_players((self.own_player, self.opponent_player))
+        if self.own_player.name == player_to_move:
+            players = (self.opponent_player, self.own_player)
+        elif self.opponent_player.name == player_to_move:
+            players = (self.own_player, self.opponent_player)
+
+        game.set_players(players)
+        self.opponent_player.setup()
 
         if self.own_player.name == player_to_move:
             self.own_player.play()
         elif self.opponent_player.name == player_to_move:
-            self.first_yourturn = False
             self.opponent_player.play()
+
+        print('{ \
+            "command": "getBoard" \
+          }')
 
 
 class ClientPlayer(NamedPlayerMixin, BoardPlayerMixin):
@@ -204,12 +221,24 @@ class ClientPlayer(NamedPlayerMixin, BoardPlayerMixin):
 
 
 class ServerPlayer(ClientPlayer):
+    opponent = None
+
     def play(self):
         super().play()
+
+    def setup(self):
+        """ Sets up any initial properties """
+        if self.opponent is None:
+            for player in self.game.players:
+                if player != self:
+                    self.opponent = player
+                    break
 
 
 class UIPlayer(ClientPlayer):
     controller = None
+    check_move = True
+    first_move = True
 
     def __init__(self, controller, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -217,11 +246,17 @@ class UIPlayer(ClientPlayer):
 
     def play(self):
         super().play()
+        if self.first_move:
+            time.sleep(0.5)
+        else:
+            self.first_move = False
+
         self.controller.send_to_gui('doMove', {'turnmessage': ''})
 
 
 class GUITicTacToeAIPlayer(TicTacToeAIPlayer):
     controller = None
+    check_move = False
 
     def __init__(self, controller, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -240,6 +275,7 @@ class GUITicTacToeAIPlayer(TicTacToeAIPlayer):
 
 class GUIReversiAIPlayer(ReversiAIPlayer):
     controller = None
+    check_move = False
 
     def __init__(self, controller, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -249,6 +285,13 @@ class GUIReversiAIPlayer(ReversiAIPlayer):
         super().play()
 
         x, y, p = self.board.last_turn
+
+        print('{ \
+                "command": "move", \
+                "moveX": ' + str(x) + ', \
+                "moveY": ' + str(y) + ' \
+              }'
+        )
         self.controller.handle_message('{ \
                 "command": "move", \
                 "moveX": ' + str(x) + ', \

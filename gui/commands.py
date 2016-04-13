@@ -3,6 +3,7 @@ Provides classes for every implemented command that the GUI wants to do.
 """
 
 from gac.client.client import *
+from gac.astley import *
 
 
 class Command:
@@ -292,23 +293,33 @@ class CommandMove(Command):
         super().__init__(controller, client)
         self.x = message['moveX']
         self.y = message['moveY']
-        self.handle_move(self.x, self.y)
+        check_move = self.controller.own_player.check_move
+        self.handle_move(self.x, self.y, check_move)
 
-    def handle_move(self, x, y):
-        try:
-            self.controller.own_player.board.is_available(int(self.x), int(self.y))
+    def handle_move(self, x, y, check_move):
+        print("x=" + str(x) + " y=" + str(y))
+
+        move_valid = True
+        if check_move:
+            move_valid = self.controller.own_player.game.is_legal_move(player=self.controller.own_player, row=int(x), col=int(y))
+
+        if move_valid:
             self.send_to_server()
-        except Exception as e:
+        else:
             self.handle_err('')
 
     def send_to_server(self):
+        print(str(int(self.x)) + " * " + str(int(self.controller.own_player.board.size[0])))
+        print(str(int(self.y)) + " % " + str(int(self.controller.own_player.board.size[1])))
+
         move = int(self.x) * int(self.controller.own_player.board.size[0])
         move += int(self.y) % int(self.controller.own_player.board.size[1])
         super().send_to_server('move', str(move))
 
     def handle_ok(self, data):
         super().handle_ok(data)
-        self.controller.own_player.board.set(int(self.x), int(self.y), self.controller.own_player)
+        if self.controller.own_player.check_move:
+            self.controller.own_player.game.execute_move(self.controller.own_player, int(self.x), int(self.y))
         self.send_to_gui()
 
     def handle_err(self, data):
@@ -318,3 +329,51 @@ class CommandMove(Command):
 
     def send_to_gui(self):
         self.controller.send_to_gui('moveListener', {}, self.status['status'], self.status['message'])
+
+
+class CommandBoard(Command):
+    command = 'getBoard'
+
+    def __init__(self, controller, client, message):
+        super().__init__(controller, client)
+        self.send_to_gui()
+
+    def send_to_gui(self):
+        board = self.controller.own_player.board
+        board_to_send = [[None for r in range(0, board.size[0])] for r in range(0, board.size[1])]
+        for row in range(board.size[0]):
+            for col in range(board.size[1]):
+                if board.state[row][col] is self.controller.own_player:
+                    board_to_send[row][col] = self.controller.own_player.name
+                elif board.state[row][col] is self.controller.opponent_player:
+                    board_to_send[row][col] = self.controller.opponent_player.name
+                else:
+                    board_to_send[row][col] = None
+        self.controller.send_to_gui('boardListener', {'board': board_to_send})
+
+class CommandForfeit(Command):
+    command = 'forfeit'
+
+    def __init__(self, controller, client, message):
+        super().__init__(controller, client)
+        super().send_to_server('forfeit')
+        self.controller.opponent_player = None
+        self.controller.own_player = None
+        self.controller.first_yourturn = True
+
+class CommandRICKROLL(Command):
+    command = 'rickroll'
+
+    playername = None
+
+    def __init__(self, controller, client, message):
+        super().__init__(controller, client)
+        self.playername = message['player']
+        if self.playername == '':
+            self.playername = self.controller.opponent_player.name
+
+        self.play(self.playername)
+
+    def play(self, player):
+        spammer = AstleySpammer(self.client, self.playername)
+        spammer.start()
