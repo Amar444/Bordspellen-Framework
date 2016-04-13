@@ -208,7 +208,7 @@
       $("#player2-points").text(e.detail.playerTwoScore);
       $("#player1").text("You");
       $("#result-message").text("Opponent");
-      $(".match-overlay").css('display', "none");
+      $(".match-overlay").remove();
       $(".challenge-overlay").removeClass('hidden');
     });
 
