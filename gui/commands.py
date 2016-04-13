@@ -350,3 +350,10 @@ class CommandBoard(Command):
                 else:
                     board_to_send[row][col] = None
         self.controller.send_to_gui('boardListener', {'board': board_to_send})
+
+class CommandForfeit(Command):
+    command = 'forfeit'
+
+    def __init__(self, controller, client, message):
+        super().__init__(controller, client)
+        super().send_to_server('forfeit')
