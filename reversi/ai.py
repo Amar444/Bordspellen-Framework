@@ -135,7 +135,7 @@ class ReversiAIPlayer(NamedPlayerMixin, BoardPlayerMixin):
 
 
 class AIPlayerC(NamedPlayerMixin, BoardPlayerMixin):
-    _DEFAULT_DEPTH = 8
+    _DEFAULT_DEPTH = 12
     opponent = None
 
     def __init__(self, depth=_DEFAULT_DEPTH, *args, **kwargs):

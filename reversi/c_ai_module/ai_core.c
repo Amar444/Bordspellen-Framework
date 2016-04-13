@@ -1,31 +1,51 @@
 #include "ai_core.h"
+#include <sys/time.h>
+#define NULL '\0' /*defines NULL as NULL pointer */
 
 const int DIRECTIONS[8][2] = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
 const int DIRECTIONS_LENGTH = 8;
+const int WEIGHTS[8][8] = {{120, -20, 20,  5,  5, 20,-20,120},
+                          {-20, -40, -5, -5, -5, -5,-40,-20},
+                          {20,  -5,  15,  3,  3, 15, -5, 20},
+                          {5,   -5,   3,  3,  3,  3, -5,  5},
+                          {5,   -5,   3,  3,  3,  3, -5,  5},
+                          {20,  -5,  15,  3,  3, 15, -5, 20},
+                          {-20,-40,  -5, -5, -5, -5,-40,-20},
+                          {120,-20,  20,  5,  5, 20,-20,120}};
 int ai_player;
 int analyzed_moves = 0;
+struct timeval starttime, endtime;
 
 /*init for the ai, called from the wrapper*/
 move start(int board[SIZE][SIZE], int player, int depth){
+    gettimeofday(&starttime, NULL);
+    /*printf("\n%ld\n", starttime);*/
     ai_player = player;
     analyzed_moves = 0;
-    move ret = get_best_move(board, player, depth);
+    int alpha = -2147483647;
+    int beta = 2147483647;
+    move ret = get_best_move(board, player, depth, alpha, beta);
     printf("Analyzed %i moves.\n", analyzed_moves);
     return ret;
 }
 
 /*the basic minimax structure*/
-move get_best_move(int board[SIZE][SIZE], int player, int depth){
-    move end = {10,10,calc_value(board)};
-    if(depth == 0){
+move get_best_move(int board[SIZE][SIZE], int player, int depth, int alpha, int beta){
+    move end = {10,10,calc_value(board, player)};
+    gettimeofday(&endtime, NULL);
+    if(depth == 0 || (((endtime.tv_sec - starttime.tv_sec) >= 3) && ((endtime.tv_usec - starttime.tv_usec) > 700000))){
+        if(depth > 0){
+            printf("time diference: %i.%lu\n", endtime.tv_sec - starttime.tv_sec, endtime.tv_usec - starttime.tv_usec );
+        }
         return end;
     }
+
     /*initialize an array of 0's to store legit moves*/
     int moves[SIZE][SIZE];
     int output_board[SIZE][SIZE];
     int i,j;
     move result;
-    move best_result = player == ai_player ? (move){0,0,0 } : (move){0,0,100};
+    move best_result = player == ai_player ? (move){0,0,calc_value(board, player) } : (move){0,0,calc_value(board, player)};
 
     /* set the opponent*/
     int opp = (player == 1 ? 2 : 1);
@@ -45,12 +65,35 @@ move get_best_move(int board[SIZE][SIZE], int player, int depth){
             if(moves[i][j]){
                 copy_board(output_board, board);
                 do_moves(output_board, i, j, player);
-                result = get_best_move(output_board, opp, depth-1);
+                result = get_best_move(output_board, opp, depth-1, alpha, beta);
                 analyzed_moves++;
-                if((result.val > best_result.val && player == ai_player) || (result.val < best_result.val && player != ai_player)){
-                    best_result.row = i;
-                    best_result.col = j;
-                    best_result.val = result.val;
+
+                if(player == ai_player){
+
+                    if(result.val > alpha){
+                        alpha = result.val;
+                        best_result.row = i;
+                        best_result.col = j;
+                        best_result.val = alpha;
+                        if(beta <= alpha){
+                            move ret = {i, j, alpha};
+                            /*printf("row = %i, col =%i \n", ret.row, ret.col);*/
+                            return ret;
+                        }
+                    }
+                }
+                else{
+                    if(result.val < beta){
+                        beta = result.val;
+                        best_result.row = i;
+                        best_result.col = j;
+                        best_result.val = beta;
+                        if(beta <= alpha){
+                            move ret = {i, j, beta};
+                            /*printf("row = %i, col =%i \n", ret.row, ret.col);*/
+                            return ret;
+                        }
+                    }
                 }
             }
         }
@@ -62,7 +105,9 @@ move get_best_move(int board[SIZE][SIZE], int player, int depth){
             printf("%i ", output_board[i][j]);
         }
         printf("\n");
-    }*/
+    }
+    printf("REACHED THE END OF SERIES WITH %i, %i, %i\n", best_result.row, best_result.col, best_result.val);
+    */
     return best_result;
 
 }
@@ -155,12 +200,16 @@ void copy_board(int board[SIZE][SIZE], int board_to_copy[SIZE][SIZE]){
     }
 }
 
-int calc_value(int board[SIZE][SIZE]){
+int calc_value(int board[SIZE][SIZE], int player){
     int i,j,ret = 0;
+    int opp = player == ai_player ? 2 : 1;
     for(i=0;i<SIZE;i++){
         for(j=0;j<SIZE;j++){
-            if(board[i][j] == ai_player){
-                ret++;
+            if(board[i][j] == player){
+                ret += WEIGHTS[i][j];
+            }
+            if(board[i][j] == opp){
+                ret -= WEIGHTS[i][j];
             }
         }
     }
