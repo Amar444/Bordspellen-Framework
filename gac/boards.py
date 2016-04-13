@@ -4,7 +4,7 @@ the library. Classes can be extended or used as mixins and all inherit from the
 base Board class.
 """
 
-from exceptions import *
+from gac.exceptions import *
 
 class Board(object):
     """
