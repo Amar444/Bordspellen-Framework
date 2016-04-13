@@ -6,6 +6,11 @@ Provides implementation for Player objects
 class Player(object):
     """ Player is used to define a player in the game """
 
+    game = None
+
+    def __init__(self, game):
+        self.game = game
+
     def play(self):
         """ It is your turn, play the game """
         pass
@@ -18,9 +23,9 @@ class BoardPlayerMixin(Player):
     print_board = True
     token = None
 
-    def __init__(self, board, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.board = board
+        self.board = self.game.board
 
     def play(self):
         """ Prints the board to the console while playing if enabled """

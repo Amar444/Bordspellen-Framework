@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reversion & TicTacToe - The Game</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="fonts/stylesheet.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<div class="global">
+    <div class="background fadeIn">
+        <div class="scroll-background">
+
+        </div>
+    </div>
+    <div class="content fadeIn">
+        <div class="top-bar">
+            <div class="title-bar">
+                <div id="lobbyMessage">
+                    Welcome in the lobby
+                </div>
+            </div>
+            <div class="title-bar-button" data-destination="index.html">
+                <
+            </div>
+            <div class="title-bar-volume">
+                <div class="volume">
+                    <img id="mute-button" data-action="mute-unmute" src="img/sound.png">
+                </div>
+            </div>
+        </div>
+        <div id="game-main-content">
+            <div class="participants" id="participants">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="challenge-overlay hidden">
+    <div class="challenge">
+        <div class="screen-1">
+            <div class="overflow-hidden">
+                <div class="half font big" id="localPlayer">
+                </div>
+                <div class="half font big" id="remotePlayer">
+                </div>
+            </div>
+            <div class="center font">
+                VS.
+            </div>
+            <h3 class="center font super" id="gameName"></h3>
+            <div class="challenge-settings">
+                <div class="turntime">
+                    <label class="challenge-label">The minimal turn time of this challenge</label>
+                    <input type="number" class="input terminal-blink" id="turntimechallenge" name="turntime-input"
+                           min="1" step="1" value="10">
+                </div>
+            </div>
+            <div class="challenge-buttons">
+                <a class="button cancel-button">Cancel</a>
+                <a class="button" id="challenge">Challenge</a>
+                <input class="ai" type="checkbox" datatype="AI">Play as an AI
+            </div>
+        </div>
+        <div class="screen-2" style="display:none;">
+            <div class="waiting-animation">
+                <h2 class="font">Waiting for opponent...</h2>
+            </div>
+
+            <div class="challenge-buttons">
+                <a class="button cancel-button">Cancel</a>
+            </div>
+        </div>
+        <div class="screen-3">
+          <div class="font big center">
+            Challenge received
+          </div>
+            <div class="overflow-hidden">
+                <div class="half font big" id="localPlayer1">
+                </div>
+                <div class="half font big" id="remotePlayer1">
+                </div>
+            </div>
+            <div class="center font">
+                VS.
+            </div>
+            <h3 class="center font super" id="gameName1"></h3>
+            <div class="challenge-settings">
+                <div class="turntime center">
+                    <label class="challenge-label">The turn time of this challenge</label>
+                    <span class="turntimeValue"></span>
+                </div>
+            </div>
+            <div class="challenge-buttons">
+                <a class="button cancel-button">Cancel</a>
+                <a class="button" id="play">Play</a>
+                <input class="ai" type="checkbox" datatype="AI">Play as an AI
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="js/main.js"></script>
+<script>
+    $(function() {
+      /* FUNCTIONS */
+
+      // Change mute image based on the status
+      var setMuteImage = function(status) {
+          if(status) {
+              $("#mute-button").attr("src", "img/sound.png");
+          } else {
+              $("#mute-button").attr("src", "img/mute.png");
+          }
+      }
+
+
+
+      /* INITIALISATION */
+
+      // Setting the lobby message
+      var message = $("#lobbyMessage").html();
+      var name = app._utilities.storage.get("localName");
+      $("#lobbyMessage").html(name + ", " + message);
+
+
+      // Request playerlist every five seconds
+      setInterval(function() {
+        window.activeWebSocket.send('{ "command": "playerlist"}');
+      }, 5000);
+      window.activeWebSocket.onopen = function () {
+       window.activeWebSocket.send('{ "command": "playerlist"}');
+      }
+
+
+      // Init the mute image
+      setMuteImage(app._utilities.statusAudio());
+
+
+
+      /* EVENTS */
+
+      // On click go back to index
+      $(".title-bar-button").click(function() {
+        var dest = $(this).attr("data-destination");
+        app.main.unloadPage(dest, this);
+      });
+
+
+      // Hide overlay when cancel is clicked
+      $(".cancel-button").click(function() {
+        $(".challenge-overlay").addClass("hidden");
+      });
+
+
+      // Setting up the GUI when in need for a challenge
+      $(document).on("click", "[data-listener='challenge']", function() {
+        var remoteName = $(this).attr('data-player'),
+            game = $(this).attr('data-game');
+
+        $("#localPlayer").html(app._utilities.storage.get("localName"));
+        app._utilities.storage.set("selectedGame", game);
+
+        $(".screen-1").show();
+        $(".screen-3").hide();
+        $(".screen-2").hide();
+
+        $("#remotePlayer").html(remoteName);
+        $("#gameName").html(game);
+
+        $(".challenge-overlay").removeClass('hidden');
+      });
+
+
+      // On challenge, send request to server
+      $("#challenge").click(function() {
+        var player = $(".screen-1").find("#remotePlayer").html(),
+            game = app._utilities.storage.get("selectedGame"),
+            turntime = $("#turntimechallenge").val();
+
+            var playState = $('.ai:checked').val();
+
+            if(playState == "on") {
+                playState = "AI"
+            } else {
+                playState = "HUMAN"
+            }
+
+        app._utilities.storage.set('turnTime', turntime);
+          window.activeWebSocket.send(JSON.stringify({
+            "command" : "challenge",
+            "playername": player,
+            "gamename" : game,
+            "turntime" : turntime,
+            "playAs": playState
+          }));
+          window.selectedPlayer = player;
+          window.selectedGame = game;
+
+
+        $(".screen-1").hide();
+        $(".screen-3").hide();
+        $(".screen-2").show();
+      });
+
+
+      // Toggle mute - unmute
+      $('[data-action="mute-unmute"]').click(function() {
+        var status = app._utilities.toggleAudio();
+
+        setMuteImage(status);
+      });
+
+
+      $("#play").click(function() {
+           var playState = $('.ai:checked').val();
+
+            if(playState == "on") {
+                playState = "AI"
+            } else {
+                playState = "HUMAN"
+            }
+
+        window.activeWebSocket.send(JSON.stringify({
+          "command" : "accept",
+          "challenge" : $(this).attr("data-challengeNumber"),
+          "opponent" : $(this).attr("data-player"),
+          "playAs" : playState
+        }));
+      });
+
+
+
+      /* API EVENTS */
+
+      // Go to next screen when challenge is accepted
+      $(document).on("challengeAccepted", function(e) {
+        app._utilities.storage.set("opponentPlayer", window.selectedPlayer);
+        app.main.unloadPage(window.selectedGame + ".html", null);
+      });
+
+
+      $(document).on("match", function(e) {
+        console.log(e.detail);
+        app._utilities.storage.set("playerToMove", e.detail.playerToMove);
+        if(e.detail.gametype == "Tic-tac-toe") {
+          window.location="tictactoe.html";
+        }
+        if(e.detail.gametype == "Reversi") {
+          window.location="reversion.html";
+        }
+      });
+
+
+      $(document).on("challenged", function(e) {
+        console.log(e.detail);
+        $(".challenge-overlay").removeClass("hidden");
+        $(".screen-3").show();
+        $(".screen-1").hide();
+        $(".screen-2").hide();
+        $(".turntimeValue").text(e.detail.turnTime);
+        $("#remotePlayer1").text(e.detail.challenger);
+        $("#localPlayer1").text(app._utilities.storage.get("localName"));
+        $("#gameName1").text(e.detail.gameName);
+        $("#play").attr("data-challengeNumber", e.detail.challengeNumber);
+        $("#play").attr("data-player", e.detail.challenger)
+
+        app._utilities.storage.set('turnTime', e.detail.turnTime)
+      });
+
+
+      // When received, put playerlist in view
+      $(document).on("playerList", function(e) {
+        var html = "";
+
+        for (var i = 0; i < e.detail.players.length; i++) {
+          if(e.detail.players[i] == app._utilities.storage.get('localName')) {
+            continue;
+          }
+          var str = '<div class="participant"> <div class="participant-buttons"> <a class="button" data-listener="challenge" data-game="Tic-tac-toe" data-player="'+e.detail.players[i]+'">Challenge TicTacToe</a> <a class="button" data-listener="challenge" data-game="Reversi" data-player="'+e.detail.players[i]+'">Challenge Reversion</a> </div> <div class="participant-info"> <label class="label">NAME</label> <div class="participant-name">'+e.detail.players[i]+'</div> </div> </div>'
+          html += str;
+        }
+        $('#participants').html(html);
+      });
+    });
+
+</script>
+</html>
