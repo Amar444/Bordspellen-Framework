@@ -37,9 +37,20 @@
         </div>
       </div>
     </div>
+    <div class="match-overlay">
+    </div>
+    <div class="message">
+        <div class="message-timer">
+            10
+        </div>
+        <div class="message-text">
+            It's your turn
+        </div>
+    </div>
   </body>
   <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/game.js"></script>
   <script>
   $(function () {
 
@@ -91,20 +102,6 @@
       var status = app._utilities.toggleAudio();
 
       setMuteImage(status);
-    });
-
-    // Place item on click in empty field position
-    $(document).on("click", "[data-position]", function() {
-      var placed = $(this).attr("data-placed");
-      if(placed == "") {
-        $(this).attr("data-placed", "cross");
-
-        // Get the place position:
-       var position = $(this).attr("data-position"); // Position as number of total
-
-       var rowColumn = app._utilities.getXY(position, 8);
-
-      }
     });
 
 
