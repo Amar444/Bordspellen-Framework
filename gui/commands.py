@@ -312,8 +312,8 @@ class CommandMove(Command):
         print(str(int(self.x)) + " * " + str(int(self.controller.own_player.board.size[0])))
         print(str(int(self.y)) + " % " + str(int(self.controller.own_player.board.size[1])))
 
-        move = int(self.y) * int(self.controller.own_player.board.size[0])
-        move += int(self.x) % int(self.controller.own_player.board.size[1])
+        move = int(self.x) * int(self.controller.own_player.board.size[0])
+        move += int(self.y) % int(self.controller.own_player.board.size[1])
         super().send_to_server('move', str(move))
 
     def handle_ok(self, data):
