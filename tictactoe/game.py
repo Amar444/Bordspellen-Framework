@@ -82,3 +82,6 @@ class TicTacToeGame(TurnBasedGame, BoardGame):
             elif status == STATUS_DRAW:
                 self.is_playing = False
                 print("Game over! It's a tie!")
+
+    def execute_move(self, player, row, col):
+        self.board.set(row, col, player)
