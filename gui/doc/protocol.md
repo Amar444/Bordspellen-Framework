@@ -300,6 +300,29 @@ the GUI received the response of the server.
 <br>
 <br>
 
+#### GUI needs to place a move:
+
+---
+
+```
+GUI <- :
+    {
+        'detail': {
+            'turnmessage': <turnmessage>,
+        },
+        'listener': 'doMove'
+    }
+
+```
+
+- The 'listener' entry in the return JSON String is the listener that needs to be invoked when
+the GUI received the response of the server.
+
+
+<br>
+<br>
+<br>
+
 #### Update the gui's view:
 
 ---
@@ -323,3 +346,24 @@ array could be the field for TicTacToe as it is 3x3. The thing is, that this fie
 like 8x8 for reversion or any other size for any other game.
 - The name values are the player it's name that is located in the found location inside the grid.
 - Empty fields can simply be added as "empty" instead of a player name.
+
+<br>
+<br>
+<br>
+
+#### Update the game status:
+
+---
+
+```
+GUI <-:
+    {
+        'detail': {
+            'status': <"win" | "draw" | "loss">
+            'playerOneScore': <playerOneScore>
+            'playerTwoScore': <playerTwoScore>
+            'comment': <comment>
+        },
+        'listener': 'gameStatus'
+    }
+```

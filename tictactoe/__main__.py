@@ -1,5 +1,5 @@
 from tictactoe.game import TicTacToeGame
-from tictactoe.ai import AIPlayer
+from tictactoe.ai import TicTacToeAIPlayer
 from gac.players import Player, BoardPlayerMixin, NamedPlayerMixin
 
 
@@ -24,7 +24,7 @@ players = (DemoCliPlayer(name="X", game=game),)
 
 answer = str(input("Would you like to play against the computer? y/n"))
 if answer == "y":
-    players += (AIPlayer(name="O", game=game),)
+    players += (TicTacToeAIPlayer(name="O", game=game),)
 else:
     players += (DemoCliPlayer(name="O", game=game),)
 
