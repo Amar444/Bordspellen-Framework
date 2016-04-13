@@ -58,7 +58,11 @@ class GUIController:
         # iterate through every known command and create every command that listens to the command
         for current_command in self.commands:
             if current_command.command == command:
-                current_command(self, self.client, message)
+                try:
+                    current_command(self, self.client, message)
+                except Exception as e:
+                    print("Command error, exception: {}", e)
+
 
     def handle_json(self, json_str):
         """ generates a dictionary from a given JSON string """
