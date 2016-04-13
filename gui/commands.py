@@ -302,6 +302,9 @@ class CommandMove(Command):
             self.handle_err('')
 
     def send_to_server(self):
+        print(int(self.x) + " * " + int(self.controller.own_player.board.size[0]))
+        print(int(self.y) + " % " + int(self.controller.own_player.board.size[0]))
+
         move = int(self.x) * int(self.controller.own_player.board.size[0])
         move += int(self.y) % int(self.controller.own_player.board.size[1])
         super().send_to_server('move', str(move))

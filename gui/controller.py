@@ -164,6 +164,7 @@ class GUIController:
 
         self.opponent_player = None
         self.own_player = None
+        self.first_yourturn = True
 
     def create_game(self, gametype, opponent, player_to_move):
         if gametype == 'Reversi':
@@ -187,6 +188,7 @@ class GUIController:
         self.opponent_player = ServerPlayer(name=opponent, game=game)
 
         game.set_players((self.own_player, self.opponent_player))
+        self.opponent_player.setup()
 
         if self.own_player.name == player_to_move:
             self.own_player.play()
@@ -201,8 +203,18 @@ class ClientPlayer(NamedPlayerMixin, BoardPlayerMixin):
 
 
 class ServerPlayer(ClientPlayer):
+    opponent = None
+
     def play(self):
         super().play()
+
+    def setup(self):
+        """ Sets up any initial properties """
+        if self.opponent is None:
+            for player in self.game.players:
+                if player != self:
+                    self.opponent = player
+                    break
 
 
 class UIPlayer(ClientPlayer):
