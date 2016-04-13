@@ -174,6 +174,7 @@ class GUIController:
 
         try:
             player_type = self.challenges[str(opponent)]
+            del self.challenges[str(opponent)]
         except Exception as e:
             player_type = 'AI'
 
@@ -258,6 +259,13 @@ class GUIReversiAIPlayer(ReversiAIPlayer):
         super().play()
 
         x, y, p = self.board.last_turn
+
+        print('{ \
+                "command": "move", \
+                "moveX": ' + str(x) + ', \
+                "moveY": ' + str(y) + ' \
+              }'
+        )
         self.controller.handle_message('{ \
                 "command": "move", \
                 "moveX": ' + str(x) + ', \

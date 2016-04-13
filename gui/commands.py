@@ -295,18 +295,18 @@ class CommandMove(Command):
         self.handle_move(self.x, self.y)
 
     def handle_move(self, x, y):
-        try:
-            self.controller.own_player.board.is_available(int(self.x), int(self.y))
+        print("x=" + str(x) + " y=" + str(y))
+        if self.controller.own_player.game.is_legal_move(player=self.controller.own_player, row=int(x), col=int(y)):
             self.send_to_server()
-        except Exception as e:
+        else:
             self.handle_err('')
 
     def send_to_server(self):
-        print(int(self.x) + " * " + int(self.controller.own_player.board.size[0]))
-        print(int(self.y) + " % " + int(self.controller.own_player.board.size[0]))
+        print(str(int(self.x)) + " * " + str(int(self.controller.own_player.board.size[0])))
+        print(str(int(self.y)) + " % " + str(int(self.controller.own_player.board.size[1])))
 
-        move = int(self.x) * int(self.controller.own_player.board.size[0])
-        move += int(self.y) % int(self.controller.own_player.board.size[1])
+        move = int(self.y) * int(self.controller.own_player.board.size[0])
+        move += int(self.x) % int(self.controller.own_player.board.size[1])
         super().send_to_server('move', str(move))
 
     def handle_ok(self, data):

@@ -52,12 +52,13 @@ class TwoDimensionalBoard(Board):
             self.check_coordinates(x, y)
         return self.state[x][y] is None
 
-    def set(self, x: int, y: int, value: any, check: bool=True):
+    def set(self, x: int, y: int, value: any, check: bool=True, update_last_turn=True):
         """ Saves a given value to the board on the given X and Y positions """
         if check:
             self.check_coordinates(x, y)
         self.state[x][y] = value
-        self.last_turn = (x, y, value)
+        if update_last_turn:
+            self.last_turn = (x, y, value)
 
     def get(self, x: int, y: int, check: bool=True):
         """ Returns the saved value from the board on the given X and Y positions """
