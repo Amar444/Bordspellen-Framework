@@ -6,6 +6,8 @@ from players import BoardPlayerMixin, NamedPlayerMixin, Player
 
 
 class DemoCliPlayer(NamedPlayerMixin, BoardPlayerMixin):
+    opponent = None
+
     def play(self):
         super().play()
         if len(self.game.get_legal_moves(self)) == 0:
@@ -16,7 +18,16 @@ class DemoCliPlayer(NamedPlayerMixin, BoardPlayerMixin):
             print("\n")
         except Exception as e:
             print("{}\n".format(e))
+            self.setup()
             self.play()
+
+    def setup(self):
+        """ Sets up any initial properties """
+        if self.opponent is None:
+            for player in self.game.players:
+                if player != self:
+                    self.opponent = player
+                    break
 
 
 game = ReversiGame()
