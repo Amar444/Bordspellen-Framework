@@ -118,6 +118,9 @@
               <a class="button subscribe-button" data-game="unsubscribe" data-type="unsubscribe">Unsubscribe</a>
             </div>
         </div>
+        <div class="challenge-buttons">
+            <a class="button cancel-button">Cancel</a>
+        </div>
     </div>
 </div>
 </body>
@@ -154,7 +157,6 @@
        window.activeWebSocket.send('{ "command": "playerlist"}');
       }
       $(document).keypress("p",function(e) {
-        if(e.altKey) {
           if(typeof window.getPlayerList !== "undefined") {
             clearInterval(window.getPlayerList);
             delete window.getPlayerList;
@@ -166,7 +168,6 @@
             console.log("Started playerlist requests");
           }
           e.preventDefault();
-        }
       });
 
 
@@ -289,14 +290,12 @@
       });
 
       $(document).keypress("s",function(e) {
-        if(e.altKey) {
-          $(".challenge-overlay").show();
+          $(".challenge-overlay").removeClass('hidden');
           $(".screen-1").hide();
           $(".screen-3").hide();
           $(".screen-2").hide();
           $(".screen-4").show();
           e.preventDefault();
-        }
       });
 
 
