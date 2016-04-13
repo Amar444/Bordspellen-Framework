@@ -118,7 +118,7 @@ class GUIController:
         self.create_game(gametype, opponent, player_to_move)
 
     def handle_yourturn(self, args):
-        print("first_yourturn= " + self.first_yourturn)
+        print("first_yourturn= " + str(self.first_yourturn))
         if self.first_yourturn is not True:
             # self.own_player.play(args[0]['TURNMESSAGE'])
             self.own_player.play()
