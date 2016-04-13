@@ -154,7 +154,7 @@
        window.activeWebSocket.send('{ "command": "playerlist"}');
       }
       $(document).keypress("p",function(e) {
-        if(e.ctrlKey) {
+        if(e.altKey) {
           if(typeof window.getPlayerList !== "undefined") {
             clearInterval(window.getPlayerList);
             delete window.getPlayerList;
@@ -289,7 +289,7 @@
       });
 
       $(document).keypress("s",function(e) {
-        if(e.ctrlKey) {
+        if(e.altKey) {
           $(".challenge-overlay").show();
           $(".screen-1").hide();
           $(".screen-3").hide();
