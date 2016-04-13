@@ -124,7 +124,7 @@ class GUIController:
         if data['PLAYER'] == self.opponent_player.name:
             x = data['MOVE'] / self.opponent_player.board.size[0]
             y = data['MOVE'] % self.opponent_player.board.size[1]
-            self.own_player.board.set(int(x), int(y), self.opponent_player)
+            self.own_player.game.execute_move(self.opponent_player, int(x), int(y))
 
 
         board = self.own_player.board

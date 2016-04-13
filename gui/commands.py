@@ -318,7 +318,7 @@ class CommandMove(Command):
 
     def handle_ok(self, data):
         super().handle_ok(data)
-        self.controller.own_player.board.set(int(self.x), int(self.y), self.controller.own_player)
+        self.controller.own_player.game.execute_move(self.controller.own_player, int(self.x), int(self.y))
         self.send_to_gui()
 
     def handle_err(self, data):
@@ -348,4 +348,4 @@ class CommandBoard(Command):
                     board_to_send[row][col] = self.controller.opponent_player.name
                 else:
                     board_to_send[row][col] = None
-        self.send_to_gui('boardListener', {'board': board_to_send})
+        self.controller.send_to_gui('boardListener', {'board': board_to_send})
