@@ -247,7 +247,7 @@ class UIPlayer(ClientPlayer):
     def play(self):
         super().play()
         if self.first_move:
-            time.sleep(0.1)
+            time.sleep(0.5)
         else:
             self.first_move = False
 
