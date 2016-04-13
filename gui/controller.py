@@ -220,6 +220,7 @@ class ServerPlayer(ClientPlayer):
 
 class UIPlayer(ClientPlayer):
     controller = None
+    check_move = True
 
     def __init__(self, controller, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -232,6 +233,7 @@ class UIPlayer(ClientPlayer):
 
 class GUITicTacToeAIPlayer(TicTacToeAIPlayer):
     controller = None
+    check_move = False
 
     def __init__(self, controller, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -250,6 +252,7 @@ class GUITicTacToeAIPlayer(TicTacToeAIPlayer):
 
 class GUIReversiAIPlayer(ReversiAIPlayer):
     controller = None
+    check_move = False
 
     def __init__(self, controller, *args, **kwargs):
         super().__init__(*args, **kwargs)

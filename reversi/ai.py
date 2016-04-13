@@ -44,6 +44,7 @@ class ReversiAIPlayer(NamedPlayerMixin, BoardPlayerMixin):
         print(self.game.board.__str__())
         print(self.game.get_legal_moves(self))
         self.game.execute_move(self, best_row, best_column)
+        self.board.last_turn = (best_row, best_column, self)
         print("AI placed {} on coords {},{}\n\n".format(self.name, best_row, best_column))
 
     def calc_best_move_alpha_beta(self, player, depth, alpha, beta, stop_time):

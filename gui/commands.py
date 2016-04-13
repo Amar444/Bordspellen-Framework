@@ -3,6 +3,7 @@ Provides classes for every implemented command that the GUI wants to do.
 """
 
 from gac.client.client import *
+from reversi.ai import ReversiAIPlayer
 
 
 class Command:
@@ -292,14 +293,20 @@ class CommandMove(Command):
         super().__init__(controller, client)
         self.x = message['moveX']
         self.y = message['moveY']
-        self.handle_move(self.x, self.y)
+        check_move = self.controller.own_player.check_move
+        self.handle_move(self.x, self.y, check_move)
 
-    def handle_move(self, x, y):
+    def handle_move(self, x, y, check_move):
         print("x=" + str(x) + " y=" + str(y))
-        if self.controller.own_player.game.is_legal_move(player=self.controller.own_player, row=int(x), col=int(y)):
+
+        move_valid = True
+        if check_move:
+            move_valid = self.controller.own_player.game.is_legal_move(player=self.controller.own_player, row=int(x), col=int(y))
+
+        if move_valid:
             self.send_to_server()
         else:
-            self.handle_err('')
+            self.handle_err()
 
     def send_to_server(self):
         print(str(int(self.x)) + " * " + str(int(self.controller.own_player.board.size[0])))
