@@ -165,6 +165,7 @@
             }, 5000);
             console.log("Started playerlist requests");
           }
+          e.preventDefault();
         }
       });
 
@@ -285,6 +286,17 @@
         }
 
         $(".challenge-overlay").addClass("hidden");
+      });
+
+      $(document).keypress("s",function(e) {
+        if(e.ctrlKey) {
+          $(".challenge-overlay").show();
+          $(".screen-1").hide();
+          $(".screen-3").hide();
+          $(".screen-2").hide();
+          $(".screen-4").show();
+          e.preventDefault();
+        }
       });
 
 

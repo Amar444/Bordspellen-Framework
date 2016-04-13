@@ -96,9 +96,11 @@ $(function () {
     });
   }
   window.activeWebSocket.onopen = function() {
-    window.activeWebSocket.send(JSON.stringify({
-      "command" : "getBoard"
-    }));
+    setTimeout(function() {
+      window.activeWebSocket.send(JSON.stringify({
+        "command" : "getBoard"
+      }));
+    }, 500);
   }
 
 });
