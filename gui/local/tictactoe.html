@@ -75,6 +75,26 @@
     <div class="match-overlay">
 
     </div>
+    <div class="challenge-overlay hidden">
+      <div class="challenge">
+        <br><br>
+        <div class="big font center" id="result">
+          You won!
+        </div>
+        <div class="result-area">
+          <p id="result-message"></p>
+          <br><br>
+          <span id = "player1">You</span> :
+          <span id = "player1-points">34</span> points
+          <br>
+          <span id = "player2">Opponent</span> :
+          <span id = "player2-points">-34.235.523</span> points
+        </div>
+        <div class="challenge-buttons">
+            <a class="button back-button">Go back, I like</a>
+        </div>
+      </div>
+    </div>
     <div class="message">
         <div class="message-timer">
             10
@@ -88,8 +108,6 @@
 <script>
     window.home = true;
     window.song = "tictactoe.mp3";
-
-
 </script>
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script src="js/main.js"></script>
@@ -105,7 +123,7 @@
         } else {
             $("#mute-button").attr("src", "img/mute.png");
         }
-    }
+    };
 
 
 
@@ -153,6 +171,10 @@
 
     });
 
+    $(".back-button").click(function() {
+      window.location = "gameroom.html";
+    });
+
 
     /* API EVENTS */
     $(document).on("boardListener", function(e) {
@@ -180,10 +202,14 @@
       });
     });
 
-    $(document).on("moveListener", function(e) {
-      if(e.detail.status == "success") {
-
-      }
+    $(document).on("gameStatus", function(e) {
+      $("#result").text(e.detail.status.capitalizeFirstLetter());
+      $("#player1-points").text(e.detail.playerOneScore);
+      $("#player2-points").text(e.detail.playerTwoScore);
+      $("#player1").text("You");
+      $("#result-message").text("Opponent");
+      $(".match-overlay").css('display', "none");
+      $(".challenge-overlay").removeClass('hidden');
     });
 
   });

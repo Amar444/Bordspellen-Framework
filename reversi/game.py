@@ -1,10 +1,10 @@
 """ Provides tools to enforce game rules and keep track of the game """
 import time
 
-from boards import TwoDimensionalBoard
-from games import BoardGame, TurnBasedGame
-from exceptions import InvalidCoordinatesException
-from players import Player
+from gac.boards import TwoDimensionalBoard
+from gac.games import BoardGame, TurnBasedGame
+from gac.exceptions import InvalidCoordinatesException
+from gac.players import Player
 
 _REVERSI_BOARD_SIZE = 8
 
