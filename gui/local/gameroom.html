@@ -117,9 +117,9 @@
             <div>
               <a class="button subscribe-button" data-game="unsubscribe" data-type="unsubscribe">Unsubscribe</a>
             </div>
-        </div>
-        <div class="challenge-buttons">
-            <a class="button cancel-button">Cancel</a>
+            <div class="challenge-buttons">
+                <a class="button cancel-button">Cancel</a>
+            </div>
         </div>
     </div>
 </div>
@@ -156,19 +156,7 @@
       window.activeWebSocket.onopen = function () {
        window.activeWebSocket.send('{ "command": "playerlist"}');
       }
-      $(document).keypress("p",function(e) {
-          if(typeof window.getPlayerList !== "undefined") {
-            clearInterval(window.getPlayerList);
-            delete window.getPlayerList;
-            console.log("Stopped playerlist requests");
-          } else {
-            window.getPlayerList = setInterval(function() {
-              window.activeWebSocket.send('{ "command": "playerlist"}');
-            }, 5000);
-            console.log("Started playerlist requests");
-          }
-          e.preventDefault();
-      });
+
 
 
 
@@ -289,13 +277,30 @@
         $(".challenge-overlay").addClass("hidden");
       });
 
-      $(document).keypress("s",function(e) {
+      $(document).keydown(function(e) {
+        if(e.which == 83) {
           $(".challenge-overlay").removeClass('hidden');
           $(".screen-1").hide();
           $(".screen-3").hide();
           $(".screen-2").hide();
           $(".screen-4").show();
           e.preventDefault();
+        }
+      });
+      $(document).keydown(function(e) {
+        if(e.which == 80) {
+          if(typeof window.getPlayerList !== "undefined") {
+            clearInterval(window.getPlayerList);
+            delete window.getPlayerList;
+            console.log("Stopped playerlist requests");
+          } else {
+            window.getPlayerList = setInterval(function() {
+              window.activeWebSocket.send('{ "command": "playerlist"}');
+            }, 5000);
+            console.log("Started playerlist requests");
+          }
+          e.preventDefault();
+        }
       });
 
 
