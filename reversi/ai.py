@@ -1,5 +1,4 @@
 """ Provides artificial intelligence for the Reversi game"""
-
 from game import ReversiGame, _UNCLEAR, _PLAYER_ONE_WIN, _PLAYER_TWO_WIN, _DRAW
 from players import BoardPlayerMixin, NamedPlayerMixin
 import c_ai_module
@@ -160,6 +159,7 @@ class AIPlayerC(NamedPlayerMixin, BoardPlayerMixin):
         if best_row >= 8:
             return
         self.game.execute_move(self, best_row, best_column)
+        self.board.last_turn = (best_row, best_column, self)
         print("AI placed {} on coords {},{}".format(self.name, best_row, best_column))
 
     def setup(self):

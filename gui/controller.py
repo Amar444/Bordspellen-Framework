@@ -9,7 +9,8 @@ from reversi.game import ReversiGame
 from gac.players import NamedPlayerMixin, BoardPlayerMixin
 from gac.client import Client
 from tictactoe.ai import TicTacToeAIPlayer
-from reversi.ai import ReversiAIPlayer
+from reversi.ai import AIPlayerC
+import c_ai_module
 
 
 class GUIController:
@@ -273,7 +274,7 @@ class GUITicTacToeAIPlayer(TicTacToeAIPlayer):
           }')
 
 
-class GUIReversiAIPlayer(ReversiAIPlayer):
+class GUIReversiAIPlayer(AIPlayerC):
     controller = None
     check_move = False
 
