@@ -136,12 +136,13 @@ class ReversiAIPlayer(NamedPlayerMixin, BoardPlayerMixin):
 
 class AIPlayerC(NamedPlayerMixin, BoardPlayerMixin):
     _DEFAULT_DEPTH = 8
+    opponent = None
 
-    def __init__(self, game: ReversiGame, depth=_DEFAULT_DEPTH, *args, **kwargs):
+    def __init__(self, depth=_DEFAULT_DEPTH, *args, **kwargs):
         """ Initializes the AIPlayer instance """
         super().__init__(*args, **kwargs)
-        self.game = game
         self.depth = depth
+        self.setup()
 
     def play(self):
         """ Picks the best move, updates the board and prints the move to the the console """
@@ -156,3 +157,10 @@ class AIPlayerC(NamedPlayerMixin, BoardPlayerMixin):
         self.game.execute_move(self, best_row, best_column)
         print("AI placed {} on coords {},{}".format(self.name, best_row, best_column))
 
+    def setup(self):
+        """ Sets up any initial properties """
+        if self.opponent is None:
+            for player in self.game.players:
+                if player != self:
+                    self.opponent = player
+                    break
