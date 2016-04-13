@@ -168,6 +168,7 @@ class GUIController:
         self.first_yourturn = True
 
     def create_game(self, gametype, opponent, player_to_move):
+        self.first_yourturn = True
         if gametype == 'Reversi':
             game = ReversiGame()
         elif gametype == 'Tic-tac-toe':

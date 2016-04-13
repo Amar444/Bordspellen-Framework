@@ -173,6 +173,7 @@ class ReversiGame(TurnBasedGame, BoardGame):
         state = self.board.state
 
         if len(directions) == 0:
+            print(self.board)
             raise ValueError("{} is not allowed to play at {},{} at this time.".format(player, row, col))
 
         resets = [(row, col, state[row][col])]
