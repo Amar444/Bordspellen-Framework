@@ -10,7 +10,7 @@ class ReversiAIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     opponent = None
     _DEFAULT_DEPTH = 6
     _TIME_LIMIT = 3.7
-    moves_analyzed = 0;
+    moves_analyzed = 0
 
     def __init__(self, depth=_DEFAULT_DEPTH, *args, **kwargs):
         """ Initializes the AIPlayer instance """
