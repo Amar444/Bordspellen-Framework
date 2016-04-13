@@ -1,5 +1,5 @@
 import json
-import copy
+import time
 
 from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, CommandGamelist, CommandCreateChallenge, \
     CommandAcceptChallenge, CommandSubscribe, CommandUnsubscribe, CommandMove, CommandBoard, CommandForfeit
@@ -237,6 +237,7 @@ class ServerPlayer(ClientPlayer):
 class UIPlayer(ClientPlayer):
     controller = None
     check_move = True
+    first_move = True
 
     def __init__(self, controller, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -244,6 +245,11 @@ class UIPlayer(ClientPlayer):
 
     def play(self):
         super().play()
+        if self.first_move:
+            time.sleep(0.1)
+        else:
+            self.first_move = False
+
         self.controller.send_to_gui('doMove', {'turnmessage': ''})
 
 
