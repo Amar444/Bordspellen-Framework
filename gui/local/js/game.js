@@ -86,6 +86,14 @@ $(function () {
     $(".challenge-overlay").removeClass('hidden');
   });
 
+  $(document).keydown(function(e) {
+    if(e.which == 70) {
+      window.activeWebSocket.send(JSON.stringify({
+        "command" : "forfeit"
+      }));
+    }
+  });
+
 
   /* INITIALISATION */
 
