@@ -8,8 +8,8 @@ from ai import AIPlayerC, ReversiAIPlayer
 start = time.time()
 
 game = ReversiGame()
-game.set_players((AIPlayerC(name="W", game=game),
-                  ReversiAIPlayer(name="B", game=game),))
+game.set_players((ReversiAIPlayer(name="W", game=game),
+                  AIPlayerC(name="B", game=game),))
 for player in game.players:
     player.print_board = False
 
