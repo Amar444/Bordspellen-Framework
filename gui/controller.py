@@ -189,9 +189,9 @@ class GUIController:
         self.opponent_player = ServerPlayer(name=opponent, game=game)
 
         if self.own_player.name == player_to_move:
-            players = (self.own_player, self.opponent_player)
-        elif self.opponent_player.name == player_to_move:
             players = (self.opponent_player, self.own_player)
+        elif self.opponent_player.name == player_to_move:
+            players = (self.own_player, self.opponent_player)
 
         game.set_players(players)
         self.opponent_player.setup()
