@@ -97,6 +97,27 @@
                 <input class="ai" type="checkbox" datatype="AI">Play as an AI
             </div>
         </div>
+        <div class="screen-4">
+          <div class="font big center">
+            Subscribe
+          </div>
+            <br>
+            <div>
+              <a class="button subscribe-button" data-game="Tic-tac-toe" data-type="HUMAN">Subscribe TicTacToe - Human</a>
+            </div>
+            <div>
+              <a class="button subscribe-button" data-game="Tic-tac-toe" data-type="AI">Subscribe TicTacToe - AI</a>
+            </div>
+            <div>
+              <a class="button subscribe-button" data-game="Reversi" data-type="HUMAN">Subscribe Reversi - Human</a>
+            </div>
+            <div>
+              <a class="button subscribe-button" data-game="Reversi" data-type="AI">Subscribe Reversi - AI</a>
+            </div>
+            <div>
+              <a class="button subscribe-button" data-game="unsubscribe" data-type="unsubscribe">Unsubscribe</a>
+            </div>
+        </div>
     </div>
 </div>
 </body>
@@ -180,6 +201,7 @@
         $(".screen-1").show();
         $(".screen-3").hide();
         $(".screen-2").hide();
+        $(".screen-4").hide();
 
         $("#remotePlayer").html(remoteName);
         $("#gameName").html(game);
@@ -217,6 +239,7 @@
         $(".screen-1").hide();
         $(".screen-3").hide();
         $(".screen-2").show();
+        $(".screen-4").hide();
       });
 
 
@@ -243,6 +266,25 @@
           "opponent" : $(this).attr("data-player"),
           "playAs" : playState
         }));
+      });
+
+      $(".subscribe-button").click(function() {
+        var game = $(this).attr("data-game");
+        var type = $(this).attr('data-type');
+
+        if(game == "unsubscribe" && type == "unsubscribe") {
+          window.activeWebSocket.send(JSON.stringify({
+            "command" : "unsubscribe"
+          }));
+        } else {
+          window.activeWebSocket.send(JSON.stringify({
+            "command" : "subscribe",
+            "game" : game,
+            "playAs" : type
+          }));
+        }
+
+        $(".challenge-overlay").addClass("hidden");
       });
 
 
@@ -274,6 +316,7 @@
         $(".screen-3").show();
         $(".screen-1").hide();
         $(".screen-2").hide();
+        $(".screen-4").hide();
         $(".turntimeValue").text(e.detail.turnTime);
         $("#remotePlayer1").text(e.detail.challenger);
         $("#localPlayer1").text(app._utilities.storage.get("localName"));

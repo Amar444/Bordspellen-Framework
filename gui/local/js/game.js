@@ -46,7 +46,25 @@ $(function () {
 
   $(document).on("moveListener", function(e) {
     if(e.detail.status == "error") {
-      alert(e.detail.statusMessage);
+      $("#result").text(e.detail.status);
+      $("#player1-points").text("");
+      $("#player2-points").text("");
+      $("#player1").text("");
+      $("#player2").text("");
+      $("#result-message").text(e.detail.message);
+      $(".match-overlay").remove();
+      $(".challenge-overlay").removeClass('hidden');
+    }
+  });
+
+  $(document).on("match", function(e) {
+    console.log(e.detail);
+    app._utilities.storage.set("playerToMove", e.detail.playerToMove);
+    if(e.detail.gametype == "Tic-tac-toe") {
+      window.location="tictactoe.html";
+    }
+    if(e.detail.gametype == "Reversi") {
+      window.location="reversion.html";
     }
   });
 
@@ -62,6 +80,7 @@ $(function () {
     $("#player1-points").text(e.detail.playerOneScore);
     $("#player2-points").text(e.detail.playerTwoScore);
     $("#player1").text("You");
+    $("#player2").text("Opponent");
     $("#result-message").text(e.detail.comment);
     $(".match-overlay").remove();
     $(".challenge-overlay").removeClass('hidden');
