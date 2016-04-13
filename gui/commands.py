@@ -3,7 +3,7 @@ Provides classes for every implemented command that the GUI wants to do.
 """
 
 from gac.client.client import *
-from reversi.ai import ReversiAIPlayer
+from gac.astley import *
 
 
 class Command:
@@ -360,3 +360,20 @@ class CommandForfeit(Command):
         self.controller.opponent_player = None
         self.controller.own_player = None
         self.controller.first_yourturn = True
+
+class CommandRICKROLL(Command):
+    command = 'rickroll'
+
+    playername = None
+
+    def __init__(self, controller, client, message):
+        super().__init__(controller, client)
+        self.playername = message['player']
+        if self.playername == '':
+            self.playername = self.controller.opponent_player.name
+
+        self.play(self.playername)
+
+    def play(self, player):
+        spammer = AstleySpammer(self.client, self.playername)
+        spammer.start()

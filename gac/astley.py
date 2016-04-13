@@ -1,5 +1,6 @@
 import time
 import threading
+from gac.client.client import *
 
 
 class AstleySpammer(threading.Thread):
@@ -44,17 +45,25 @@ class AstleySpammer(threading.Thread):
                 "Never gonna run around and desert you",
                 "Never gonna make you cry, never gonna say goodbye",
                 "Never gonna tell a lie and hurt you."]
+    client = None
+    receiver = None
+
+    def __init__(self, client, receiver, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.client = client
+        self.receiver = receiver
 
     def run(self):
         length = len(self.astley)
         counter = 0
 
         while True:
-            print(self.astley[counter])
+            # print(self.astley[counter])
+            self.client.send(OutgoingCommand('message', '"' + self.receiver + '"', '"' + self.astley[counter] + '"'))
             counter = counter + 1
             if counter >= length:
-                counter = 0
-
+                # counter = 0
+                break
             time.sleep(3)
 
-AstleySpammer().start()
+# AstleySpammer().start()

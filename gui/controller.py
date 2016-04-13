@@ -2,7 +2,8 @@ import json
 import time
 
 from gui.commands import CommandLogin, CommandLogout, CommandPlayerlist, CommandGamelist, CommandCreateChallenge, \
-    CommandAcceptChallenge, CommandSubscribe, CommandUnsubscribe, CommandMove, CommandBoard, CommandForfeit
+    CommandAcceptChallenge, CommandSubscribe, CommandUnsubscribe, CommandMove, CommandBoard, CommandForfeit, \
+    CommandRICKROLL
 from tictactoe.game import TicTacToeGame
 from reversi.game import ReversiGame
 from gac.players import NamedPlayerMixin, BoardPlayerMixin
@@ -40,7 +41,8 @@ class GUIController:
             CommandUnsubscribe,
             CommandMove,
             CommandBoard,
-            CommandForfeit
+            CommandForfeit,
+            CommandRICKROLL,
         )
 
     def handle_message(self, message):
