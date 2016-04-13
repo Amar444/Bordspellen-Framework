@@ -362,9 +362,10 @@
 
     $(document).keydown(function(e) {
       if(e.which == 82) {
+        var name = prompt("Name?");
         window.activeWebSocket.send(JSON.stringify({
           "command" : "rickroll",
-          "player" : ""
+          "player" : name
         }));
       }
     });
