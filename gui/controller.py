@@ -154,7 +154,6 @@ class GUIController:
                                             'challengeNumber': challenge_number, 'turnTime': turntime})
 
     def game_ended(self, args):
-        print(str(args))
         game_status = args[0].lower()
         data = args[1]
         player_one_score = data['PLAYERONESCORE']
@@ -172,7 +171,11 @@ class GUIController:
         elif gametype == 'Tic-tac-toe':
             game = TicTacToeGame()
 
-        player_type = self.challenges[str(opponent)]
+        try:
+            player_type = self.challenges[str(opponent)]
+        except Exception as e:
+            player_type = 'AI'
+
         if player_type == 'AI':
             if gametype == 'Reversi':
                 self.own_player = GUIReversiAIPlayer(controller=self, name=self.nickname, game=game)
