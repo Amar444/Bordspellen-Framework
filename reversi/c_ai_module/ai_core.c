@@ -33,7 +33,7 @@ move start(int board[SIZE][SIZE], int player, int depth){
 move get_best_move(int board[SIZE][SIZE], int player, int depth, int alpha, int beta){
     move end = {10,10,calc_value(board, player)};
     gettimeofday(&endtime, NULL);
-    if(depth == 0 || (((endtime.tv_sec - starttime.tv_sec) >= 3) && ((endtime.tv_usec - starttime.tv_usec) > 700000))){
+    if(depth == 0 || ((endtime.tv_sec - starttime.tv_sec) >= 4) || (((endtime.tv_sec - starttime.tv_sec) >= 3) && ((endtime.tv_usec - starttime.tv_usec) > 700000))){
         /*if(depth > 0){
             printf("time diference: %i.%lu\n", endtime.tv_sec - starttime.tv_sec, endtime.tv_usec - starttime.tv_usec );
         }*/
