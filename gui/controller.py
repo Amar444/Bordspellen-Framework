@@ -20,7 +20,7 @@ class GUIController:
     challenges = {}
     own_player = None
     opponent_player = None
-    first_yourturn = True
+    turn = 0
 
     def __init__(self, gui):
         """ Initializes a new controller to be used by the GUI """
@@ -118,14 +118,13 @@ class GUIController:
         self.create_game(gametype, opponent, player_to_move)
 
     def handle_yourturn(self, args):
-        print("first_yourturn= " + str(self.first_yourturn))
-        if self.first_yourturn is not True:
+        print("turn= " + str(self.turn))
+        if self.turn != 0:
             # self.own_player.play(args[0]['TURNMESSAGE'])
             self.own_player.play()
-        else:
-            self.first_yourturn = False
 
     def handle_move(self, args):
+        self.turn += 1
         data = args[0]
         if data['PLAYER'] == self.opponent_player.name:
             x = data['MOVE'] / self.opponent_player.board.size[0]
@@ -171,10 +170,10 @@ class GUIController:
 
         self.opponent_player = None
         self.own_player = None
-        self.first_yourturn = True
+        self.turn = 0
 
     def create_game(self, gametype, opponent, player_to_move):
-        self.first_yourturn = True
+        self.turn = 0
         if gametype == 'Reversi':
             game = ReversiGame()
         elif gametype == 'Tic-tac-toe':
@@ -207,7 +206,6 @@ class GUIController:
         if self.own_player.name == player_to_move:
             self.own_player.play()
         elif self.opponent_player.name == player_to_move:
-            self.first_yourturn = False
             self.opponent_player.play()
 
         print('{ \
