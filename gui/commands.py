@@ -306,7 +306,7 @@ class CommandMove(Command):
         if move_valid:
             self.send_to_server()
         else:
-            self.handle_err()
+            self.handle_err('')
 
     def send_to_server(self):
         print(str(int(self.x)) + " * " + str(int(self.controller.own_player.board.size[0])))
