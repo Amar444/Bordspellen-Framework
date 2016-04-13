@@ -76,5 +76,8 @@ $(function () {
       $(".match-overlay").show();
     });
   }
+  window.activeWebSocket.send(JSON.stringify({
+    "command" : "getBoard"
+  }));
 
 });
