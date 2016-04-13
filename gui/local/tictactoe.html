@@ -75,6 +75,17 @@
     <div class="match-overlay">
 
     </div>
+    <div class="challenge-overlay hidden">
+      <div class="challenge">
+        <br><br>
+        <div class="big font center" id="result">
+          You won!
+        </div>
+        <div class="challenge-buttons">
+            <a class="button back-button">Go back, I like</a>
+        </div>
+      </div>
+    </div>
     <div class="message">
         <div class="message-timer">
             10
@@ -105,7 +116,7 @@
         } else {
             $("#mute-button").attr("src", "img/mute.png");
         }
-    }
+    };
 
 
 
@@ -153,6 +164,10 @@
 
     });
 
+    $(".back-button").click(function() {
+      window.location = "gameroom.html";
+    });
+
 
     /* API EVENTS */
     $(document).on("boardListener", function(e) {
@@ -180,10 +195,10 @@
       });
     });
 
-    $(document).on("moveListener", function(e) {
-      if(e.detail.status == "success") {
-
-      }
+    $(document).on("winloss", function(e) {
+      $("#result").text(e.detail.title);
+      $(".match-overlay").hide();
+      $(".challenge-overlay").removeClass('hidden');
     });
 
   });
