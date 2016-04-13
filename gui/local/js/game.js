@@ -76,9 +76,19 @@ $(function () {
   });
 
   $(document).on("gameStatus", function(e) {
+    var me,
+        other;
+
+    if(app._utilities.storage.get("playerToMove") == app._utilities.storage.get("localName")) {
+      me = e.detail.playerOneScore;
+      other = e.detail.playerTwoScore;
+    } else {
+      me = e.detail.playerTwoScore;
+      other = e.detail.playerOneScore;
+    }
     $("#result").text(e.detail.status.capitalizeFirstLetter());
-    $("#player1-points").text(e.detail.playerOneScore);
-    $("#player2-points").text(e.detail.playerTwoScore);
+    $("#player1-points").text(me);
+    $("#player2-points").text(other);
     $("#player1").text("You");
     $("#player2").text("Opponent");
     $("#result-message").text(e.detail.comment);
