@@ -3,11 +3,15 @@
 const int DIRECTIONS[8][2] = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
 const int DIRECTIONS_LENGTH = 8;
 int ai_player;
+int analyzed_moves = 0;
 
 /*init for the ai, called from the wrapper*/
 move start(int board[SIZE][SIZE], int player, int depth){
     ai_player = player;
-    return get_best_move(board, player, depth);
+    analyzed_moves = 0;
+    move ret = get_best_move(board, player, depth);
+    printf("Analyzed %i moves.\n", analyzed_moves);
+    return ret;
 }
 
 /*the basic minimax structure*/
@@ -42,6 +46,7 @@ move get_best_move(int board[SIZE][SIZE], int player, int depth){
                 copy_board(output_board, board);
                 do_moves(output_board, i, j, player);
                 result = get_best_move(output_board, opp, depth-1);
+                analyzed_moves++;
                 if((result.val > best_result.val && player == ai_player) || (result.val < best_result.val && player != ai_player)){
                     best_result.row = i;
                     best_result.col = j;

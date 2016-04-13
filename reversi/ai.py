@@ -8,8 +8,9 @@ import time
 
 class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
     opponent = None
-    _DEFAULT_DEPTH = 8
+    _DEFAULT_DEPTH = 6
     _TIME_LIMIT = 3.7
+    moves_analyzed = 0;
 
     def __init__(self, game: ReversiGame, depth=_DEFAULT_DEPTH, *args, **kwargs):
         """ Initializes the AIPlayer instance """
@@ -35,16 +36,17 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
 
     def do_move(self):
         """ Attempts to calculate the best move and update the board accordingly """
-        print(self.game.get_legal_moves(self))
+        # print(self.game.get_legal_moves(self))
         time_limit = float(self._TIME_LIMIT)
         stop_time = time.time() + time_limit
-
+        self.moves_analyzed = 0
         _, best_row, best_column = self.calc_best_move_alpha_beta(self, self.depth, -sys.maxsize, sys.maxsize,
                                                                   stop_time)
-        print(self.game.board.__str__())
-        print(self.game.get_legal_moves(self))
+        #  print(self.game.board.__str__())
+        #  print(self.game.get_legal_moves(self))
         self.game.execute_move(self, best_row, best_column)
-        print("AI placed {} on coords {},{}\n\n".format(self.name, best_row, best_column))
+        print("AI placed {} on coords {},{} after analyzing {} moves".format(self.name, best_row,
+                                                                         best_column, self.moves_analyzed))
 
     def calc_best_move_alpha_beta(self, player, depth, alpha, beta, stop_time):
         """ Find best move for winning the game with alpha beta pruning """
@@ -61,6 +63,7 @@ class AIPlayer(NamedPlayerMixin, BoardPlayerMixin):
 
             # Iterate over legal moves
             for x, y in self.game.iterate_legal_moves(player):
+                self.moves_analyzed += 1
                 has_legal_moves = True
                 # Place stone at current cell
                 moves = self.game.execute_move(player, x, y)
@@ -149,6 +152,8 @@ class AIPlayerC(NamedPlayerMixin, BoardPlayerMixin):
     def do_move(self):
         """ Attempts to calculate the best move and update the board accordingly """
         best_row, best_column = c_ai_module.best_move(self.board.tokenized(), self.token, self.depth)
+        if best_row >= 8:
+            return
         self.game.execute_move(self, best_row, best_column)
-        print("AI placed {} on coords {},{}\n\n".format(self.name, best_row, best_column))
+        print("AI placed {} on coords {},{}".format(self.name, best_row, best_column))
 

@@ -211,6 +211,7 @@ class ReversiGame(TurnBasedGame, BoardGame):
             elif self.status == _DRAW:
                 self.is_playing = False
                 print("Game over! It's a tie!")
+            return
         super().next_turn()
         end = current_milli_time()
-        print("Turn took {} seconds".format(float(end-start)/1000.0))
+        print("Turn took {} seconds\n".format(float(end-start)/1000.0))
