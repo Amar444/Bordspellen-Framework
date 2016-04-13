@@ -328,3 +328,24 @@ class CommandMove(Command):
 
     def send_to_gui(self):
         self.controller.send_to_gui('moveListener', {}, self.status['status'], self.status['message'])
+
+
+class CommandBoard(Command):
+    command = 'getBoard'
+
+    def __init__(self, controller, client, message):
+        super().__init__(controller, client)
+        self.send_to_gui()
+
+    def send_to_gui(self):
+        board = self.controller.own_player.board
+        board_to_send = [[None for r in range(0, board.size[0])] for r in range(0, board.size[1])]
+        for row in range(board.size[0]):
+            for col in range(board.size[1]):
+                if board.state[row][col] is self.controller.own_player:
+                    board_to_send[row][col] = self.controller.own_player.name
+                elif board.state[row][col] is self.controller.opponent_player:
+                    board_to_send[row][col] = self.controller.opponent_player.name
+                else:
+                    board_to_send[row][col] = None
+        self.send_to_gui('boardListener', {'board': board_to_send})
