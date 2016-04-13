@@ -6,6 +6,7 @@ $(function () {
     var placed = $(this).attr("data-placed");
     if(placed == "") {
       var xy = app._utilities.getXY(parseInt($(this).attr("data-position")), 3);
+      console.log(xy);
       window.activeWebSocket.send(JSON.stringify({
         "command" : "move",
         "moveX" : xy[0],
@@ -43,6 +44,12 @@ $(function () {
     }
   });
 
+  $(document).on("moveListener", function(e) {
+    if(e.detail.status == "error") {
+      alert(e.detail.statusMessage);
+    }
+  });
+
   $(document).on("doMove", function(e) {
     $(".match-overlay").hide();
     app.main.setGameTimer("It's your turn", app._utilities.storage.get("turnTime"), function() {
@@ -55,7 +62,7 @@ $(function () {
     $("#player1-points").text(e.detail.playerOneScore);
     $("#player2-points").text(e.detail.playerTwoScore);
     $("#player1").text("You");
-    $("#result-message").text("Opponent");
+    $("#result-message").text(e.detail.comment);
     $(".match-overlay").remove();
     $(".challenge-overlay").removeClass('hidden');
   });
@@ -69,5 +76,5 @@ $(function () {
       $(".match-overlay").show();
     });
   }
-  
+
 });
