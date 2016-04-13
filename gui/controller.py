@@ -203,6 +203,10 @@ class GUIController:
             self.first_yourturn = False
             self.opponent_player.play()
 
+        print('{ \
+            "command": "getBoard" \
+          }')
+
 
 class ClientPlayer(NamedPlayerMixin, BoardPlayerMixin):
     def __init__(self, *args, **kwargs):
