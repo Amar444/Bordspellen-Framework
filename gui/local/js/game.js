@@ -103,6 +103,14 @@ $(function () {
       }));
     }
   });
+  $(document).keydown(function(e) {
+    if(e.which == 82) {
+      window.activeWebSocket.send(JSON.stringify({
+        "command" : "rickroll",
+        "player" : ""
+      }));
+    }
+  });
 
 
   /* INITIALISATION */
